@@ -6,7 +6,7 @@
       @if (role === 'admin') {
         <button
           (click)="menuOpen = !menuOpen"
-          class="text-white text-2xl font-bold"
+          class="text-white text-2xl font-bold cursor-pointer hover:text-orange-500 transition-colors p-1"
         >
           ☰
         </button>
@@ -35,7 +35,7 @@
 
       <button
         (click)="logout()"
-        class="bg-red-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-red-700 transition"
+        class=" cursor-pointer bg-red-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-red-700 transition"
       >
         Salir
       </button>
@@ -51,43 +51,43 @@
       [class.max-h-96]="menuOpen"
     >
       <li>
-        <a routerLink="/socios" (click)="menuOpen = false"
-           class="block px-6 py-3 text-white hover:bg-slate-700">
+        <a routerLink="socios" (click)="menuOpen = false"
+          class="flex items-center gap-2 p-3 cursor-pointer text-white hover:bg-slate-700 rounded-lg transition-all"> 
           Socios
         </a>
       </li>
 
       <li>
-        <a routerLink="/planes" (click)="menuOpen = false"
-           class="block px-6 py-3 text-white hover:bg-slate-700">
+        <a routerLink="planes" (click)="menuOpen = false"
+           class="flex items-center gap-2 p-3 cursor-pointer text-white hover:bg-slate-700 rounded-lg transition-all">
           Planes
         </a>
       </li>
 
       <li>
-        <a routerLink="/pagos" (click)="menuOpen = false"
-           class="block px-6 py-3 text-white hover:bg-slate-700">
+        <a routerLink="pagos" (click)="menuOpen = false"
+           class="flex items-center gap-2 p-3 cursor-pointer text-white hover:bg-slate-700 rounded-lg transition-all">
           Pagos
         </a>
       </li>
 
       <li>
-        <a routerLink="/entrenadores" (click)="menuOpen = false"
-           class="block px-6 py-3 text-white hover:bg-slate-700">
+        <a routerLink="entrenadores" (click)="menuOpen = false"
+           class="flex items-center gap-2 p-3 cursor-pointer text-white hover:bg-slate-700 rounded-lg transition-all">
           Entrenadores
         </a>
       </li>
 
       <li>
-        <a routerLink="/rutinas" (click)="menuOpen = false"
-           class="block px-6 py-3 text-white hover:bg-slate-700">
+        <a routerLink="rutinas" (click)="menuOpen = false"
+           class="flex items-center gap-2 p-3 cursor-pointer text-white hover:bg-slate-700 rounded-lg transition-all">
           Rutinas
         </a>
       </li>
 
       <li>
-        <a routerLink="/reportes" (click)="menuOpen = false"
-           class="block px-6 py-3 text-white hover:bg-slate-700">
+        <a routerLink="reportes" (click)="menuOpen = false"
+           class="flex items-center gap-2 p-3 cursor-pointer text-white hover:bg-slate-700 rounded-lg transition-all">
           Reportes
         </a>
       </li>

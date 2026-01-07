@@ -26,25 +26,27 @@ export class Login {
   (private router: Router, private authService: AuthService) {}
 
 iniciarSesion() {
-    this.authService.login(this.usuario).subscribe({
-      next: (res: any) => {
-        console.log('Login exitoso:', res);
-        
-        // 1. GUARDA EL TOKEN (Indispensable para el AuthGuard)
-        localStorage.setItem('token', res.token);
-        
-        // 2. GUARDA EL ROL (Para saber si es admin o socio después)
-        // Usamos 'role' porque es lo que definimos que enviaría el Backend
-        localStorage.setItem('role', res.usuario.role);
-        localStorage.setItem('nombre', res.usuario.nombre);
+  this.authService.login(this.usuario).subscribe({
+    next: (res: any) => {
+      
+      const role = res.usuario.role.toLowerCase().trim();
+      console.log('Rol procesado:', role); // Verifica que imprima "admin"
 
-        // 3. AHORA SÍ, NAVEGA
-        this.router.navigate(['/home']);
-      },
-      error: (err: any) => {
-        alert('❌ Error: Usuario o contraseña incorrectos.');
-        console.error(err);
+      localStorage.setItem('token', res.token);
+      localStorage.setItem('role', role);
+      localStorage.setItem('nombre', res.usuario.nombre);
+
+      if (role === 'admin') {
+        this.router.navigate(['admin/socios']);
+      } else {
+        console.log('Navegando a socio...');
+        this.router.navigate(['/socio']);
       }
-    });
-  }
+    },
+    error: (err) => {
+      console.error('Error en login:', err);
+      alert('Credenciales incorrectas');
+    }
+  });
+}
 }
