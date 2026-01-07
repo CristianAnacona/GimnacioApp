@@ -10,7 +10,7 @@ export const routes: Routes = [
   {
     path: 'register',
     // Verifica si en tu archivo de registro la clase se llama 'Register' o 'RegisterComponent'
-    loadComponent: () => import('./components/register/register').then(m => m.Register)
+    loadComponent: () => import('./components/auth/register/register').then(m => m.Register)
   },
   {
     path: 'home', // Nueva ruta para el home
@@ -18,5 +18,8 @@ export const routes: Routes = [
     loadComponent: () => import('./components/home/home').then(m => m.HomeComponent)
   },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '/login' },
+
+  //Rutas para el dashboard de administración
+ 
 ];

@@ -2,12 +2,13 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router'; // Para redirigir si no está autenticado
+import { Navbar } from '../shared/navbar/navbar';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.html',
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, Navbar]
 })
 export class HomeComponent implements OnInit {
   // Array de usuarios (solo visible para admin)
@@ -68,9 +69,5 @@ cargarUsuarios() {
     });
   }
 
-  // Cerrar sesión y limpiar datos
-  logout() {
-    localStorage.clear();
-    window.location.reload();
-  }
+
 }
