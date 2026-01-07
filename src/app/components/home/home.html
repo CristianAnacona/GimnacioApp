@@ -1,0 +1,144 @@
+<!-- Contenedor principal con fondo gris claro -->
+<div class="min-h-screen bg-slate-100">
+  
+  <!-- Barra de navegación superior -->
+  <nav class="bg-slate-900 text-white p-4 flex justify-between items-center shadow-lg">
+    <!-- Logo de la aplicación -->
+    <h1 class="font-black italic text-xl">GYM<span class="text-orange-500">APP</span></h1>
+    
+    <!-- Rol del usuario y botón de salir -->
+    <div class="flex items-center gap-4">
+      <!-- Badge con el rol del usuario (admin/socio) -->
+      <span class="text-xs font-bold bg-slate-700 px-2 py-1 rounded uppercase tracking-tighter">
+        {{ role }}
+      </span>
+      <!-- Botón para cerrar sesión -->
+      <button (click)="logout()" class="text-sm hover:text-orange-500 transition-colors">
+        Salir
+      </button>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="p-6 max-w-6xl mx-auto">
+    <!-- Encabezado de bienvenida -->
+    <h2 class="text-2xl font-bold text-slate-800 mb-6">
+      Bienvenido, {{ username }}
+    </h2>
+
+    <!-- VISTA PARA ADMINISTRADOR -->
+    @if (role === 'admin') {
+      <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-200">
+        
+        <!-- Encabezado de la tabla -->
+        <div class="p-6 border-b bg-slate-50">
+          <h3 class="font-bold text-slate-800 uppercase text-xs tracking-widest">
+            Gestión de Socios
+          </h3>
+        </div>
+
+        <!-- Tabla de usuarios -->
+        <table class="w-full text-left border-collapse">
+          <!-- Encabezados de la tabla -->
+          <thead>
+            <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase font-bold">
+              <th class="p-4">Nombre</th>
+              <th class="p-4">Email</th>
+              <th class="p-4">Vencimiento</th>
+              <th class="p-4 text-center">Renovación Rápida</th>
+            </tr>
+          </thead>
+          
+          <!-- Cuerpo de la tabla -->
+          <tbody>
+            <!-- Iterar sobre cada usuario -->
+            @for (u of usuarios; track u._id) {
+              <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                
+                <!-- Nombre del usuario -->
+                <td class="p-4 font-bold text-slate-700">{{ u.nombre }}</td>
+                
+                <!-- Email del usuario -->
+                <td class="p-4 text-slate-500 text-sm">{{ u.email }}</td>
+                
+                <!-- Fecha de vencimiento con color dinámico -->
+                <td class="p-4 text-sm font-medium">
+                  @if (u.fechaVencimiento) {
+                    <!-- Rojo si está vencido, verde si está activo -->
+                    <span [class]="esVencido(u.fechaVencimiento) ? 'text-red-600' : 'text-green-600'">
+                      {{ u.fechaVencimiento | date:'dd/MM/yyyy' }}
+                    </span>
+                  } @else {
+                    <!-- Mensaje si no hay membresía activa -->
+                    <span class="text-slate-400 italic text-[10px]">
+                      Sin membresía activa
+                    </span>
+                  }
+                </td>
+                
+                <!-- Botones de renovación rápida -->
+                <td class="p-4 text-center">
+                  <div class="flex gap-2 justify-center">
+                    <!-- Botón renovar 7 días -->
+                    <button 
+                      (click)="renovar(u._id, 7)" 
+                      class="bg-blue-50 text-blue-600 px-2 py-1 rounded text-[10px] font-bold hover:bg-blue-600 hover:text-white transition-all"
+                    >
+                      +7 Días
+                    </button>
+                    
+                    <!-- Botón renovar 15 días -->
+                    <button 
+                      (click)="renovar(u._id, 15)" 
+                      class="bg-purple-50 text-purple-600 px-2 py-1 rounded text-[10px] font-bold hover:bg-purple-600 hover:text-white transition-all"
+                    >
+                      +15 Días
+                    </button>
+                    
+                    <!-- Botón renovar 30 días -->
+                    <button 
+                      (click)="renovar(u._id, 30)" 
+                      class="bg-green-50 text-green-600 px-2 py-1 rounded text-[10px] font-bold hover:bg-green-600 hover:text-white transition-all"
+                    >
+                      +30 Días
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <!-- Mensaje cuando no hay usuarios -->
+              <tr>
+                <td colspan="4" class="p-10 text-center text-slate-400 italic">
+                  No hay usuarios registrados.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- VISTA PARA SOCIO (MIEMBRO) -->
+    @else if (role === 'socio') {
+      <div class="bg-orange-600 text-white p-8 rounded-3xl shadow-xl">
+        <!-- Título de la rutina -->
+        <h3 class="text-xl font-bold mb-2">Tu rutina de hoy:</h3>
+        
+        <!-- Nombre de la rutina -->
+        <p class="text-4xl font-black mb-4">ESPALDA Y BÍCEPS</p>
+        
+        <!-- Botón para iniciar entrenamiento -->
+        <button class="bg-white text-orange-600 px-6 py-2 rounded-full font-bold text-sm hover:bg-slate-100 transition-colors">
+          EMPEZAR ENTRENAMIENTO
+        </button>
+      </div>
+    }
+
+    <!-- VISTA POR DEFECTO (Verificando) -->
+    @else {
+      <div class="p-10 text-center bg-white rounded-3xl">
+        <p class="text-slate-400">Verificando credenciales...</p>
+      </div>
+    }
+  </div>
+</div>
