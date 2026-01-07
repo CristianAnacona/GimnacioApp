@@ -1,0 +1,96 @@
+<nav class="bg-slate-900 px-6 py-4 relative">
+  <div class="flex items-center justify-between relative">
+
+    <!-- IZQUIERDA -->
+    <div class="flex items-center gap-3">
+      @if (role === 'admin') {
+        <button
+          (click)="menuOpen = !menuOpen"
+          class="text-white text-2xl font-bold"
+        >
+          ☰
+        </button>
+      }
+
+      <span class="font-black text-lg">
+        <span class="text-white">GYM</span>
+        <span class="text-orange-500">APP</span>
+      </span>
+    </div>
+
+    <!-- CENTRO (solo admin) -->
+    
+      <div class="absolute left-1/2 transform -translate-x-1/2">
+        <span class="text-white font-semibold text-sm">
+          Bienvenido, {{ username }}
+        </span>
+      </div>
+    
+
+    <!-- DERECHA -->
+    <div class="flex items-center gap-4">
+      <span class="text-slate-300 text-xs font-bold uppercase">
+        {{ role }}
+      </span>
+
+      <button
+        (click)="logout()"
+        class="bg-red-600 text-white px-3 py-1 rounded text-xs font-bold hover:bg-red-700 transition"
+      >
+        Salir
+      </button>
+    </div>
+  </div>
+
+  <!-- MENÚ DESPLEGABLE (solo admin) -->
+  @if (role === 'admin') {
+    <ul
+      class="absolute left-0 top-full w-full bg-slate-800
+             transition-all duration-300 overflow-hidden z-50"
+      [class.max-h-0]="!menuOpen"
+      [class.max-h-96]="menuOpen"
+    >
+      <li>
+        <a routerLink="/socios" (click)="menuOpen = false"
+           class="block px-6 py-3 text-white hover:bg-slate-700">
+          Socios
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/planes" (click)="menuOpen = false"
+           class="block px-6 py-3 text-white hover:bg-slate-700">
+          Planes
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/pagos" (click)="menuOpen = false"
+           class="block px-6 py-3 text-white hover:bg-slate-700">
+          Pagos
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/entrenadores" (click)="menuOpen = false"
+           class="block px-6 py-3 text-white hover:bg-slate-700">
+          Entrenadores
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/rutinas" (click)="menuOpen = false"
+           class="block px-6 py-3 text-white hover:bg-slate-700">
+          Rutinas
+        </a>
+      </li>
+
+      <li>
+        <a routerLink="/reportes" (click)="menuOpen = false"
+           class="block px-6 py-3 text-white hover:bg-slate-700">
+          Reportes
+        </a>
+      </li>
+    </ul>
+  }
+</nav>

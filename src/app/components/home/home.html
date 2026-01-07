@@ -1,24 +1,6 @@
 <!-- Contenedor principal con fondo gris claro -->
 <div class="min-h-screen bg-slate-100">
-  
-  <!-- Barra de navegación superior -->
-  <nav class="bg-slate-900 text-white p-4 flex justify-between items-center shadow-lg">
-    <!-- Logo de la aplicación -->
-    <h1 class="font-black italic text-xl">GYM<span class="text-orange-500">APP</span></h1>
-    
-    <!-- Rol del usuario y botón de salir -->
-    <div class="flex items-center gap-4">
-      <!-- Badge con el rol del usuario (admin/socio) -->
-      <span class="text-xs font-bold bg-slate-700 px-2 py-1 rounded uppercase tracking-tighter">
-        {{ role }}
-      </span>
-      <!-- Botón para cerrar sesión -->
-      <button (click)="logout()" class="text-sm hover:text-orange-500 transition-colors">
-        Salir
-      </button>
-    </div>
-  </nav>
-
+<app-navbar></app-navbar>
   <!-- Contenido principal -->
   <div class="p-6 max-w-6xl mx-auto">
     <!-- Encabezado de bienvenida -->
