@@ -1,25 +1,46 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth';
+import { AdminDashboard } from './components/admin/dashboardAdmin/dashboardAdmin';
 
 export const routes: Routes = [
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   {
     path: 'login',
-    // IMPORTANTE: m.Login debe coincidir con el nombre en tu archivo login.ts
     loadComponent: () => import('./components/auth/login/login').then(m => m.Login)
   },
   {
     path: 'register',
-    // Verifica si en tu archivo de registro la clase se llama 'Register' o 'RegisterComponent'
     loadComponent: () => import('./components/auth/register/register').then(m => m.Register)
   },
-  {
-    path: 'home', // Nueva ruta para el home
-    canActivate: [authGuard], // Protegida por el guardia de autenticación
-    loadComponent: () => import('./components/home/home').then(m => m.HomeComponent)
-  },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' },
 
-  //Rutas para el dashboard de administración
- 
+  // ESTRUCTURA PARA ADMINISTRADORES
+  {
+    path: 'admin',
+    component:AdminDashboard,
+    children: [
+      { path: 'entrenadores',
+         loadComponent: () => import('./components/admin/entrenadores/entrenadores')
+         .then(m => m.Entrenadores) },
+      { path: 'socios', loadComponent: () => import('./components/admin/socios/socios').then(m => m.Socios) },
+      { path: 'pagos', loadComponent: () => import('./components/admin/pagos/pagos').then(m => m.Pagos) },
+      { path: 'planes', loadComponent: () => import('./components/admin/planes/planes').then(m => m.Planes) },
+      { path: 'reportes', loadComponent: () => import('./components/admin/reportes/reportes').then(m => m.Reportes) },
+      { path: 'rutinas', loadComponent: () => import('./components/admin/rutinas/rutinas').then(m => m.Rutinas) },
+      { path: '', redirectTo: 'socios', pathMatch: 'full' }
+    ]
+  },
+
+  // ESTRUCTURA PARA SOCIOS
+  {
+    path: 'socio',
+    canActivate: [authGuard],
+    loadComponent: () => import('./components/socio/dashboardSocio/dashboardSocio').then(m => m.Dashboard),
+    children: [
+      { path: 'perfil', loadComponent: () => import('./components/socio/perfil/perfil').then(m => m.Perfil) },
+      { path: 'rutina', loadComponent: () => import('./components/home/home').then(m => m.HomeComponent) },
+      { path: '', redirectTo: 'socio', pathMatch: 'full' }
+    ]
+  },
+
+  { path: '**', redirectTo: '/login' }
 ];

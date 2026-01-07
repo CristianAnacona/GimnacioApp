@@ -1,1 +1,60 @@
 <p>socios works!</p>
+  <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-200">
+
+      <div class="p-6 border-b bg-slate-50">
+        <h3 class="font-bold text-slate-800 uppercase text-xs tracking-widest">
+          Gestión de Socios
+        </h3>
+      </div>
+
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase font-bold">
+            <th class="p-4">Nombre</th>
+            <th class="p-4">Email</th>
+            <th class="p-4">Vencimiento</th>
+            <th class="p-4 text-center">Renovación</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (u of usuarios; track u._id) {
+            <tr class="border-b hover:bg-slate-50">
+              <td class="p-4 font-bold">{{ u.nombre }}</td>
+              <td class="p-4 text-slate-500">{{ u.email }}</td>
+
+              <td class="p-4">
+                @if (u.fechaVencimiento) {
+                  <span
+                    [class]="esVencido(u.fechaVencimiento)
+                      ? 'text-red-600'
+                      : 'text-green-600'"
+                  >
+                    {{ u.fechaVencimiento | date:'dd/MM/yyyy' }}
+                  </span>
+                } @else {
+                  <span class="text-slate-400 italic text-xs">
+                    Sin membresía
+                  </span>
+                }
+              </td>
+
+              <td class="p-4 text-center">
+                <div class="flex gap-2 justify-center">
+                  <button (click)="renovar(u._id, 7)" class="btn-blue">+7</button>
+                  <button (click)="renovar(u._id, 15)" class="btn-purple">+15</button>
+                  <button (click)="renovar(u._id, 30)" class="btn-green">+30</button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="p-10 text-center text-slate-400">
+                No hay usuarios registrados
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+    </div>

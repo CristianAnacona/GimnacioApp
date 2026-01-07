@@ -1,4 +1,3 @@
-
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router,RouterModule } from '@angular/router';
@@ -7,13 +6,14 @@ import { Navbar } from '../../shared/navbar/navbar';
 import { AuthService } from '../../../services/auth';
 
 @Component({
-  selector: 'app-socios',
-  imports: [CommonModule, RouterModule, Navbar],
-  templateUrl: './socios.html',
-  styleUrl: './socios.css',
+  selector: 'app-admin-dashboard',
+  standalone: true,
+  imports: [CommonModule, Navbar, RouterModule],
+  templateUrl: './dashboardAdmin.html',
+  styleUrl: './dashboardAdmin.css',
 })
-export class Socios implements OnInit {
- role: string = '';
+export class AdminDashboard implements OnInit {
+role: string = '';
   username = '';
   usuarios: any[] = [];
 
@@ -44,6 +44,7 @@ export class Socios implements OnInit {
     if (!fecha) return true;
     return new Date(fecha) < new Date();
   }
+
   renovar(id: string, dias: number) {
     this.authService.renovarMembresia(id, dias).subscribe({
       next: () => this.cargarUsuarios(),
@@ -51,5 +52,4 @@ export class Socios implements OnInit {
         alert('Error al renovar: ' + (err.error?.mensaje || 'Intenta de nuevo'))
     });
   }
-
 }
