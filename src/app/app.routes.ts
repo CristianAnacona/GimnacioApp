@@ -5,7 +5,7 @@ export const routes: Routes = [
   {
     path: 'login',
     // IMPORTANTE: m.Login debe coincidir con el nombre en tu archivo login.ts
-    loadComponent: () => import('./components/login/login').then(m => m.Login)
+    loadComponent: () => import('./components/auth/login/login').then(m => m.Login)
   },
   {
     path: 'register',

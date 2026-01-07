@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth'; // Verifica que la ruta a tu servicio sea esta
+import { AuthService } from '../../../services/auth'; // Verifica que la ruta a tu servicio sea esta
 
 @Component({
   selector: 'app-register',
