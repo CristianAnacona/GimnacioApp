@@ -8,7 +8,8 @@ import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-socios',
-  imports: [CommonModule, RouterModule, Navbar],
+  imports: [CommonModule, RouterModule],
+  standalone: true,
   templateUrl: './socios.html',
   styleUrl: './socios.css',
 })
@@ -16,6 +17,8 @@ export class Socios implements OnInit {
  role: string = '';
   username = '';
   usuarios: any[] = [];
+
+  loadingId: string | null = null; // Para saber qué usuario se está procesando
 
   constructor(
     private authService: AuthService,
@@ -40,16 +43,45 @@ export class Socios implements OnInit {
     });
   }
 
-  esVencido(fecha: any): boolean {
-    if (!fecha) return true;
-    return new Date(fecha) < new Date();
-  }
-  renovar(id: string, dias: number) {
-    this.authService.renovarMembresia(id, dias).subscribe({
-      next: () => this.cargarUsuarios(),
-      error: (err) =>
-        alert('Error al renovar: ' + (err.error?.mensaje || 'Intenta de nuevo'))
+esVencido(fecha: any): boolean {
+  if (!fecha) return true;
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0); // Reseteamos la hora para comparar solo fechas
+  const vencimiento = new Date(fecha);
+  return vencimiento < hoy;
+}
+// En socios.ts
+renovar(id: string, dias: number, nombre: string = 'usuario') { // <--- Agregamos 'nombre'
+  if (!confirm(`¿Sumar ${dias} días a ${nombre}?`)) return;
+  
+  this.loadingId = id;
+  this.authService.renovarMembresia(id, dias).subscribe({
+    next: () => {
+      this.cargarUsuarios();
+      this.loadingId = null; 
+    },
+    error: () => {
+      this.loadingId = null;
+      alert('Error en la renovación');
+    }
+  });
+}
+// Añade esto a tu clase Socios
+limpiarMembresia(id: string, nombre: string) {
+  const confirmar = confirm(`¿Estás seguro de eliminar la membresía de ${nombre}? Esto corregirá errores de asignación.`);
+  
+  if (confirmar) {
+    this.loadingId = id;
+    this.authService.limpiarMembresia(id).subscribe({
+      next: () => {
+        this.cargarUsuarios();
+        this.loadingId = null;
+      },
+      error: () => {
+        this.loadingId = null;
+        alert('Error al limpiar la membresía');
+      }
     });
   }
-
+}
 }

@@ -17,6 +17,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component:AdminDashboard,
+    canActivate: [authGuard],
     children: [
       { path: 'entrenadores',
          loadComponent: () => import('./components/admin/entrenadores/entrenadores')
@@ -38,7 +39,7 @@ export const routes: Routes = [
     children: [
       { path: 'perfil', loadComponent: () => import('./components/socio/perfil/perfil').then(m => m.Perfil) },
       { path: 'rutina', loadComponent: () => import('./components/home/home').then(m => m.HomeComponent) },
-      { path: '', redirectTo: 'socio', pathMatch: 'full' }
+      { path: '', redirectTo: 'perfil', pathMatch: 'full' }
     ]
   },
 

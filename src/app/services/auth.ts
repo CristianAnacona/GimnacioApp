@@ -46,4 +46,8 @@ export class AuthService {
   logout() {
     localStorage.clear();
   }
+  // En tu servicio auth.service.ts
+limpiarMembresia(id: string) {
+  return this.http.put(`${this.apiUrl}/limpiar-membresia/${id}`, {});
+}
 }
