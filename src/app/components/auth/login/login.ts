@@ -32,6 +32,7 @@ iniciarSesion() {
       const role = res.usuario.role.toLowerCase().trim();
       console.log('Rol procesado:', role); // Verifica que imprima "admin"
 
+      localStorage.setItem('usuario', JSON.stringify(res.usuario));
       localStorage.setItem('token', res.token);
       localStorage.setItem('role', role);
       localStorage.setItem('nombre', res.usuario.nombre);

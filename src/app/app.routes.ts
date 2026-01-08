@@ -27,6 +27,7 @@ export const routes: Routes = [
       { path: 'planes', loadComponent: () => import('./components/admin/planes/planes').then(m => m.Planes) },
       { path: 'reportes', loadComponent: () => import('./components/admin/reportes/reportes').then(m => m.Reportes) },
       { path: 'rutinas', loadComponent: () => import('./components/admin/rutinas/rutinas').then(m => m.Rutinas) },
+      {path: 'aadmin/rutinas/:id', loadComponent: () => import('./components/admin/rutinas/rutinas').then(m => m.Rutinas)},
       { path: '', redirectTo: 'socios', pathMatch: 'full' }
     ]
   },
@@ -37,11 +38,15 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./components/socio/dashboardSocio/dashboardSocio').then(m => m.Dashboard),
     children: [
-      { path: 'perfil', loadComponent: () => import('./components/socio/perfil/perfil').then(m => m.Perfil) },
-      { path: 'rutina', loadComponent: () => import('./components/home/home').then(m => m.HomeComponent) },
+      { path: 'perfil', loadComponent: () => import('./components/socio/perfil/perfil')
+        .then(m => m.Perfil) },
+      { path: 'mi-rutina', loadComponent: () => import('./components/socio/mi-rutina/mi-rutina')
+        .then(m => m.MiRutina) },
       { path: '', redirectTo: 'perfil', pathMatch: 'full' }
     ]
   },
+
+  
 
   { path: '**', redirectTo: '/login' }
 ];

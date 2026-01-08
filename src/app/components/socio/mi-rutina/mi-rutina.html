@@ -1,0 +1,32 @@
+
+
+<div class="rutina-seccion">
+  @if (rutina) {
+    <div class="rutina-header">
+      <h2 class="rutina-titulo">{{ rutina?.nombre }}</h2>
+    </div>
+
+    <div class="ejercicios-grid">
+      @for (ejer of rutina?.ejercicios; track ejer._id) {
+        <div class="card-ejercicio">
+          <div class="card-img-wrapper">
+            <img [src]="ejer.imagenUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'" 
+                 alt="ejercicio" class="ejer-img">
+          </div>
+          <div class="card-body">
+            <h3>{{ ejer.nombre }}</h3>
+            <div class="stats-row">
+              <span class="stat"><strong>Series:</strong> {{ ejer.series }}</span>
+              <span class="stat"><strong>Reps:</strong> {{ ejer.repeticiones }}</span>
+            </div>
+            <p class="instrucciones">{{ ejer.instrucciones }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="loader-container">
+      <p>Cargando tu rutina personalizada...</p>
+    </div>
+  }
+</div>
