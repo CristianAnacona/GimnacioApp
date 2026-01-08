@@ -50,4 +50,26 @@ export class AuthService {
 limpiarMembresia(id: string) {
   return this.http.put(`${this.apiUrl}/limpiar-membresia/${id}`, {});
 }
+  // Asignar rutina a un usuario
+  // En auth.service.ts
+
+// En auth.service.ts
+asignarRutina(datos: any) {
+  // Forzamos la ruta que configuraste en tu index.js del backend
+  return this.http.post('http://localhost:3000/api/rutinas/asignar', datos);
+}
+
+// 2. Para que el Socio o el Admin modifiquen una rutina existente
+actualizarRutina(idRutina: string, datosActualizados: any) {
+  return this.http.put(`${this.apiUrl}/rutinas/actualizar/${idRutina}`, datosActualizados);
+}
+
+// 3. Para obtener la rutina de un socio
+// auth.service.ts
+// En auth.service.ts
+// auth.service.ts
+obtenerRutina(usuarioId: string) {
+  // Asegúrate de que la ruta coincida con tu backend de Node.js
+  return this.http.get(`http://localhost:3000/api/rutinas/${usuarioId}`);
+}
 }
