@@ -1,62 +1,75 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth';
-// Importamos los datos que creaste en el paso anterior
 import { CATALOGO_EJERCICIOS, CATEGORIAS_UNICAS } from '../../../../data/ejercicios-catalogo';
-// Importamos la herramienta para arrastrar y soltar
-import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-rutinas',
   standalone: true,
-  imports: [CommonModule, FormsModule, DragDropModule], // DragDropModule es clave
+  imports: [CommonModule, FormsModule, DragDropModule, RouterModule],
   templateUrl: './rutinas.html',
   styleUrls: ['./rutinas.css']
 })
 export class Rutinas implements OnInit {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
-  // Datos del catálogo
+  // Datos del catálogo y paginación
   categorias = CATEGORIAS_UNICAS;
-  ejerciciosVisibles = CATALOGO_EJERCICIOS;
   categoriaActiva = 'Pecho';
+  ejerciciosDeCategoria: any[] = []; // Base de datos filtrada
+  ejerciciosVisibles: any[] = [];    // Lo que el usuario ve realmente
+  limiteActual = 12;
 
-  // Datos de la rutina que estamos armando
+  // Datos de la rutina
   usuarioId = '';
   nombreRutina = '';
-  rutinaParaSocio: any[] = []; // Aquí caerán los ejercicios seleccionados
-  listaSocios: any[] = []; // Aquí caerán los socios
- ngOnInit() {
-  // 1. Intentar capturar el ID de la URL si viene de la lista
-  const idUrl = this.route.snapshot.paramMap.get('id');
-  if (idUrl) {
-    this.usuarioId = idUrl;
-  }
+  rutinaParaSocio: any[] = []; 
+  listaSocios: any[] = []; 
 
-  // 2. Cargar todos los socios para el buscador/desplegable
-  this.authService.getUsuarios().subscribe((res:any) => {
-    this.listaSocios = res;
-  });
-}
+  ngOnInit() {
+    this.filtrarPorCategoria('Pecho');
+
+    const idUrl = this.route.snapshot.paramMap.get('id');
+    if (idUrl) this.usuarioId = idUrl;
+
+    // Carga de socios con desbloqueo de interfaz
+    this.authService.getUsuarios().subscribe({
+      next: (res: any) => {
+        this.listaSocios = res;
+        this.cdr.detectChanges(); // Desbloquea el select al recibir los datos
+      },
+      error: (err) => console.error('Error al cargar socios', err)
+    });
+  }
 
   filtrarPorCategoria(cat: string) {
     this.categoriaActiva = cat;
-    this.ejerciciosVisibles = CATALOGO_EJERCICIOS.filter(e => e.categoria === cat);
+    this.limiteActual = 12; 
+    this.ejerciciosDeCategoria = CATALOGO_EJERCICIOS.filter(e => e.categoria === cat);
+    this.actualizarVista();
   }
 
-  // Función para cuando haces clic en el "+" de la carta
+  actualizarVista() {
+    this.ejerciciosVisibles = this.ejerciciosDeCategoria.slice(0, this.limiteActual);
+  }
+
+  cargarMas() {
+    this.limiteActual += 12;
+    this.actualizarVista();
+  }
+
   agregarA_Rutina(ej: any) {
-    // Creamos una copia para que cada ejercicio tenga sus propias series/reps
-    const nuevoEjercicio = {
+    this.rutinaParaSocio.push({
       ...ej,
       series: 4,
       repeticiones: '12',
       completado: false
-    };
-    this.rutinaParaSocio.push(nuevoEjercicio);
+    });
   }
 
   quitarDeRutina(index: number) {
@@ -64,7 +77,8 @@ export class Rutinas implements OnInit {
   }
 
   guardarRutina() {
-    if (!this.nombreRutina) return alert('Ponle un nombre a la rutina');
+    if (!this.usuarioId) return alert('Por favor, selecciona un socio');
+    if (!this.nombreRutina) return alert('Dale un nombre a la rutina');
     
     const data = {
       usuarioId: this.usuarioId,
@@ -73,8 +87,12 @@ export class Rutinas implements OnInit {
     };
 
     this.authService.asignarRutina(data).subscribe({
-      next: () => alert('¡Rutina enviada con éxito!'),
-      error: (err) => alert('Error: ' + err.message)
+      next: () => {
+        alert('¡Rutina enviada con éxito!');
+        this.rutinaParaSocio = [];
+        this.nombreRutina = '';
+      },
+      error: (err) => alert('Error al guardar: ' + err.message)
     });
   }
 }

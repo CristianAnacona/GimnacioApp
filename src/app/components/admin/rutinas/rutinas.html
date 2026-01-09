@@ -1,79 +1,75 @@
-<div class="container-rutinas">
-  <header class="header">
-  <div class="info-socio">
-    <h2>Asignar Rutina a:</h2>
-    
-    <select [(ngModel)]="usuarioId" class="select-socio-moderno">
-      <option value="" disabled>-- Selecciona un Socio --</option>
-      @for (socio of listaSocios; track socio._id) {
-        <option [value]="socio._id">
-          {{ socio.nombre }} {{ socio.apellido }}
-        </option>
+<div class="rutina-container">
+  <header class="setup-header">
+    <div class="input-group">
+      <label>Socio</label>
+      <select [(ngModel)]="usuarioId" class="modern-select">
+        <option value="" disabled>Selecciona un Socio</option>
+        @for (socio of listaSocios; track socio._id) {
+          <option [value]="socio._id">{{ socio.nombre }} {{ socio.apellido }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label>Nombre de la Rutina</label>
+      <input [(ngModel)]="nombreRutina" placeholder="Ej: lunes" class="modern-input">
+    </div>
+  </header>
+
+  <div class="catalogo-container">
+    <nav class="category-pills">
+      @for (cat of categorias; track cat) {
+        <button (click)="filtrarPorCategoria(cat)" [class.active]="categoriaActiva === cat">
+          {{ cat }}
+        </button>
       }
-    </select>
-    
-    @if (usuarioId) {
-      <span class="badge-id">ID: {{ usuarioId }}</span>
-    }
-  </div>
+    </nav>
 
-  <input [(ngModel)]="nombreRutina" 
-         placeholder="Nombre de la rutina (ej: Lunes Explosivo)" 
-         class="input-nombre">
-</header>
-
-
-  <div class="layout-creador">
-    
-    <section class="catalogo">
-      <nav class="tabs">
-        @for (cat of categorias; track cat) {
-          <button (click)="filtrarPorCategoria(cat)" [class.active]="categoriaActiva === cat">
-            {{ cat }}
-          </button>
-        }
-      </nav>
-
-      <div class="grid-ejercicios">
-        @for (ej of ejerciciosVisibles; track ej.nombre) {
-          <div class="card-ejercicio">
+    <div class="grid-ejercicios-full">
+      @for (ej of ejerciciosVisibles; track ej.nombre) {
+        <div class="card-ejercicio">
+          <div class="img-wrapper">
             <img [src]="ej.imagenUrl" [alt]="ej.nombre">
-            <div class="card-info">
-              <h4>{{ ej.nombre }}</h4>
-              <button (click)="agregarA_Rutina(ej)" class="btn-add">+</button>
+          </div>
+          <div class="card-body">
+            <h4 class="ejercicio-titulo">{{ ej.nombre }}</h4>
+            <div class="acciones-fila">
+              <button [routerLink]="['/admin/ejercicio', ej.nombre]" class="btn-descripcion">
+                Descripción
+              </button>
+              <button (click)="agregarA_Rutina(ej)" class="btn-add">
+                +
+              </button>
             </div>
           </div>
-        }
-      </div>
-    </section>
-
-    <section class="lista-final">
-      <h3>Rutina Seleccionada ({{ rutinaParaSocio.length }})</h3>
-      
-      <div class="scroll-area">
-        @for (item of rutinaParaSocio; track $index) {
-          <div class="item-seleccionado">
-            <img [src]="item.imagenUrl" class="mini-img">
-            <div class="item-detalles">
-              <p>{{ item.nombre }}</p>
-              <div class="inputs-mini">
-                <input [(ngModel)]="item.series" type="number" placeholder="Ser">
-                <input [(ngModel)]="item.repeticiones" placeholder="Reps">
-              </div>
-            </div>
-            <button (click)="quitarDeRutina($index)" class="btn-del">✕</button>
-          </div>
-        } @empty {
-          <div class="empty-state">
-            <p>Haz clic en los ejercicios de la izquierda para empezar</p>
-          </div>
-        }
-      </div>
-
-      <button (click)="guardarRutina()" class="btn-guardar" [disabled]="rutinaParaSocio.length === 0">
-        GUARDAR Y ENVIAR AL SOCIO
-      </button>
-    </section>
-
+        </div>
+      }
+    </div>
   </div>
+
+  @if (rutinaParaSocio.length > 0) {
+    <section class="rutina-resumen-final">
+      <h3 class="resumen-titulo">Ejercicios en la rutina ({{ rutinaParaSocio.length }})</h3>
+      
+      <div class="resumen-grid">
+        @for (item of rutinaParaSocio; track $index) {
+          <div class="resumen-item">
+            <img [src]="item.imagenUrl" [alt]="item.nombre" class="mini-foto-resumen">
+            <span class="item-nombre">{{ item.nombre }}</span>
+            <div class="item-inputs">
+              <input [(ngModel)]="item.series" type="number" class="input-mini" placeholder="Ser.">
+              <input [(ngModel)]="item.repeticiones" class="input-mini" placeholder="Rep.">
+              <button (click)="quitarDeRutina($index)" class="btn-remove">✕</button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="action-footer">
+        <button (click)="guardarRutina()" class="btn-guardar-grande">
+          CONFIRMAR Y ENVIAR RUTINA
+        </button>
+      </div>
+    </section>
+  }
 </div>

@@ -1,0 +1,48 @@
+
+<div class="container-detalle p-6 max-w-4xl mx-auto">
+  <button routerLink="/admin/rutinas" class="mb-6 flex items-center text-blue-600 font-bold hover:underline">
+    <span class="mr-2">←</span> Volver al Creador de Rutinas
+  </button>
+
+  @if (ejercicio) {
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+      <div class="p-6 bg-gray-50 border-b border-gray-200">
+        <h1 class="text-3xl font-extrabold text-gray-800">{{ ejercicio.nombre }}</h1>
+        <span class="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-bold uppercase">
+          {{ ejercicio.categoria }}
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+        <div class="flex justify-center items-center bg-gray-100 rounded-xl p-4 border-2 border-dashed border-gray-300">
+          @if (ejercicio.gifUrl) {
+            <img [src]="ejercicio.gifUrl" [alt]="ejercicio.nombre" class="max-w-full h-auto rounded-lg shadow-md">
+          } @else {
+            <div class="text-gray-400 text-center">
+              <p>No hay GIF disponible para este ejercicio</p>
+            </div>
+          }
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <h3 class="text-xl font-bold text-gray-700 flex items-center">
+            <span class="mr-2">📝</span> Guía de Ejecución
+          </h3>
+          <p class="text-gray-600 leading-relaxed text-lg italic">
+            "{{ ejercicio.descripcion || 'Sin descripción disponible todavía.' }}"
+          </p>
+          
+          <div class="mt-auto p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+            <p class="text-sm text-yellow-800">
+              <strong>Tip:</strong> Mantén siempre la espalda recta y controla la respiración durante el movimiento.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="text-center py-20">
+      <h2 class="text-2xl font-bold text-gray-400">Ejercicio no encontrado</h2>
+    </div>
+  }
+</div>
