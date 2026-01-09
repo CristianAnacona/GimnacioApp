@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth';
 import { AdminDashboard } from './components/admin/dashboardAdmin/dashboardAdmin';
+import { EjercicioDetalle } from './components/admin/ejercicio-detalle/ejercicio-detalle';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -27,7 +28,8 @@ export const routes: Routes = [
       { path: 'planes', loadComponent: () => import('./components/admin/planes/planes').then(m => m.Planes) },
       { path: 'reportes', loadComponent: () => import('./components/admin/reportes/reportes').then(m => m.Reportes) },
       { path: 'rutinas', loadComponent: () => import('./components/admin/rutinas/rutinas').then(m => m.Rutinas) },
-      {path: 'aadmin/rutinas/:id', loadComponent: () => import('./components/admin/rutinas/rutinas').then(m => m.Rutinas)},
+      {path: 'rutinas/:id', loadComponent: () => import('./components/admin/rutinas/rutinas').then(m => m.Rutinas)},
+      { path: 'ejercicio/:nombre', component: EjercicioDetalle },
       { path: '', redirectTo: 'socios', pathMatch: 'full' }
     ]
   },
@@ -42,6 +44,7 @@ export const routes: Routes = [
         .then(m => m.Perfil) },
       { path: 'mi-rutina', loadComponent: () => import('./components/socio/mi-rutina/mi-rutina')
         .then(m => m.MiRutina) },
+  
       { path: '', redirectTo: 'perfil', pathMatch: 'full' }
     ]
   },

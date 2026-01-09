@@ -1,0 +1,18 @@
+.container-detalle {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.gif-demo {
+  /* Asegura que el GIF no se vea pixelado */
+  image-rendering: auto;
+  transition: transform 0.3s ease;
+}
+
+.gif-demo:hover {
+  transform: scale(1.02);
+}

@@ -5,7 +5,9 @@ export interface EjercicioBase {
   nombre: string;
   imagenUrl: string;
   categoria: string;
-  instrucciones?: string; // Opcional
+  gifUrl?: string;
+  descripcion?: string;
+  instrucciones?: string;
 }
 
 // Este es tu catálogo maestro. ¡Aquí añadirás todos los ejercicios que ofreces!
@@ -14,8 +16,10 @@ export const CATALOGO_EJERCICIOS: EjercicioBase[] = [
   {
     nombre: 'Press Banca Plano',
     categoria: 'Pecho',
-    imagenUrl: 'https://dummyimage.com/300x200/000/fff&text=Press+Banca',
-    instrucciones: 'Barra al pecho, codos a 45 grados.'
+    imagenUrl: 'ejercicios/press.jpeg',
+    gifUrl: 'ejercicios/press-plano.gif',
+    descripcion: 'Acuéstate en un banco plano, baja la barra al pecho y empuja hacia arriba...'
+
   },
   {
     nombre: 'Aperturas con Mancuernas',
