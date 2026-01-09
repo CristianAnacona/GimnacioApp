@@ -30,6 +30,7 @@ export const routes: Routes = [
       { path: 'rutinas', loadComponent: () => import('./components/admin/rutinas/rutinas').then(m => m.Rutinas) },
       {path: 'rutinas/:id', loadComponent: () => import('./components/admin/rutinas/rutinas').then(m => m.Rutinas)},
       { path: 'ejercicio/:nombre', component: EjercicioDetalle },
+      {path: 'detalle-rutina/:id', loadComponent: () => import('./components/admin/detalle-rutina/detalle-rutina').then(m => m.DetalleRutina)},
       { path: '', redirectTo: 'socios', pathMatch: 'full' }
     ]
   },
