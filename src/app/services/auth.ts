@@ -5,8 +5,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
-  private rutinasUrl = 'http://localhost:3000/api/rutinas'; // Centralizamos la URL de rutinas
+  private apiUrl = 'https://gimnasio-backend.onrender.com.app/api/auth'; // Centralizamos la URL de autenticación
+  private rutinasUrl = 'https://gimnasio-backend.onrender.com/api/rutinas'; // Centralizamos la URL de rutinas
 
   constructor(private http: HttpClient) {}
 
