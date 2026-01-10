@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth';
 import { AdminDashboard } from './components/admin/dashboardAdmin/dashboardAdmin';
 import { EjercicioDetalle } from './components/admin/ejercicio-detalle/ejercicio-detalle';
+import { noAuthGuard } from './guards/no-auth-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -18,7 +19,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component:AdminDashboard,
-    canActivate: [authGuard],
+    canActivate: [noAuthGuard],
     children: [
       { path: 'entrenadores',
          loadComponent: () => import('./components/admin/entrenadores/entrenadores')

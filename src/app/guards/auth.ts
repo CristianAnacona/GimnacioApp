@@ -6,14 +6,13 @@ export const authGuard: CanActivateFn = (route, state) => {
   const token = localStorage.getItem('token');
   const role = localStorage.getItem('role')?.toLowerCase().trim();
 
-  if (!token) {
+  if (token) {
     router.navigate(['/login']);
     return false;
   }
 
-  // Si intenta ir a cualquier ruta que empiece con /admin y NO es admin
   if (state.url.includes('/admin') && role !== 'admin') {
-    router.navigate(['/socio']); // Lo mandamos a su ruta permitida
+    router.navigate(['/socio']); 
     return false;
   }
 
