@@ -8,10 +8,12 @@ export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   {
     path: 'login',
+    canActivate: [noAuthGuard],
     loadComponent: () => import('./components/auth/login/login').then(m => m.Login)
   },
   {
     path: 'register',
+    canActivate: [noAuthGuard],
     loadComponent: () => import('./components/auth/register/register').then(m => m.Register)
   },
 
@@ -19,7 +21,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component:AdminDashboard,
-    canActivate: [noAuthGuard],
+    canActivate: [authGuard],
     children: [
       { path: 'entrenadores',
          loadComponent: () => import('./components/admin/entrenadores/entrenadores')
