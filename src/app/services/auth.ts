@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://gimnacioapp-backend.onrender.com/api/auth';
-private rutinasUrl = 'https://gimnacioapp-backend.onrender.com/api/rutinas';
+  private apiUrl = `${environment.apiUrl}/api/auth`;
+  private rutinasUrl = `${environment.apiUrl}/api/rutinas`;
 
   constructor(private http: HttpClient) {}
 
