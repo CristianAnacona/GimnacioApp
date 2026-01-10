@@ -1,0 +1,25 @@
+<div class="gestion-container" style="padding: 20px;">
+  <h2 style="color: #333;">📋 Gestión de Rutinas</h2>
+  <hr>
+
+  @if (rutinas && rutinas.length > 0) {
+    <div class="grid-rutinas" style="display: flex; flex-direction: column; gap: 15px;">
+      @for (rutina of rutinas; track rutina._id) {
+        <div class="card-admin" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: white; box-shadow: 2px 2px 5px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; color: #e63946;">{{ rutina.nombre }}</h3>
+            <div class="botones">
+              <button (click)="editarRutina(rutina)" style="background: #4a90e2; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-right: 10px;">✏️ Editar</button>
+              <button (click)="borrarRutina(rutina._id)" style="background: #d0021b; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">🗑️ Borrar</button>
+            </div>
+          </div>
+          <p style="font-size: 0.9em; color: #666;">Ejercicios: {{ rutina.ejercicios?.length }}</p>
+        </div>
+      }
+    </div>
+  } @else {
+    <div style="text-align: center; padding: 40px;">
+      <p>Cargando datos o no se encontraron rutinas...</p>
+    </div>
+  }
+</div>

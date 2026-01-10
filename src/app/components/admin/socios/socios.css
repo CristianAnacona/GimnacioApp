@@ -1,0 +1,16 @@
+@media (max-width: 768px) {
+  /* Separamos las filas para que parezcan tarjetas sueltas */
+  tr {
+    display: block;
+    margin-bottom: 14px !important; /* El espacio que buscas entre socios */
+    background-color: white;
+    border-radius: 20px;
+  }
+
+  /* Eliminamos el borde de la tabla principal para que no encierre a todas */
+  .bg-white.rounded-3xl.shadow-sm {
+    background: transparent !important;
+    border: none !important;
+
+  }
+}

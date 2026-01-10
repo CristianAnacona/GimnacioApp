@@ -1,8 +1,10 @@
-<div class="rutina-container">
-  <header class="setup-header">
-    <div class="input-group">
-      <label>Socio</label>
-      <select [(ngModel)]="usuarioId" class="modern-select">
+<div class="max-w-6xl mx-auto p-2 md:p-6 space-y-6">
+  
+  <header class="flex flex-col md:flex-row gap-4 p-5 bg-white rounded-3xl shadow-sm border border-slate-100">
+    <div class="flex flex-col w-full">
+      <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-1 ml-1 tracking-wider">Socio</label>
+      <select [(ngModel)]="usuarioId" (change)="onSocioChange()" 
+              class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-orange-500 text-slate-700 transition-all cursor-pointer">
         <option value="" disabled>Selecciona un Socio</option>
         @for (socio of listaSocios; track socio._id) {
           <option [value]="socio._id">{{ socio.nombre }} {{ socio.apellido }}</option>
@@ -10,66 +12,113 @@
       </select>
     </div>
 
-    <div class="input-group">
-      <label>Nombre de la Rutina</label>
-      <input [(ngModel)]="nombreRutina" placeholder="Ej: lunes" class="modern-input">
+    <div class="flex flex-col w-full">
+      <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-1 ml-1 tracking-wider">Nombre de la Rutina</label>
+      <input [(ngModel)]="nombreRutina" placeholder="Ej: Lunes - Pecho" 
+             class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-orange-500 text-slate-700 transition-all">
     </div>
   </header>
 
-  <div class="catalogo-container">
-    <nav class="category-pills">
-      @for (cat of categorias; track cat) {
-        <button (click)="filtrarPorCategoria(cat)" [class.active]="categoriaActiva === cat">
-          {{ cat }}
-        </button>
-      }
-    </nav>
-
-    <div class="grid-ejercicios-full">
-      @for (ej of ejerciciosVisibles; track ej.nombre) {
-        <div class="card-ejercicio">
-          <div class="img-wrapper">
-            <img [src]="ej.imagenUrl" [alt]="ej.nombre">
-          </div>
-          <div class="card-body">
-            <h4 class="ejercicio-titulo">{{ ej.nombre }}</h4>
-            <div class="acciones-fila">
-              <button [routerLink]="['/admin/ejercicio', ej.nombre]" class="btn-descripcion">
-                Descripción
-              </button>
-              <button (click)="agregarA_Rutina(ej)" class="btn-add">
-                +
-              </button>
-            </div>
-          </div>
-        </div>
-      }
-    </div>
-  </div>
-
-  @if (rutinaParaSocio.length > 0) {
-    <section class="rutina-resumen-final">
-      <h3 class="resumen-titulo">Ejercicios en la rutina ({{ rutinaParaSocio.length }})</h3>
+  <div class="flex flex-col lg:flex-row gap-8">
+    
+    <div class="w-full lg:w-3/5 space-y-4">
       
-      <div class="resumen-grid">
-        @for (item of rutinaParaSocio; track $index) {
-          <div class="resumen-item">
-            <img [src]="item.imagenUrl" [alt]="item.nombre" class="mini-foto-resumen">
-            <span class="item-nombre">{{ item.nombre }}</span>
-            <div class="item-inputs">
-              <input [(ngModel)]="item.series" type="number" class="input-mini" placeholder="Ser.">
-              <input [(ngModel)]="item.repeticiones" class="input-mini" placeholder="Rep.">
-              <button (click)="quitarDeRutina($index)" class="btn-remove">✕</button>
+      <nav class="flex overflow-x-auto gap-2 pb-2 no-scrollbar">
+        @for (cat of categorias; track cat) {
+          <button (click)="filtrarPorCategoria(cat)" 
+                  [class]="categoriaActiva === cat 
+                           ? 'bg-orange-500 text-white shadow-lg shadow-orange-200 border-orange-500' 
+                           : 'bg-white text-slate-500 border-slate-200 hover:border-orange-300'"
+                  class="px-5 py-2 rounded-full border font-bold text-xs whitespace-nowrap transition-all active:scale-95">
+            {{ cat }}
+          </button>
+        }
+      </nav>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+        @for (ej of ejerciciosVisibles; track ej.nombre) {
+          <div class="group bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-md transition-all">
+            <div class="h-28 sm:h-36 overflow-hidden relative">
+              <img [src]="ej.imagenUrl" [alt]="ej.nombre" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+              <div class="absolute inset-0 from-black/20 to-transparent"></div>
+            </div>
+            <div class="p-3">
+              <h4 class="text-xs sm:text-sm font-bold text-slate-800 leading-tight mb-3 h-8 line-clamp-2 uppercase">
+                {{ ej.nombre }}
+              </h4>
+              <div class="flex gap-1">
+                <button [routerLink]="['/admin/ejercicio', ej.nombre]" 
+                        class="flex-1 text-[9px] uppercase tracking-tighter bg-slate-100 text-slate-600 p-2 rounded-xl font-black hover:bg-slate-200 transition-colors">
+                  Info
+                </button>
+                <button (click)="agregarA_Rutina(ej)" 
+                        class="bg-orange-500 text-white w-10 h-9 rounded-xl font-bold shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all active:scale-90 flex items-center justify-center">
+                  <span class="text-xl">+</span>
+                </button>
+              </div>
             </div>
           </div>
         }
       </div>
+    </div>
 
-      <div class="action-footer">
-        <button (click)="guardarRutina()" class="btn-guardar-grande">
-          CONFIRMAR Y ENVIAR RUTINA
-        </button>
-      </div>
-    </section>
-  }
+    <div class="w-full lg:w-2/5">
+      @if (rutinaParaSocio.length > 0) {
+        <section class="bg-slate-900 rounded-[2.5rem] p-6 text-white shadow-2xl sticky top-6 border border-slate-800">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-black italic uppercase tracking-tighter">Mi Selección</h3>
+            <span class="bg-orange-500 text-white text-xs font-black px-3 py-1 rounded-full animate-pulse">
+              {{ rutinaParaSocio.length }} Ejercicios
+            </span>
+          </div>
+
+          <div class="space-y-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+            @for (item of rutinaParaSocio; track $index) {
+              <div class="flex items-center gap-3 bg-slate-800/50 p-3 rounded-2xl border border-slate-700/50 group">
+                <div class="relative w-14 h-14 shrink-0">
+                  <img [src]="item.imagenUrl" class="w-full h-full rounded-xl object-cover border border-slate-600">
+                </div>
+                
+                <div class="flex-grow min-w-0">
+                  <p class="text-sm font-bold text-slate-100 truncate uppercase">{{ item.nombre }}</p>
+                  <div class="flex gap-2 mt-2">
+                    <div class="flex flex-col">
+                      <span class="text-[8px] text-slate-500 font-bold uppercase ml-1">Series</span>
+                      <input [(ngModel)]="item.series" type="number" 
+                             class="w-14 bg-slate-700 border-none rounded-lg p-1.5 text-center text-xs font-bold text-orange-400 focus:ring-1 focus:ring-orange-500">
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-[8px] text-slate-500 font-bold uppercase ml-1">Reps</span>
+                      <input [(ngModel)]="item.repeticiones" 
+                             class="w-20 bg-slate-700 border-none rounded-lg p-1.5 text-center text-xs font-bold text-orange-400 focus:ring-1 focus:ring-orange-500">
+                    </div>
+                  </div>
+                </div>
+
+                <button (click)="quitarDeRutina($index)" class="text-slate-500 hover:text-red-400 p-2 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            }
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-slate-800">
+            <button (click)="guardarRutina()" 
+                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-4 rounded-2xl shadow-xl shadow-orange-900/40 transition-all active:scale-95 flex items-center justify-center gap-2 uppercase tracking-widest text-sm">
+              {{ editandoModo ? '💾 Actualizar Cambios' : '🚀 Guardar Rutina' }}
+            </button>
+            <p class="text-[10px] text-slate-500 text-center mt-4 italic">Verifica las series y repeticiones antes de guardar</p>
+          </div>
+        </section>
+      } @else {
+        <div class="h-64 border-2 border-dashed border-slate-200 rounded-[2.5rem] flex flex-col items-center justify-center text-slate-400 p-10 text-center">
+          <span class="text-4xl mb-2">🏋️‍♂️</span>
+          <p class="font-bold text-sm">No has agregado ejercicios aún.</p>
+          <p class="text-xs">Usa el botón "+" del catálogo para armar la rutina.</p>
+        </div>
+      }
+    </div>
+  </div>
 </div>

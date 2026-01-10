@@ -13,7 +13,7 @@ export class MiRutina implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService);
   // Asegúrate de que NO tenga 'private' adelante
-  rutina: any = null; 
+  rutinas: any[] = [];
   username = '';
 
   ngOnInit() {
@@ -29,12 +29,12 @@ export class MiRutina implements OnInit {
             console.log('Datos recibidos del server:', res);
             // Asignamos directamente a la variable de la clase
             if (Array.isArray(res) && res.length > 0) {
-              this.rutina = res[0]; 
+              this.rutinas = res;
             } else {
-              this.rutina = res;
+              this.rutinas = [res];
             }
             this.cdr.detectChanges();
-            console.log('Variable this.rutina ahora tiene:', this.rutina);
+            console.log('Variable this.rutinas ahora tiene:', this.rutinas);
           },
           error: (err) => console.error(err)
         });
