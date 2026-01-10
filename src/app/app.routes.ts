@@ -2,15 +2,18 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth';
 import { AdminDashboard } from './components/admin/dashboardAdmin/dashboardAdmin';
 import { EjercicioDetalle } from './components/admin/ejercicio-detalle/ejercicio-detalle';
+import { noAuthGuard } from './guards/no-auth-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   {
     path: 'login',
+    canActivate: [noAuthGuard],
     loadComponent: () => import('./components/auth/login/login').then(m => m.Login)
   },
   {
     path: 'register',
+    canActivate: [noAuthGuard],
     loadComponent: () => import('./components/auth/register/register').then(m => m.Register)
   },
 

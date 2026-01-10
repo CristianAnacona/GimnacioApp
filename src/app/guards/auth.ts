@@ -11,9 +11,8 @@ export const authGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  // Si intenta ir a cualquier ruta que empiece con /admin y NO es admin
   if (state.url.includes('/admin') && role !== 'admin') {
-    router.navigate(['/socio']); // Lo mandamos a su ruta permitida
+    router.navigate(['/socio']); 
     return false;
   }
 
