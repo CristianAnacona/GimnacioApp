@@ -23,6 +23,8 @@ export const routes: Routes = [
     component:AdminDashboard,
     canActivate: [authGuard],
     children: [
+      { path: 'noticias', loadComponent: () => import('./components/noticias/noticias')
+        .then(m => m.Noticias) },
       { path: 'entrenadores',
          loadComponent: () => import('./components/admin/entrenadores/entrenadores')
          .then(m => m.Entrenadores) },
@@ -34,7 +36,7 @@ export const routes: Routes = [
       {path: 'rutinas/:id', loadComponent: () => import('./components/admin/rutinas/rutinas').then(m => m.Rutinas)},
       { path: 'ejercicio/:nombre', component: EjercicioDetalle },
       {path: 'detalle-rutina/:id', loadComponent: () => import('./components/admin/detalle-rutina/detalle-rutina').then(m => m.DetalleRutina)},
-      { path: '', redirectTo: 'socios', pathMatch: 'full' }
+      { path: '', redirectTo: 'noticias', pathMatch: 'full' }
     ]
   },
 
@@ -44,12 +46,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./components/socio/dashboardSocio/dashboardSocio').then(m => m.Dashboard),
     children: [
+      { path: 'noticias', loadComponent: () => import('./components/noticias/noticias')
+        .then(m => m.Noticias) },
       { path: 'perfil', loadComponent: () => import('./components/socio/perfil/perfil')
         .then(m => m.Perfil) },
       { path: 'mi-rutina', loadComponent: () => import('./components/socio/mi-rutina/mi-rutina')
         .then(m => m.MiRutina) },
-  
-      { path: '', redirectTo: 'perfil', pathMatch: 'full' }
+   { path: '', redirectTo: 'noticias', pathMatch: 'full' }
     ]
   },
 

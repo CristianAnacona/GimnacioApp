@@ -38,7 +38,7 @@ iniciarSesion() {
       localStorage.setItem('nombre', res.usuario.nombre);
 
       if (role === 'admin') {
-        this.router.navigate(['admin/socios']);
+        this.router.navigate(['admin/noticias']);
       } else {
         console.log('Navegando a socio...');
         this.router.navigate(['/socio']);

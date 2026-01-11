@@ -1,0 +1,141 @@
+<div class="noticias-container">
+  <div class="noticias-header">
+    <h1>📰 Noticias</h1>
+    
+    @if (rol === 'admin') {
+      <button type="button" (click)="abrirFormulario()" class="btn-agregar">
+        + Agregar Noticia
+      </button>
+    }
+  </div>
+
+  <!-- FORMULARIO (modal) -->
+  @if (mostrarFormulario) {
+    <div class="modal-overlay">
+      <div class="modal-contenido">
+        <div class="modal-header">
+          <h2>{{ esEdicion ? 'Editar Noticia' : 'Nueva Noticia' }}</h2>
+          <button type="button" (click)="cerrarFormulario()" class="btn-cerrar">✕</button>
+        </div>
+
+        <form #form="ngForm" (ngSubmit)="guardarNoticia(form)" class="formulario">
+          <!-- CAMPOS OBLIGATORIOS -->
+          <div class="form-grupo">
+            <label for="titulo">Título: <span class="requerido">*</span></label>
+            <input 
+              id="titulo"
+              type="text" 
+              [(ngModel)]="formulario.titulo" 
+              name="titulo"
+              placeholder="Ej: Coloca un título aquí"
+              required>
+          </div>
+
+          <div class="form-grupo">
+            <label for="descripcion">Descripción: <span class="requerido">*</span></label>
+            <textarea 
+              id="descripcion"
+              [(ngModel)]="formulario.descripcion" 
+              name="descripcion"
+              placeholder="Ej: Coloca una descripción aquí"
+              rows="4"
+              required></textarea>
+          </div>
+
+          <!-- CAMPOS OPCIONALES -->
+          <div class="form-grupo">
+            <label for="dia">Día:</label>
+            <select id="dia" [(ngModel)]="formulario.dia" name="dia">
+              <option value="">Ninguno</option>
+              @for (dia of dias; track dia) {
+                <option [value]="dia">{{ dia }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-grupo">
+              <label for="horaInicio">Hora Inicio:</label>
+              <input 
+                id="horaInicio"
+                type="time" 
+                [(ngModel)]="formulario.horaInicio" 
+                name="horaInicio">
+            </div>
+
+            <div class="form-grupo">
+              <label for="horaFin">Hora Fin:</label>
+              <input 
+                id="horaFin"
+                type="time" 
+                [(ngModel)]="formulario.horaFin" 
+                name="horaFin">
+            </div>
+          </div>
+
+          <div class="modal-botones">
+            <button 
+              type="submit" 
+              class="btn-guardar"
+              [disabled]="!formulario.titulo || !formulario.descripcion">
+              {{ esEdicion ? 'Actualizar' : 'Guardar' }}
+            </button>
+            <button 
+              type="button" 
+              (click)="cerrarFormulario()" 
+              class="btn-cancelar">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- LISTA DE NOTICIAS -->
+  <div class="noticias-lista">
+    @if (noticias.length === 0) {
+      <div class="sin-noticias">
+        <p>No hay noticias disponibles</p>
+      </div>
+    } @else {
+      @for (noticia of noticias; track noticia._id) {
+        <div class="noticia-card">
+          <div class="noticia-header">
+            <h3>{{ noticia.titulo }}</h3>
+            @if (rol === 'admin') {
+              <div class="noticia-acciones">
+                <button 
+                  type="button"
+                  (click)="editarNoticia(noticia)" 
+                  class="btn-editar">
+                  ✏️ Editar
+                </button>
+                <button 
+                  type="button"
+                  (click)="eliminarNoticia(noticia._id)" 
+                  class="btn-eliminar">
+                  🗑️ Eliminar
+                </button>
+              </div>
+            }
+          </div>
+
+          <p class="noticia-descripcion">{{ noticia.descripcion }}</p>
+
+          <!-- Solo mostrar info adicional si existe -->
+          @if (noticia.dia || noticia.horaInicio || noticia.horaFin) {
+            <div class="noticia-info">
+              @if (noticia.dia) {
+                <span class="info-item">📅 {{ noticia.dia }}</span>
+              }
+              @if (noticia.horaInicio && noticia.horaFin) {
+                <span class="info-item">🕐 {{ noticia.horaInicio }} - {{ noticia.horaFin }}</span>
+              }
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+</div>
