@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { CATALOGO_EJERCICIOS } from '../../../../data/ejercicios-catalogo';
+import { CATALOGO_EJERCICIOS } from '../../../data/ejercicios-catalogo';
 
 @Component({
   selector: 'app-ejercicio-detalle',
