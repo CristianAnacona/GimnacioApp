@@ -15,7 +15,7 @@ export class Noticias implements OnInit {
   mostrarFormulario = false;
   esEdicion = false;
   noticiaEditando: any = null;
-  rol = localStorage.getItem('role')?.toLowerCase().trim();
+  role = localStorage.getItem('role')?.toLowerCase().trim();
 
   formulario = {
     titulo: '',

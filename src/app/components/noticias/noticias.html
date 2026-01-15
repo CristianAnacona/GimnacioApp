@@ -2,7 +2,7 @@
   <div class="noticias-header">
     <h1>📰 Noticias</h1>
     
-    @if (rol === 'admin') {
+    @if (role === 'admin') {
       <button type="button" (click)="abrirFormulario()" class="btn-agregar">
         + Agregar Noticia
       </button>
@@ -103,7 +103,7 @@
         <div class="noticia-card">
           <div class="noticia-header">
             <h3>{{ noticia.titulo }}</h3>
-            @if (rol === 'admin') {
+            @if (role === 'admin') {
               <div class="noticia-acciones">
                 <button 
                   type="button"

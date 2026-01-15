@@ -32,7 +32,7 @@ export const routes: Routes = [
         .then(m => m.Socios) },
       { path: 'pagos', loadComponent: () => import('./components/admin/pagos/pagos')
         .then(m => m.Pagos) },
-      { path: 'planes', loadComponent: () => import('./components/admin/planes/planes')
+      { path: 'planes', loadComponent: () => import('./components/planes/planes')
         .then(m => m.Planes) },
       { path: 'rutinas', loadComponent: () => import('./components/admin/rutinas/rutinas')
         .then(m => m.Rutinas) },
@@ -57,6 +57,7 @@ export const routes: Routes = [
     children: [
       { path: 'noticias', loadComponent: () => import('./components/noticias/noticias')
         .then(m => m.Noticias) },
+        {path: 'planes', loadComponent: () => import('./components/planes/planes').then(m => m.Planes)},
       { path: 'perfil', loadComponent: () => import('./components/socio/perfil/perfil')
         .then(m => m.Perfil) },
       { path: 'mi-rutina', loadComponent: () => import('./components/socio/mi-rutina/mi-rutina')
