@@ -1,0 +1,195 @@
+/* --- CONTENEDOR PRINCIPAL Y CABECERA --- */
+.pagos-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.pagos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.pagos-header h1 {
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+}
+
+/* BOTÓN + NUEVO MÉTODO */
+.btn-agregar {
+  background: linear-gradient(135deg, #4a59bd 0%, #5a367d 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-agregar:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transform: translateY(-2px);
+}
+
+/* --- GRID DE TARJETAS --- */
+.grid-pagos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+  gap: 20px;
+  margin-top: 10px;
+}
+
+/* --- TARJETA COMPACTA --- */
+.pago-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  border: 1px solid #e0e0e0;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center; /* Centrado vertical cuando no hay número */
+  
+  min-height: 260px; 
+  position: relative; /* Para los botones de la esquina */
+}
+
+.pago-card:hover {
+  transform: translateY(-5px);
+  border-color: #667eea;
+}
+
+/* --- BOTONES DE ACCIÓN (ESQUINA SUPERIOR) --- */
+.acciones-admin {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  z-index: 10;
+}
+
+.btn-mini-edit, .btn-mini-delete {
+  background: #fff8e1; /* Color papayawhip suave */
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-mini-edit:hover { background: #e3f2fd; border-color: #90caf9; }
+.btn-mini-delete:hover { background: #ffebee; border-color: #ef9a9a; }
+
+/* --- CONTENIDO DE LA TARJETA --- */
+.card-icon img {
+  max-width: 80px;
+  max-height: 55px;
+  margin-bottom: 10px;
+  object-fit: contain;
+}
+
+/* Título con gradiente y compatibilidad estándar */
+.pago-card h3 {
+  margin: 5px 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  
+  /* Compatibilidad con navegadores Webkit (Chrome, Safari, Edge) */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+  /* Propiedad estándar para compatibilidad total */
+  background-clip: text;
+  color: transparent; /* Fallback si text-fill-color no es soportado */
+}
+
+.descripcion {
+  color: #666;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  max-width: 90%;
+}
+
+/* CUADRO DE COPIAR --- */
+.info-pago {
+  width: auto;
+  min-width: 150px;
+  padding: 6px 12px;
+  background: #f0f2ff;
+  border-radius: 8px;
+  border: 1px dashed #667eea;
+  cursor: pointer;
+}
+
+.valor {
+  font-weight: 700;
+  color: #4a59bd;
+  font-size: 1rem;
+}
+
+.label-copy {
+  font-size: 0.6rem;
+  display: block;
+  font-weight: bold;
+  color: #667eea;
+}
+
+/* --- MODAL (ESTILO NOTICIAS) --- */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-contenido {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 450px;
+  padding: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.form-grupo { margin-bottom: 15px; }
+.form-grupo label { display: block; margin-bottom: 5px; font-weight: 600; }
+.form-grupo input, .form-grupo textarea {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.modal-botones { display: flex; gap: 10px; margin-top: 15px; }
+.btn-guardar { flex: 1; background: #667eea; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+.btn-cancelar { flex: 1; background: #eee; border: none; padding: 10px; border-radius: 8px; cursor: pointer; }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .grid-pagos { grid-template-columns: 1fr; }
+  .pagos-header { flex-direction: column; text-align: center; gap: 10px; }
+}
