@@ -1,0 +1,69 @@
+<div class="pagos-container">
+  <div class="pagos-header">
+    <h1>{{ role === 'admin' ? 'Gestión de Pagos' : 'Métodos de Pago' }}</h1>
+    @if (role === 'admin') {
+      <button (click)="abrirFormulario()" class="btn-agregar">+ Nuevo Método</button>
+    }
+  </div>
+
+  @if (mostrarFormulario) {
+    <div class="modal-overlay">
+      <div class="modal-contenido">
+        <h2>Configurar Método de Pago</h2>
+        <form (ngSubmit)="guardarPago()">
+          <div class="form-grupo">
+            <label>Título (Ej: Nequi o Efectivo):</label>
+            <input type="text" [(ngModel)]="formulario.titulo" name="titulo" required>
+          </div>
+          
+          <div class="form-grupo">
+            <label>URL de Imagen/Logo:</label>
+            <input type="text" [(ngModel)]="formulario.imagenUrl" name="imagenUrl" placeholder="https://...">
+          </div>
+
+          <div class="form-grupo">
+            <label>Descripción:</label>
+            <textarea [(ngModel)]="formulario.descripcion" name="descripcion"></textarea>
+          </div>
+
+          <div class="form-grupo">
+            <label>Dato Clave (Celular o Ubicación):</label>
+            <input type="text" [(ngModel)]="formulario.datosClave" name="datosClave">
+          </div>
+
+          <div class="modal-botones">
+            <button type="submit" class="btn-guardar">Guardar</button>
+            <button type="button" (click)="cerrarFormulario()" class="btn-cancelar">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+<div class="grid-pagos">
+  @for (pago of listaPagos; track pago._id) {
+    <div class="pago-card">
+      @if (role === 'admin') {
+        <div class="acciones-admin">
+          <button (click)="prepararEdicion(pago)" class="btn-mini-edit" title="Editar">✏️</button>
+          <button (click)="eliminarMetodo(pago._id)" class="btn-mini-delete" title="Eliminar">🗑️</button>
+        </div>
+      }
+
+      <div class="card-icon">
+        <img [src]="pago.imagenUrl" alt="icon">
+      </div>
+      
+      <h3>{{ pago.titulo }}</h3>
+      <p class="descripcion">{{ pago.descripcion }}</p>
+
+      @if (pago.datosClave && pago.datosClave.trim() !== '') {
+        <div class="info-pago" (click)="copiarAlPortapapeles(pago.datosClave)" title="Click para copiar">
+          <span class="label-copy">Toca para copiar:</span>
+          <span class="valor">{{ pago.datosClave }} 📋</span>
+        </div>
+      }
+    </div>
+  }
+</div>
+</div>
