@@ -2,9 +2,9 @@
   <div class="flex items-center justify-between px-4 md:px-6 py-3">
     
     <div class="flex items-center gap-2">
-      @if (role === 'admin') {
+      @if (role === 'admin' || role === 'socio') {
         <button (click)="menuOpen = !menuOpen" 
-                class="text-white text-2xl font-bold cursor-pointer hover:text-orange-500 p-1 transition-colors">
+                class="menu-button text-white text-2xl font-bold cursor-pointer hover:text-orange-500 p-1 transition-colors">
           ☰
         </button>
       }
@@ -40,18 +40,22 @@
     </span>
   </div>
 
-  @if (role === 'admin') {
-    <ul class="absolute left-0 top-full w-full bg-slate-900 border-t border-slate-800 transition-all duration-300 overflow-hidden z-50 shadow-2xl"
+  <!-- Menú Desplegable -->
+  @if (role === 'admin' || role === 'socio') {
+    <ul class="menu-container absolute left-0 top-full w-64 bg-slate-900 border-t border-slate-800 transition-all duration-300 overflow-hidden z-50 shadow-2xl rounded-b-lg"
         [class.max-h-0]="!menuOpen"
         [class.max-h-screen]="menuOpen">
-      @for (link of ['noticias', 'socios', 'planes', 'pagos', 'entrenadores', 'rutinas']; track link) {
+      
+      @for (link of menuLinks; track link.route) {
         <li>
-          <a [routerLink]="link" (click)="menuOpen = false"
+          <a [routerLink]="link.route" (click)="menuOpen = false"
              class="flex items-center gap-3 p-4 cursor-pointer text-slate-300 hover:text-white hover:bg-slate-800 transition-all uppercase text-xs font-black tracking-widest border-b border-slate-800/50"> 
-            <span class="text-orange-500">→</span> {{ link }}
+            <span class="text-orange-500 text-lg">{{ link.icon }}</span> 
+            {{ link.name }}
           </a>
         </li>
       }
+      
     </ul>
   }
 </nav>

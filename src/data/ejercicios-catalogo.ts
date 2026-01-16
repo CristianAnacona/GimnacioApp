@@ -1,5 +1,7 @@
 // src/app/data/ejercicios-catalogo.ts
 
+import { D } from "@angular/cdk/keycodes";
+
 // Definimos cómo se ve un ejercicio base
 export interface EjercicioBase {
   nombre: string;
@@ -10,6 +12,25 @@ export interface EjercicioBase {
   instrucciones?: string;
   tip?: string;
 }
+ export interface diasRutina {
+  lunes: string;
+  martes: string;
+  miercoles: string;
+  jueves: string;
+  viernes: string;
+  sabado: string;
+  domingo: string;
+}
+
+export const DIAS_RUTINA: diasRutina = {
+  lunes: 'Lunes',
+  martes: 'Martes',
+  miercoles: 'Miércoles',
+  jueves: 'Jueves',
+  viernes: 'Viernes',
+  sabado: 'Sábado',
+  domingo: 'Domingo'
+};
 
 // Este es tu catálogo maestro. ¡Aquí añadirás todos los ejercicios que ofreces!
 export const CATALOGO_EJERCICIOS: EjercicioBase[] = [

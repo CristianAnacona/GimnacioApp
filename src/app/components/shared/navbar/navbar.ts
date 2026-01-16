@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {Router, RouterModule } from '@angular/router';
 
@@ -14,6 +14,40 @@ export class Navbar implements OnInit {
  role: string = '';
   username: string = '';
    menuOpen = false;
+
+     // Detectar clics fuera del menú
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    const clickedInsideMenu = target.closest('.menu-container');
+    const clickedMenuButton = target.closest('.menu-button');
+    
+    if (!clickedInsideMenu && !clickedMenuButton && this.menuOpen) {
+      this.menuOpen = false;
+    }
+  }
+
+   get menuLinks() {
+    if (this.role === 'admin') {
+      return [
+        { icon: '📰', name: 'noticias', route: 'noticias' },
+        { icon: '👥', name: 'socios', route: 'socios' },
+        { icon: '💳', name: 'planes', route: 'planes' },
+        { icon: '💰', name: 'pagos', route: 'pagos' },
+        { icon: '🏋️', name: 'entrenadores', route: 'entrenadores' },
+        { icon: '📋', name: 'rutinas', route: 'rutinas' }
+      ];
+    } else if (this.role === 'socio') {
+      return [
+        { icon: '📰', name: 'noticias', route: 'noticias' },
+        { icon: '💪', name: 'mi rutina', route: 'mi-rutina' },
+        { icon: '👤', name: 'perfil', route: 'perfil' },
+        { icon: '💳', name: 'planes', route: 'planes' },
+        { icon: '💰', name: 'pagos', route: 'pagos' }
+      ];
+    }
+    return [];
+  }
 
   ngOnInit() {
     // Recuperamos los datos que guardamos al hacer login
