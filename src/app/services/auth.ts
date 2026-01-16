@@ -66,4 +66,18 @@ export class AuthService {
   eliminarRutina(idRutina: string) {
     return this.http.delete(`${this.rutinasUrl}/eliminar/${idRutina}`);
   }
+
+  // Método para obtener la data del perfil procesada
+getPerfilSocio(id: string){
+  return this.http.get(`${this.apiUrl}/perfil/${id}`);
+}
+
+// metodo para actualizar el perfil
+actualizarPerfil(id: string, datos: any){
+  return this.http.put(`${this.apiUrl}/actualizar-perfil/${id}`, datos);
+}
+ obtenerPerfil(userId: string){
+    return this.http.get(`${this.apiUrl}/perfil/${userId}`);
+  }
+
 }

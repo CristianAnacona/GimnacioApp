@@ -74,7 +74,13 @@ export const routes: Routes = [
       ...sharedRoutes, // Rutas compartidas
       { 
         path: 'perfil', 
-        loadComponent: () => import('./components/socio/perfil/perfil').then(m => m.Perfil) 
+        loadComponent: () => import('./components/socio/perfil/perfil')
+        .then(m => m.Perfil) 
+      },
+      { 
+        path: 'datos-personales', 
+        loadComponent: () => import('./components/socio/datos-personales/datos-personales')
+        .then(m => m.DatosPersonales) 
       },
       { 
         path: 'mi-rutina', 

@@ -1,1 +1,78 @@
-<p>perfil works!</p>
+<div class="profile-container p-6 bg-slate-50 min-h-screen" >
+  @if (perfil) {
+  <div class="flex flex-col items-center mt-4">
+    <div class="w-32 h-32 rounded-full border-4 border-orange-500 p-1 shadow-xl">
+      <img [src]="perfil?.fotoUrl || 'https://ui-avatars.com/api/?name=' + perfil?.nombre" 
+           class="w-full h-full rounded-full object-cover" alt="Profile">
+    </div>
+    <h1 class="text-2xl font-black text-slate-800 mt-4 italic uppercase">{{ perfil?.nombre }}</h1>
+    
+    <span class="bg-orange-100 text-orange-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-tighter mt-2 mb-2">
+      {{ perfil?.mensajeMotivador}}
+    </span>
+  </div>
+
+  <div class="grid grid-cols-3 gap-2 px-2 w-full max-w-sm mx-auto">
+    <div class="bg-white rounded-[20px] p-2 sm:p-4 shadow-sm border border-slate-50 flex flex-col items-center justify-center aspect-4/5 min-h-110px">
+    <span class="text-[10px] sm:text-[9px] font-black text-slate-400 uppercase tracking-tighter leading-none mb-1 text-center">Vencimiento</span>
+    <span class="text-1xl sm:text-xl">⏳</span>
+    <span class="text-2xl font-black text-orange-500 mt-1">6</span>
+  </div>
+   <div class="bg-white rounded-[20px] p-2 sm:p-4 shadow-sm border border-slate-50 flex flex-col items-center justify-center aspect-4/5 min-h-110px">
+    <span class="text-[10px] sm:text-[9px] font-black text-slate-400 uppercase tracking-tighter leading-none mb-1 text-center">Días del<br>Mes</span>
+    <span class="text-1xl sm:text-xl">📅</span>
+    <span class="text-2xl font-black text-blue-600 mt-1">0</span>
+  </div>
+
+  <div class="bg-white rounded-[20px] p-2 sm:p-4 shadow-sm border border-slate-50 flex flex-col items-center justify-center aspect-4/5 min-h-110px">
+    <span class="text-[11px] sm:text-[9px] font-black text-slate-400 uppercase tracking-tighter leading-none mb-1 text-center">Racha</span>
+    <span class="text-1xl sm:text-xl">🔥</span>
+    <span class="text-2xl font-black text-red-500 mt-1">0</span>
+  </div>
+  </div>
+
+  <div class="mt-8 bg-white rounded-4xl shadow-sm border border-slate-100 overflow-hidden">
+    <button routerLink="/socio/datos-personales" class="cursor-pointer w-full flex items-center justify-between p-5 border-b border-slate-50 hover:bg-slate-50">
+      <div class="flex items-center gap-3">
+        <span class="text-xl">👤</span>
+        <span class="text-sm font-bold text-slate-700">Datos Personales</span>
+      </div>
+      <span class="text-slate-300">→</span>
+    </button>
+    
+    <button [routerLink]="['/perfil/suscripcion']" class="w-full flex items-center justify-between p-5 border-b border-slate-50 hover:bg-slate-50">
+      <div class="flex items-center gap-3">
+        <span class="text-xl">💳</span>
+        <span class="text-sm font-bold text-slate-700">Mi Suscripción</span>
+      </div>
+      <span class="text-slate-300">→</span>
+    </button>
+    
+    <button [routerLink]="['/perfil/fuerza']" class="w-full flex items-center justify-between p-5 border-b border-slate-50 hover:bg-slate-50">
+      <div class="flex items-center gap-3">
+        <span class="text-xl">📊</span>
+        <span class="text-sm font-bold text-slate-700">Estadísticas de Fuerza</span>
+      </div>
+      <span class="text-slate-300">→</span>
+    </button>
+
+    <button class="w-full flex items-center justify-between p-5 text-red-500 hover:bg-red-50">
+      <div class="flex items-center gap-3">
+        <span class="text-xl">🚪</span>
+        <span class="text-sm font-bold uppercase tracking-widest">Cerrar Sesión</span>
+      </div>
+    </button>
+  </div>
+
+  }
+  @else {
+    <ng-template #cargando>
+  <div class="flex flex-col items-center justify-center h-screen bg-slate-50">
+    <div class="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+    <p class="mt-4 font-bold text-slate-400 italic">Cargando tu progreso...</p>
+  </div>
+</ng-template>
+  }
+</div>
+
+
