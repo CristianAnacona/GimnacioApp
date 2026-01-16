@@ -1,5 +1,7 @@
 import { RouterModule } from '@angular/router';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { AuthService } from '../../../services/auth';
+
 
 
 @Component({
@@ -10,5 +12,25 @@ import { Component } from '@angular/core';
   styleUrl: './perfil.css',
 })
 export class Perfil {
+perfil: any = null;
 
+constructor( private authService: AuthService, private cdr: ChangeDetectorRef) {}
+
+ngOnInit() {
+    const usuarioString = localStorage.getItem('usuario');
+    if (usuarioString) {
+      const usuarioObj = JSON.parse(usuarioString);
+      this.cargarPerfil(usuarioObj._id);
+    }
+  }
+
+  cargarPerfil(id: string) {
+    this.authService.getPerfilSocio(id).subscribe({
+      next: (data) => {
+        this.perfil = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error al traer el perfil', err)
+    });
+  }
 }

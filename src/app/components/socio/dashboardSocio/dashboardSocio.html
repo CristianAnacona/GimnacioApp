@@ -1,33 +1,8 @@
 <div class="min-h-screen bg-slate-100">
   <app-navbar></app-navbar>
-<nav class="sub-nav">
-  <a routerLink="./mi-rutina" routerLinkActive="active" class="nav-item">
-    Mi Rutina
-  </a>
-  <a routerLink="./perfil" routerLinkActive="active" class="nav-item">
-    Perfil
-  </a>
-  <a routerLink="./pagos" routerLinkActive="active" class="nav-item">
-    Membresía
-  </a>
-</nav>
-  <div class="max-w-4xl mx-auto p-6">
-    
- 
-      <h2 class="text-2xl font-bold text-slate-800 mb-6">
-        Bienvenido, {{ username }}
-      </h2>
 
-      <div class="bg-orange-600 text-white p-8 rounded-3xl shadow-xl">
-        <h3 class="text-sm uppercase tracking-widest opacity-80 mb-2">Tu rutina de hoy</h3>
-        <p class="text-4xl font-black mb-6">ESPALDA Y BÍCEPS</p>
-        <h4>VAMOS CON TODA!</h4>
-      </div>
-    
-
-    <div class="mt-6">
-      <router-outlet></router-outlet>
+  <main class="max-w-4xl mx-auto p-6">
+    <div class="mt-2"> <router-outlet></router-outlet>
     </div>
-
-  </div>
+  </main>
 </div>

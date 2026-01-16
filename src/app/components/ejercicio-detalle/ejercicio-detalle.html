@@ -1,7 +1,8 @@
 
 <div class="container-detalle p-6 max-w-4xl mx-auto">
-  <button routerLink="/admin/rutinas" class="mb-6 flex items-center text-blue-600 font-bold hover:underline">
-    <span class="mr-2">←</span> Volver al Creador de Rutinas
+
+  <button (click)="volver()" class="cursor-pointer mb-6 flex items-center text-blue-600 font-bold hover:underline">
+    <span class="mr-2">←</span> {{ role === 'admin' ? 'Volver a Rutinas' : 'Volver a Mi Rutina'}}
   </button>
 
   @if (ejercicio) {
