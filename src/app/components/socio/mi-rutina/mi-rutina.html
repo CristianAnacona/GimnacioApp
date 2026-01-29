@@ -14,7 +14,7 @@
   @if (rutinas && rutinas.length > 0) {
     
     @if (rutinaActual) {
-      <div class="contenedor-rutina-diaria" style="margin-bottom: 50px;">
+      <div class="contenedor-rutina-diaria">
         <div class="rutina-header px-4 mt-4">
           <h2 class="rutina-titulo text-2xl font-black uppercase text-slate-800">
             {{ rutinaActual.enfoque }}
@@ -26,18 +26,18 @@
 
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 p-4">
           @for (ejer of rutinaActual.ejercicios; track $index) {
-          <div class="card-ejercicio bg-white rounded-[2.5rem] p-3 shadow-sm border border-slate-50 flex flex-col relative transition-all">
+          <div class="card-ejercicio bg-white rounded-[2.5rem] p-3 shadow-sm border border-slate-300 flex flex-col relative transition-all">
             
             <div class="card-img-wrapper w-full aspect-square mb-2 overflow-hidden rounded-[2.5rem] bg-slate-50">
               <img [src]="ejer.imagenUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'" alt="ejercicio"
-                class="ejer-img w-full h-full object-contain p-2">
+                class="ejer-img w-full h-full object-contain">
             </div>
             
             <div class="card-body px-1">
               <div class="flex justify-between items-start mb-1">
-                <h3 class="text-[12px] font-black text-slate-800 uppercase leading-tight flex-1">
+                <h2 class="text-[10.5px] font-black text-slate-800 uppercase leading-tight flex-1">
                   {{ ejer.nombre }}
-                </h3>
+                </h2>
                 
                 <div (click)="ejer.completado = !ejer.completado"
                      [class]="ejer.completado ? 'bg-green-500 border-green-500' : 'bg-white border-slate-200'"
