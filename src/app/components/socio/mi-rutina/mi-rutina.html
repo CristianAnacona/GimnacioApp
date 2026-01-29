@@ -1,38 +1,82 @@
-<div class="rutina-seccion grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4">
+<div class="rutina-container">
+  <nav class="flex gap-2 overflow-x-auto p-2 scrollbar-hide">
+    @for (item of diasRutina; track item) {
+    <button (click)="cambiarDia(item)" 
+      [class]="diaActivo === item
+                ? 'bg-orange-500 text-white shadow-lg shadow-orange-200 border-orange-500' 
+                : 'bg-white text-slate-500 border-slate-200 hover:border-orange-300'"
+      class="px-5 py-2 rounded-full border font-bold text-xs whitespace-nowrap transition-all active:scale-95">
+      {{ item }}
+    </button>
+    }
+  </nav>
+
   @if (rutinas && rutinas.length > 0) {
     
-    @for (rutinaIndividual of rutinas; track rutinaIndividual._id) {
-      
-      <div class="contenedor-rutina-diaria" style="margin-bottom: 50px;">
-        <div class="rutina-header">
-          <h2 class="rutina-titulo">{{ rutinaIndividual.nombre }}</h2>
+    @if (rutinaActual) {
+      <div class="contenedor-rutina-diaria">
+        <div class="rutina-header px-4 mt-4">
+          <h2 class="rutina-titulo text-2xl font-black uppercase text-slate-800">
+            {{ rutinaActual.enfoque }}
+          </h2>
+          <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">
+            Entrenamiento de {{ diaActivo }}
+          </p>
         </div>
 
-        <div class="ejercicios-grid">
-          @for (ejer of rutinaIndividual.ejercicios; track $index) {
-            <div class="card-ejercicio">
-              <div class="card-img-wrapper">
-                <img [src]="ejer.imagenUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'" 
-                     alt="ejercicio" class="ejer-img">
-              </div>
-              <div class="card-body">
-                <h3>{{ ejer.nombre }}</h3>
-                <div class="stats-row">
-                  <span class="stat"><strong>Series:</strong> {{ ejer.series }}</span>
-                  <span class="stat"><strong>Reps:</strong> {{ ejer.repeticiones }}</span>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 p-4">
+          @for (ejer of rutinaActual.ejercicios; track $index) {
+          <div class="card-ejercicio bg-white rounded-[2.5rem] p-3 shadow-sm border border-slate-300 flex flex-col relative transition-all">
+            
+            <div class="card-img-wrapper w-full aspect-square mb-2 overflow-hidden rounded-[2.5rem] bg-slate-50">
+              <img [src]="ejer.imagenUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'" alt="ejercicio"
+                class="ejer-img w-full h-full object-contain">
+            </div>
+            
+            <div class="card-body px-1">
+              <div class="flex justify-between items-start mb-1">
+                <h2 class="text-[10.5px] font-black text-slate-800 uppercase leading-tight flex-1">
+                  {{ ejer.nombre }}
+                </h2>
+                
+                <div (click)="ejer.completado = !ejer.completado"
+                     [class]="ejer.completado ? 'bg-green-500 border-green-500' : 'bg-white border-slate-200'"
+                     class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ml-1 shrink-0 cursor-pointer">
+                  @if (ejer.completado) {
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7" />
+                    </svg>
+                  }
                 </div>
-                <p class="instrucciones">{{ ejer.instrucciones }}</p>
+              </div>
+
+              <div class="stats-row flex gap-2 text-[10px] font-bold uppercase mb-2">
+                <span class="text-slate-400">Series: <span class="text-orange-500">{{ ejer.series }}</span></span>
+                <span class="text-slate-400">Reps: <span class="text-blue-600">{{ ejer.repeticiones }}</span></span>
               </div>
             </div>
+
+            <div class="card-footer mt-auto">
+              <button class="btn-info w-full py-3 bg-slate-100 text-slate-500 rounded-2xl text-[10px] font-black uppercase tracking-widest active:bg-slate-200"
+                      [routerLink]="['/ejercicio', ejer.nombre]">
+                Info
+              </button>
+            </div>
+          </div>
           }
-          
         </div>
+      </div>
+    } @else {
+      <div class="mt-10 text-center py-16 px-10 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200 mx-4">
+        <div class="text-4xl mb-4">💤</div>
+        <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">Día de Descanso</p>
+        <p class="text-slate-300 text-sm mt-1">No hay ejercicios asignados para el {{ diaActivo }}</p>
       </div>
     }
 
   } @else {
     <div class="loader-container" style="text-align: center; padding: 50px;">
-      <p>Aún no tienes rutinas asignadas. ¡Consulta con tu entrenador!</p>
+      <p class="text-slate-400 font-medium italic">Cargando tus rutinas...</p>
     </div>
   }
 </div>

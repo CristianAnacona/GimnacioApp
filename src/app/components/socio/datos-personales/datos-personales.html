@@ -1,0 +1,115 @@
+<div class="min-h-screen bg-white p-6">
+    <div class="flex items-center justify-between mb-8">
+        <button routerLink="/socio/perfil"
+            class="cursor-pointer w-10 h-10 flex items-center justify-center bg-slate-50 rounded-full text-slate-400">
+            ←
+        </button>
+        <h1 class="text-sm font-black text-slate-800 uppercase italic tracking-tighter">sEditar Perfil</h1>
+        <div class="w-10"></div>
+    </div>
+
+    @if (perfil) {
+    <div class="flex flex-col items-center mb-10">
+        <div class="relative group cursor-pointer" (click)="fileInput.click()">
+            <div
+                class="w-32 h-32 rounded-full border-4 border-orange-500 p-1 shadow-2xl overflow-hidden bg-slate-100 flex items-center justify-center">
+                @if (perfil.fotoUrl) {
+                <img [src]="perfil.fotoUrl" class="w-full h-full rounded-full object-cover">
+                } @else {
+                <span class="text-4xl font-black text-slate-300 italic">{{ perfil.nombre.substring(0,2).toUpperCase()
+                    }}</span>
+                }
+            </div>
+            <div class="absolute bottom-1 right-1 bg-orange-500 p-2 rounded-full text-white shadow-lg">
+                <span class="text-xs">📸</span>
+            </div>
+            <input type="file" 
+         #fileInput 
+         (change)="onFotoChange($event)" 
+         accept="image/*" 
+         class="hidden"
+         style="display: none;">
+        </div>
+        <p class="text-[10px] font-bold text-slate-400 uppercase mt-4 tracking-widest">Toca para cambiar foto</p>
+    </div>
+
+    <div class="space-y-6">
+        <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-2 tracking-widest">Nombre de
+                Guerrero/a</label>
+            <input type="text" [(ngModel)]="perfil.nombre"
+                class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-0">
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-2 tracking-widest">numero de
+                Identificación</label>
+            <input type="number" [(ngModel)]="perfil.datosPersonales.identificacion"
+                class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-0">
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100 opacity-60">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-2 tracking-widest">
+                Email de Registro (No editable)
+            </label>
+            <input type="email" [ngModel]="perfil?.email" readonly
+                class="w-full bg-transparent border-none font-bold text-slate-500 focus:ring-0 cursor-not-allowed">
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-2 tracking-widest">Fecha de
+                Nacimiento</label>
+            <input type="date" [(ngModel)]="perfil.datosPersonales.fechaNacimiento"
+                class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-0">
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-2 tracking-widest">Sexo</label>
+
+            <select [(ngModel)]="perfil.datosPersonales.sexo"
+                class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-0 appearance-none cursor-pointer">
+                <option value="" disabled selected>Selecciona una opción</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+            </select>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-2 tracking-widest">celular</label>
+            <input type="text" [(ngModel)]="perfil.datosPersonales.telefono"
+                class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-0">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100">
+                <label class="text-[9px] font-black text-slate-400 uppercase ml-2 tracking-widest">Peso (KG)</label>
+                <input type="number" [(ngModel)]="perfil.datosPersonales.pesoActual"
+                    class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-0">
+            </div>
+            <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100">
+                <label class="text-[9px] font-black text-slate-400 uppercase ml-2 tracking-widest">Altura (CM)</label>
+                <input type="number" [(ngModel)]="perfil.datosPersonales.altura"
+                    class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-0">
+            </div>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-3xl border border-slate-100">
+            <label class="text-[9px] font-black text-slate-400 uppercase ml-2 tracking-widest">Grito de Guerra
+                (Mensaje)</label>
+            <input type="text" [(ngModel)]="perfil.mensajeMotivador"
+                class="w-full bg-transparent border-none font-bold text-slate-700 focus:ring-0"
+                placeholder="Ej: ¡Sin miedo al éxito!">
+        </div>
+
+        <button (click)="guardar()" [disabled]="cargando"
+            class="w-full bg-slate-900 text-white font-black p-5 rounded-3xl shadow-xl uppercase italic tracking-[0.2em] active:scale-95 transition-all disabled:opacity-50">
+            {{ cargando ? 'Guardando...' : 'Actualizar Datos' }}
+        </button>
+    </div>
+    } @else {
+    <div class="flex flex-col items-center justify-center h-64">
+        <div class="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+    }
+</div>

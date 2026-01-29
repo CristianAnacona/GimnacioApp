@@ -1,10 +1,10 @@
 <div class="max-w-6xl mx-auto p-2 md:p-6 space-y-6">
   
-  <header class="flex flex-col md:flex-row gap-4 p-5 bg-white rounded-3xl shadow-sm border border-slate-100">
+ <header class="flex flex-col md:flex-row gap-4 p-5 bg-white rounded-3xl shadow-sm border border-slate-100">
     <div class="flex flex-col w-full">
       <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-1 ml-1 tracking-wider">Socio</label>
       <select [(ngModel)]="usuarioId" (change)="onSocioChange()" 
-              class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-orange-500 text-slate-700 transition-all cursor-pointer">
+              class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-orange-500 text-slate-700 transition-all cursor-pointer font-semibold">
         <option value="" disabled>Selecciona un Socio</option>
         @for (socio of listaSocios; track socio._id) {
           <option [value]="socio._id">{{ socio.nombre }} {{ socio.apellido }}</option>
@@ -12,12 +12,27 @@
       </select>
     </div>
 
-    <div class="flex flex-col w-full">
-      <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-1 ml-1 tracking-wider">Nombre de la Rutina</label>
-      <input [(ngModel)]="nombreRutina" placeholder="Ej: Lunes - Pecho" 
-             class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-orange-500 text-slate-700 transition-all">
+    <div class="flex flex-col w-full md:w-64">
+      <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-1 ml-1 tracking-wider">Día de la Semana</label>
+      <select [(ngModel)]="dia" 
+              class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-orange-500 text-slate-700 transition-all cursor-pointer font-semibold">
+        <option value="" disabled>Selecciona un día</option>
+        <option value="Lunes">Lunes</option>
+        <option value="Martes">Martes</option>
+        <option value="Miércoles">Miércoles</option>
+        <option value="Jueves">Jueves</option>
+        <option value="Viernes">Viernes</option>
+        <option value="Sábado">Sábado</option>
+        <option value="Domingo">Domingo</option>
+      </select>
     </div>
-  </header>
+
+    <div class="flex flex-col w-full">
+      <label class="text-[10px] font-extrabold text-slate-400 uppercase mb-1 ml-1 tracking-wider">Enfoque (Músculos)</label>
+      <input [(ngModel)]="enfoque" placeholder="Ej: Pecho y Tríceps" 
+             class="w-full p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-orange-500 text-slate-700 transition-all font-semibold">
+    </div>
+</header>
 
   <div class="flex flex-col lg:flex-row gap-8">
     

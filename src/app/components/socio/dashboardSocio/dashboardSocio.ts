@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterOutlet,RouterLink } from '@angular/router';
+import { Router, RouterOutlet} from '@angular/router';
 
 import { Navbar } from '../../shared/navbar/navbar';
 import { AuthService } from '../../../services/auth';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, Navbar, RouterOutlet,RouterLink],
+  imports: [CommonModule, Navbar, RouterOutlet],
   templateUrl: './dashboardSocio.html',
   styleUrl: './dashboardSocio.css',
 })

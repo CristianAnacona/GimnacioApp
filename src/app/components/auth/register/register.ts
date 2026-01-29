@@ -31,23 +31,30 @@ export class Register {
       this.nuevoUsuario.password === this.nuevoUsuario.confirmPassword
     );
   }
-
+  verPass: boolean = false;
+  verConfirmPass: boolean = false;
   contrasenasCoinciden(): boolean {
     return this.nuevoUsuario.password === this.nuevoUsuario.confirmPassword;
   }
 
-  registrar() {
-    if (this.esFormularioValido()) {
-      this.authService.registrar(this.nuevoUsuario).subscribe({
-        next: (res: any) => {
-          alert('✅ ¡Cuenta creada con éxito! Ahora puedes iniciar sesión.');
-          this.router.navigate(['/login']);
-        },
-        error: (err: any) => {
-          alert('❌ Error: El correo ya está registrado o hubo un problema con el servidor.');
-          console.error(err);
-        }
-      });
-    }
+registrar() {
+  if (this.esFormularioValido()) {
+    // Forzamos que el rol sea siempre 'socio' por seguridad
+    const usuarioAEnviar = { 
+      ...this.nuevoUsuario, 
+      role: 'socio' 
+    };
+
+    this.authService.registrar(usuarioAEnviar).subscribe({
+      next: (res: any) => {
+        alert('✅ ¡Cuenta creada con éxito! Ahora puedes iniciar sesión.');
+        this.router.navigate(['/login']);
+      },
+      error: (err: any) => {
+        alert('❌ Error: El correo ya está registrado o hubo un problema con el servidor.');
+        console.error(err);
+      }
+    });
   }
+}
 }

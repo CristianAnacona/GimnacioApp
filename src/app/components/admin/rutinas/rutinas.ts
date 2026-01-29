@@ -25,11 +25,14 @@ export class Rutinas implements OnInit {
   categoriaActiva = 'Pecho';
   ejerciciosDeCategoria: any[] = []; 
   ejerciciosVisibles: any[] = [];    
-  limiteActual = 12;
+  limiteActual = 20;
 
   // Datos de la rutina
   usuarioId = '';
   nombreRutina = '';
+  dia = '';
+  enfoque = '';
+
   rutinaParaSocio: any[] = []; 
   listaSocios: any[] = []; 
   
@@ -87,6 +90,8 @@ export class Rutinas implements OnInit {
           this.editandoModo = true;
           this.idRutinaParaEditar = encontrada._id;
           this.nombreRutina = encontrada.nombre;
+          this.dia = encontrada.dia;
+          this.enfoque = encontrada.enfoque;
           this.rutinaParaSocio = [...encontrada.ejercicios];
           this.cdr.detectChanges();
         }
@@ -108,7 +113,7 @@ export class Rutinas implements OnInit {
 
   filtrarPorCategoria(cat: string) {
     this.categoriaActiva = cat;
-    this.limiteActual = 12; 
+    this.limiteActual = 20; 
     this.ejerciciosDeCategoria = CATALOGO_EJERCICIOS.filter(e => e.categoria === cat);
     this.actualizarVista();
   }
@@ -118,7 +123,7 @@ export class Rutinas implements OnInit {
   }
 
   cargarMas() {
-    this.limiteActual += 12;
+    this.limiteActual += 20;
     this.actualizarVista();
   }
 
@@ -137,21 +142,24 @@ export class Rutinas implements OnInit {
 
 guardarRutina() {
   if (!this.usuarioId) return alert('Por favor, selecciona un socio');
-  if (!this.nombreRutina) return alert('Dale un nombre a la rutina (ej: Lunes)');
+  if (!this.dia) return alert('Selecciona un día de la semana');
+  if (!this.enfoque) return alert('Indica el enfoque (ej: Pecho y Tríceps)');
   if (this.rutinaParaSocio.length === 0) return alert('La rutina no tiene ejercicios');
 
   const data = {
     usuarioId: this.usuarioId,
     nombre: this.nombreRutina,
+    dia: this.dia,
+    enfoque: this.enfoque,
     ejercicios: this.rutinaParaSocio
   };
 
-  const rutinaExistente = this.rutinasExistentesDelSocio.find(r => 
-    r.nombre.toLowerCase().trim() === this.nombreRutina.toLowerCase().trim()
+  const rutinaExistenteEnEseDia = this.rutinasExistentesDelSocio.find(r => 
+    r.dia === this.dia && r.enfoque === this.enfoque
   );
 
-  if (this.editandoModo || rutinaExistente) {
-    const idParaActualizar = this.editandoModo ? this.idRutinaParaEditar : (rutinaExistente?._id || '');
+  if (this.editandoModo || rutinaExistenteEnEseDia) {
+    const idParaActualizar = this.editandoModo ? this.idRutinaParaEditar : (rutinaExistenteEnEseDia?._id || '');
     
     if (confirm(`¿Deseas guardar los cambios en la rutina "${this.nombreRutina}"?`)) {
       this.authService.actualizarRutina(idParaActualizar, data).subscribe({
@@ -180,7 +188,8 @@ finalizarProceso(volverALista: boolean) {
   // 2. Limpiamos los datos de la rutina de trabajo
   this.usuarioId = '';          // Reiniciamos el select del socio
   this.rutinaParaSocio = [];      // Borra los ejercicios de la derecha
-  this.nombreRutina = '';         // Borra el input "Lunes, Martes..."
+  this.dia = ''; 
+  this.enfoque = '';                // Borra el input "Lunes, Martes..."
   this.editandoModo = false;      // Quitamos el modo edición
   this.idRutinaParaEditar = '';   // Borramos el ID técnico de la rutina
 
