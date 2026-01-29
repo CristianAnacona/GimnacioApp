@@ -4,7 +4,7 @@
             class="cursor-pointer w-10 h-10 flex items-center justify-center bg-slate-50 rounded-full text-slate-400">
             ←
         </button>
-        <h1 class="text-sm font-black text-slate-800 uppercase italic tracking-tighter">Editar Perfil</h1>
+        <h1 class="text-sm font-black text-slate-800 uppercase italic tracking-tighter">sEditar Perfil</h1>
         <div class="w-10"></div>
     </div>
 
@@ -23,7 +23,12 @@
             <div class="absolute bottom-1 right-1 bg-orange-500 p-2 rounded-full text-white shadow-lg">
                 <span class="text-xs">📸</span>
             </div>
-            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" class="hidden">
+            <input type="file" 
+         #fileInput 
+         (change)="onFotoChange($event)" 
+         accept="image/*" 
+         class="hidden"
+         style="display: none;">
         </div>
         <p class="text-[10px] font-bold text-slate-400 uppercase mt-4 tracking-widest">Toca para cambiar foto</p>
     </div>

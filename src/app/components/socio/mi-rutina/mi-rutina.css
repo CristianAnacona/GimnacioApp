@@ -1,5 +1,5 @@
 .rutina-seccion {
-  padding: 16px; /* Más ajustado para móviles */
+  padding: 10px; /* Más ajustado para móviles */
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -18,25 +18,24 @@
 .ejercicios-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
-  gap: 12px;
+  gap: 8px;
 }
 
 @media (min-width: 640px) {
   .ejercicios-grid {
     grid-template-columns: repeat(3, 1fr); /* 3 columnas en tablet/pc */
-    gap: 16px;
+    gap: 10px;
   }
 }
 
 /* Tarjeta estilo Apple/Fitness App */
 .card-ejercicio {
   background: white;
-  border-radius: 1.5rem; /* Bordes muy redondeados como la imagen */
-  padding: 14px;
+  border-radius: 1.5rem; 
   display: flex;
   flex-direction: column;
-  border: 1px solid #f1f5f9;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+ 
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
 }
 

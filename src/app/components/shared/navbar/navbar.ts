@@ -1,3 +1,4 @@
+import { UserStateService } from './../../../services/user-state.service';
 import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
@@ -11,13 +12,18 @@ import { AuthService } from '../../../services/auth';
   styleUrl: './navbar.css',
 })
 export class Navbar implements OnInit {
-  constructor(private router: Router, private authService: AuthService, 
-    private cdr: ChangeDetectorRef) {}
+  constructor(private router: Router, private authService: AuthService,
+    private cdr: ChangeDetectorRef, private UserStateService: UserStateService) { }
 
   role: string = '';
   username: string = '';
   fotoUrl: string = 'https://ui-avatars.com/api/?name=Usuario&background=random';
   menuOpen = false;
+
+  // Cache estático para evitar recargas
+  private static perfilCache: any = null;
+  private static lastLoadTime: number = 0;
+  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
@@ -33,20 +39,22 @@ export class Navbar implements OnInit {
   get menuLinks() {
     if (this.role === 'admin') {
       return [
-        { icon: '📰', name: 'noticias', route: 'noticias' },
-        { icon: '👥', name: 'socios', route: 'socios' },
-        { icon: '💳', name: 'planes', route: 'planes' },
-        { icon: '💰', name: 'pagos', route: 'pagos' },
-        { icon: '🏋️', name: 'entrenadores', route: 'entrenadores' },
-        { icon: '📋', name: 'rutinas', route: 'rutinas' }
+        { icon: '📰', name: 'noticias', route: '/admin/noticias' },
+        { icon: '👥', name: 'socios', route: '/admin/socios' },
+        { icon: '💳', name: 'planes', route: '/admin/planes' },
+        { icon: '💰', name: 'pagos', route: '/admin/pagos' },
+        { icon: '🏋️', name: 'entrenadores', route: '/admin/entrenadores' },
+        { icon: '📋', name: 'rutinas', route: '/admin/rutinas' },
+        { icon: '🚪', name: 'Cerrar Sesión', route: 'logout', isAction: true }
       ];
     } else if (this.role === 'socio') {
       return [
-        { icon: '📰', name: 'noticias', route: 'noticias' },
-        { icon: '💪', name: 'mi rutina', route: 'mi-rutina' },
-        { icon: '👤', name: 'perfil', route: 'perfil' },
-        { icon: '💳', name: 'planes', route: 'planes' },
-        { icon: '💰', name: 'pagos', route: 'pagos' }
+        { icon: '📢', name: 'noticias', route: '/socio/noticias' },
+        { icon: '🏋️‍♂️', name: 'mi rutina', route: '/socio/mi-rutina' },
+        { icon: '👤', name: 'perfil', route: '/socio/perfil' },
+        { icon: '💎', name: 'planes', route: '/socio/planes' },
+        { icon: '💰', name: 'pagos', route: '/socio/pagos' },
+        { icon: '🏃‍♂️', name: 'Cerrar Sesión', route: 'logout', isAction: true }
       ];
     }
     return [];
@@ -56,12 +64,21 @@ export class Navbar implements OnInit {
     this.role = localStorage.getItem('role') || 'socio';
     this.username = localStorage.getItem('nombre') || 'Usuario';
 
-    // Solo cargar datos si hay userId
+
+    this.UserStateService.user$.subscribe(userData => {
+      if (!userData) return;
+
+      this.username = userData.nombre || this.username;
+
+      if (userData.fotoUrl && userData.fotoUrl.trim() !== '') {
+        this.fotoUrl = userData.fotoUrl;
+      }
+    });
+
     const userId = localStorage.getItem('userId');
     if (userId) {
       this.cargarDatosUsuario();
     } else {
-      // Usar imagen por defecto mientras no hay login
       this.fotoUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(this.username) + '&background=random';
     }
   }
@@ -78,18 +95,28 @@ export class Navbar implements OnInit {
       return;
     }
 
+    // Verificar si tenemos cache válido
+    const now = Date.now();
+    const cacheValido = Navbar.perfilCache &&
+      (now - Navbar.lastLoadTime) < this.CACHE_DURATION;
+
+    if (cacheValido && Navbar.perfilCache.userId === userId) {
+      // Usar datos del cache
+      this.aplicarDatosPerfil(Navbar.perfilCache.data);
+      return;
+    }
+
+    // Si no hay cache válido, hacer la petición
     this.authService.obtenerPerfil(userId).subscribe({
       next: (perfil: any) => {
-        console.log('Perfil recibido:', perfil);
-        this.username = perfil.nombre || 'Usuario';
+        // Guardar en cache
+        Navbar.perfilCache = {
+          userId: userId,
+          data: perfil
+        };
+        Navbar.lastLoadTime = Date.now();
 
-        // Si tiene fotoUrl y no está vacía, la usa. Si no, genera una con el nombre
-        if (perfil.fotoUrl && perfil.fotoUrl.trim() !== '') {
-          this.fotoUrl = perfil.fotoUrl;
-        } else {
-          this.fotoUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(perfil.nombre) + '&background=random';
-        }
-        this.cdr.detectChanges();
+        this.aplicarDatosPerfil(perfil);
       },
       error: (error: any) => {
         console.error('Error al cargar perfil:', error);
@@ -98,12 +125,35 @@ export class Navbar implements OnInit {
     });
   }
 
+  private aplicarDatosPerfil(perfil: any) {
+    this.username = perfil.nombre || 'Usuario';
+
+    if (perfil.fotoUrl && perfil.fotoUrl.trim() !== '') {
+      this.fotoUrl = perfil.fotoUrl;
+    } else {
+      this.fotoUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(perfil.nombre) + '&background=random';
+    }
+    this.cdr.detectChanges();
+  }
+
   manejarErrorFoto(event: any) {
-    // Si la foto local falla, usamos una de respaldo de internet
-    event.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(this.username) + '&background=random';
+    event.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(this.username)
+      + '&background=random';
+  }
+
+  handleMenuClick(link: any) {
+    if (link.isAction && link.route === 'logout') {
+      this.logout();
+    } else {
+      this.router.navigate([link.route]);
+    }
+    this.menuOpen = false;
   }
 
   logout() {
+    // Limpiar cache al cerrar sesión
+    Navbar.perfilCache = null;
+    Navbar.lastLoadTime = 0;
     localStorage.clear();
     this.router.navigate(['/login']);
   }

@@ -1,52 +1,61 @@
 <div class="min-h-screen bg-slate-900 flex items-center justify-center p-4 font-sans">
   <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
-    
+
     <div class="bg-orange-600 p-6 text-center text-white">
       <h2 class="text-3xl font-black italic tracking-tighter">GYM<span class="text-slate-900">APP</span></h2>
       <p class="text-xs uppercase tracking-widest font-bold opacity-90 mt-1">Crea tu cuenta nueva</p>
     </div>
 
     <form (ngSubmit)="registrar()" #registerForm="ngForm" class="p-8 space-y-4">
-      
+
       <div>
         <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Nombre Completo</label>
         <input type="text" name="nombre" [(ngModel)]="nuevoUsuario.nombre" required
-               class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all" 
-               placeholder="Juan Pérez">
+          class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all"
+          placeholder="Juan Pérez">
       </div>
 
       <div>
         <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Correo Electrónico</label>
         <input type="email" name="email" [(ngModel)]="nuevoUsuario.email" required
-               class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all" 
-               placeholder="correo@gym.com">
+          class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all"
+          placeholder="correo@gym.com">
       </div>
 
-      <div>
-        <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">¿Quién eres?</label>
-        <select name="role" [(ngModel)]="nuevoUsuario.role"
-                class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none cursor-pointer font-bold text-slate-700 appearance-none">
-          <option value="socio">🏋️ Socio (Vengo a entrenar)</option>
-          <option value="admin">🛠️ Administrador (Gestionar Gym)</option>
-        </select>
-      </div>
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+  
+  <div class="relative">
+    <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Contraseña</label>
+    <div class="relative">
+      <input [type]="verPass ? 'text' : 'password'" 
+             name="password" [(ngModel)]="nuevoUsuario.password" required
+             class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all pr-12"
+             placeholder="Min. 8 carac.">
+      
+      <button type="button" (click)="verPass = !verPass"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-2xl focus:outline-none transition-transform active:scale-90">
+        {{ verPass ? '🙉' : '🙈' }}
+      </button>
+    </div>
+  </div>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Contraseña</label>
-          <input type="password" name="password" [(ngModel)]="nuevoUsuario.password" required
-                 class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all" 
-                 placeholder="Min. 8 carac.">
-        </div>
+  <div class="relative">
+    <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Confirmar</label>
+    <div class="relative">
+      <input [type]="verConfirmPass ? 'text' : 'password'" 
+             name="confirmPassword" [(ngModel)]="nuevoUsuario.confirmPassword" required
+             [class.border-red-500]="nuevoUsuario.confirmPassword && !contrasenasCoinciden()"
+             class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all pr-12"
+             placeholder="Repetir...">
+      
+      <button type="button" (click)="verConfirmPass = !verConfirmPass"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-2xl focus:outline-none transition-transform active:scale-90">
+        {{ verConfirmPass ? '🙉' : '🙈' }}
+      </button>
+    </div>
+  </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Confirmar</label>
-          <input type="password" name="confirmPassword" [(ngModel)]="nuevoUsuario.confirmPassword" required
-                 [class.border-red-500]="nuevoUsuario.confirmPassword && !contrasenasCoinciden()"
-                 class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all" 
-                 placeholder="Repetir...">
-        </div>
-      </div>
+</div>
 
       <div *ngIf="nuevoUsuario.confirmPassword && !contrasenasCoinciden()" class="bg-red-50 p-2 rounded-lg">
         <p class="text-red-500 text-[10px] font-bold italic text-center uppercase tracking-wider">
@@ -60,15 +69,14 @@
         </p>
       </div>
 
-      <button type="submit" 
-              [disabled]="!esFormularioValido()"
-              [class.opacity-50]="!esFormularioValido()"
-              class="w-full bg-slate-900 text-white font-extrabold py-4 rounded-2xl hover:bg-orange-600 transform hover:scale-[1.02] transition-all shadow-lg active:scale-95 mt-2">
+      <button type="submit" [disabled]="!esFormularioValido()" [class.opacity-50]="!esFormularioValido()"
+        class="w-full bg-slate-900 text-white font-extrabold py-4 rounded-2xl hover:bg-orange-600 transform hover:scale-[1.02] transition-all shadow-lg active:scale-95 mt-2">
         CREAR CUENTA
       </button>
 
       <p class="text-center text-sm text-slate-500 mt-4">
-        ¿Ya tienes cuenta? <a routerLink="/login" class="text-orange-600 font-bold hover:underline cursor-pointer">Inicia sesión</a>
+        ¿Ya tienes cuenta? <a routerLink="/login"
+          class="text-orange-600 font-bold hover:underline cursor-pointer">Inicia sesión</a>
       </p>
     </form>
   </div>

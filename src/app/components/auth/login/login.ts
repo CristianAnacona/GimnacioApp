@@ -18,6 +18,7 @@ export class Login {
     password: ''
   };
 
+  verPass: boolean = false;
   constructor(private router: Router, private authService: AuthService) {}
 
   iniciarSesion() {
@@ -47,4 +48,5 @@ export class Login {
       }
     });
   }
+  
 }

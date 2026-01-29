@@ -25,7 +25,7 @@ export class Rutinas implements OnInit {
   categoriaActiva = 'Pecho';
   ejerciciosDeCategoria: any[] = []; 
   ejerciciosVisibles: any[] = [];    
-  limiteActual = 12;
+  limiteActual = 20;
 
   // Datos de la rutina
   usuarioId = '';
@@ -90,6 +90,8 @@ export class Rutinas implements OnInit {
           this.editandoModo = true;
           this.idRutinaParaEditar = encontrada._id;
           this.nombreRutina = encontrada.nombre;
+          this.dia = encontrada.dia;
+          this.enfoque = encontrada.enfoque;
           this.rutinaParaSocio = [...encontrada.ejercicios];
           this.cdr.detectChanges();
         }
@@ -111,7 +113,7 @@ export class Rutinas implements OnInit {
 
   filtrarPorCategoria(cat: string) {
     this.categoriaActiva = cat;
-    this.limiteActual = 12; 
+    this.limiteActual = 20; 
     this.ejerciciosDeCategoria = CATALOGO_EJERCICIOS.filter(e => e.categoria === cat);
     this.actualizarVista();
   }
@@ -121,7 +123,7 @@ export class Rutinas implements OnInit {
   }
 
   cargarMas() {
-    this.limiteActual += 12;
+    this.limiteActual += 20;
     this.actualizarVista();
   }
 
