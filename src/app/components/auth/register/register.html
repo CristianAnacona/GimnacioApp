@@ -27,12 +27,12 @@
   <div class="relative">
     <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Contraseña</label>
     <div class="relative">
-      <input [type]="verPass ? 'text' : 'password'" 
+      <input #passwordInput [type]="verPass ? 'text' : 'password'" 
              name="password" [(ngModel)]="nuevoUsuario.password" required
              class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all pr-12"
              placeholder="Min. 8 carac.">
       
-      <button type="button" (click)="verPass = !verPass"
+      <button type="button" (click)="verPass = !verPass; passwordInput.focus()"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-2xl focus:outline-none transition-transform active:scale-90">
         {{ verPass ? '🙉' : '🙈' }}
       </button>
@@ -42,13 +42,13 @@
   <div class="relative">
     <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Confirmar</label>
     <div class="relative">
-      <input [type]="verConfirmPass ? 'text' : 'password'" 
+      <input #confirmPasswordInput [type]="verConfirmPass ? 'text' : 'password'" 
              name="confirmPassword" [(ngModel)]="nuevoUsuario.confirmPassword" required
              [class.border-red-500]="nuevoUsuario.confirmPassword && !contrasenasCoinciden()"
              class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-orange-500 rounded-xl outline-none transition-all pr-12"
              placeholder="Repetir...">
       
-      <button type="button" (click)="verConfirmPass = !verConfirmPass"
+      <button type="button" (click)="verConfirmPass = !verConfirmPass; confirmPasswordInput.focus()"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-2xl focus:outline-none transition-transform active:scale-90">
         {{ verConfirmPass ? '🙉' : '🙈' }}
       </button>
