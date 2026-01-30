@@ -1,10 +1,13 @@
 
+
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { AuthService } from '../../../services/auth';
 import { CommonModule } from '@angular/common';
 
 import { DIAS_RUTINA } from '../../../../data/ejercicios-catalogo';
 import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-mi-rutina',
@@ -20,9 +23,12 @@ export class MiRutina implements OnInit {
   // Asegúrate de que NO tenga 'private' adelante
   rutinas: any[] = [];
   username = '';
-hasDay = (r: any) => r.dia === this.diaActivo;
-  diasRutina:string[]= Object.values(DIAS_RUTINA);
- diaActivo: string = this.diasRutina[0];
+  hasDay = (r: any) => r.dia === this.diaActivo;
+  diasRutina: string[] = Object.values(DIAS_RUTINA);
+  diaActivo: string = this.diasRutina[0];
+  rutina: any;
+
+  constructor(private http: HttpClient) { }
 
   ngOnInit() {
     // Definimos el día activo como el día real de la semana
@@ -62,4 +68,25 @@ hasDay = (r: any) => r.dia === this.diaActivo;
   get rutinaActual() {
     return this.rutinas.find(r => r.dia === this.diaActivo);
   }
+// Función para alternar el estado de completado de un ejercicio
+  toggleEjercicio(ejer: any, index: number) {
+    const rutinaDelDia = this.rutinaActual;
+    if (!rutinaDelDia?._id) return;
+    const estadoAnterior = ejer.completado;
+    ejer.completado = !estadoAnterior;
+    const url = `${environment.apiUrl}/api/rutinas/${rutinaDelDia._id}/ejercicio/${index}`;
+    this.http.patch(url, { completado: ejer.completado }).subscribe({
+      next: () => {
+        console.log('✅ Sincronizado correctamente');
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('❌ Error al guardar:', err);
+        ejer.completado = estadoAnterior; // Revertimos si falla
+        this.cdr.detectChanges();
+        alert('Error de conexión');
+      }
+    });
+  }
+
 }
