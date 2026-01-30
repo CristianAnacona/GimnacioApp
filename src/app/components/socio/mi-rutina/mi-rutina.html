@@ -39,7 +39,7 @@
                   {{ ejer.nombre }}
                 </h2>
                 
-                <div (click)="ejer.completado = !ejer.completado"
+                <div (click)="toggleEjercicio(ejer, $index)"
                      [class]="ejer.completado ? 'bg-green-500 border-green-500' : 'bg-white border-slate-200'"
                      class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ml-1 shrink-0 cursor-pointer">
                   @if (ejer.completado) {
