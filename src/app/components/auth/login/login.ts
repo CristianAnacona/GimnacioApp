@@ -21,6 +21,8 @@ export class Login {
   // 1. Estado para el spinner
   cargando: boolean = false; 
   verPass: boolean = false;
+  mensajeCarga: string = 'Iniciando sesión...'; // NUEVO
+  intentos: number = 0; // NUEVO
 
   constructor(private router: Router, private authService: AuthService) {}
 
