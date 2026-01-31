@@ -29,9 +29,15 @@
         </button>
       </div>
 
-      <button type="submit"
-        class="w-full bg-slate-900 text-white font-extrabold py-4 rounded-2xl hover:bg-orange-600 transform hover:scale-[1.02] transition-all shadow-lg active:scale-95">
-        INICIAR SESIÓN
+      <button type="submit" [disabled]="cargando" (click)="iniciarSesion()"
+        class="w-full bg-slate-900 text-white font-extrabold py-4 rounded-2xl hover:bg-orange-600 transform hover:scale-[1.02] transition-all shadow-lg active:scale-95 disabled:bg-slate-500 disabled:cursor-not-allowed flex justify-center items-center gap-2">
+
+        @if (!cargando) {
+        <span>INICIAR SESIÓN</span>
+        } @else {
+        <i class="fas fa-spinner animate-spin"></i>
+        <span>DESPERTANDO GUERREROS...</span>
+        }
       </button>
 
       <p class="text-center text-sm text-slate-500">

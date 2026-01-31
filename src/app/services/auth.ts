@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, timeout } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserStateService } from './user-state.service'; 
 
@@ -28,6 +28,7 @@ export class AuthService {
   // --- MÉTODOS DE AUTENTICACIÓN ---
   login(credenciales: any) {
     return this.http.post(`${this.apiUrl}/login`, credenciales).pipe(
+      timeout(5000),
       tap((response: any) => {
         if (response.usuario) {
           this.userStateService.updateUser(response.usuario);
