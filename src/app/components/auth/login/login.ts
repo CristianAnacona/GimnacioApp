@@ -27,42 +27,48 @@ export class Login {
   constructor(private router: Router, private authService: AuthService) {}
 
   iniciarSesion() {
-    if (!this.usuario.email || !this.usuario.password) return;
+    // 1. Validar campos y evitar doble clic si ya está cargando
+    if (!this.usuario.email || !this.usuario.password || this.cargando) return;
 
-    this.cargando = true; // Activa el estado visual de carga
+    this.cargando = true; 
+    this.mensajeCarga = 'Despertando Guerreros...';
 
     this.authService.login(this.usuario).subscribe({
       next: (res: any) => {
-        // Limpiamos localStorage previo para evitar conflictos
+        // Limpiamos sesión antigua
         localStorage.clear();
 
         const role = res.usuario.role.toLowerCase().trim();
         
-        // Guardamos la información esencial
+        // Guardamos info del Guerrero
         localStorage.setItem('userId', res.usuario._id);
         localStorage.setItem('usuario', JSON.stringify(res.usuario));
         localStorage.setItem('token', res.token);
         localStorage.setItem('role', role);
         localStorage.setItem('nombre', res.usuario.nombre);
 
+        // Navegación según el rango
         if (role === 'admin') {
           this.router.navigate(['admin/noticias']);
         } else {
           this.router.navigate(['/socio']);
         }
+        
         this.cargando = false;
       },
       error: (err) => {
-        this.cargando = false; // Desactiva el spinner en caso de error
-        console.error('Error en login:', err);
+        this.cargando = false; // ¡Importante! Liberamos el botón si falla
         
-        // Mensaje amigable si el servidor está tardando
-        if (err.status === 0 || err.status === 504) {
-          alert('El servidor está despertando, por favor intenta de nuevo en unos segundos.');
+        // Manejo inteligente de errores para no ensuciar la consola
+        if (err.status === 400 || err.status === 401) {
+          alert('❌ Credenciales incorrectas. Revisa tu email y contraseña.');
+        } else if (err.status === 0 || err.status === 504) {
+          alert('⏳ El servidor Drakkar está despertando. Espera 10 segundos e intenta de nuevo.');
         } else {
-          alert('Credenciales incorrectas o usuario no encontrado.');
+          console.error('Error no controlado:', err);
+          alert('🔥 Hubo un problema en el Valhalla. Inténtalo más tarde.');
         }
       }
     });
-  }
+  } 
 }
