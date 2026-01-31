@@ -18,18 +18,26 @@ export class Login {
     password: ''
   };
 
+  // 1. Estado para el spinner
+  cargando: boolean = false; 
   verPass: boolean = false;
+
   constructor(private router: Router, private authService: AuthService) {}
 
   iniciarSesion() {
+    if (!this.usuario.email || !this.usuario.password) return;
+
+    this.cargando = true; // Activa el estado visual de carga
+
     this.authService.login(this.usuario).subscribe({
       next: (res: any) => {
-        const role = res.usuario.role.toLowerCase().trim();
-        console.log('Rol procesado:', role);
+        // Limpiamos localStorage previo para evitar conflictos
+        localStorage.clear();
 
-        // ← AGREGAR ESTO: Guardar el userId
-        localStorage.setItem('userId', res.usuario._id);
+        const role = res.usuario.role.toLowerCase().trim();
         
+        // Guardamos la información esencial
+        localStorage.setItem('userId', res.usuario._id);
         localStorage.setItem('usuario', JSON.stringify(res.usuario));
         localStorage.setItem('token', res.token);
         localStorage.setItem('role', role);
@@ -38,15 +46,21 @@ export class Login {
         if (role === 'admin') {
           this.router.navigate(['admin/noticias']);
         } else {
-          console.log('Navegando a socio...');
           this.router.navigate(['/socio']);
         }
+        this.cargando = false;
       },
       error: (err) => {
+        this.cargando = false; // Desactiva el spinner en caso de error
         console.error('Error en login:', err);
-        alert('Credenciales incorrectas');
+        
+        // Mensaje amigable si el servidor está tardando
+        if (err.status === 0 || err.status === 504) {
+          alert('El servidor está despertando, por favor intenta de nuevo en unos segundos.');
+        } else {
+          alert('Credenciales incorrectas o usuario no encontrado.');
+        }
       }
     });
   }
-  
 }
