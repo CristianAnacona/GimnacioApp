@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://gimnacioapp-backend.onrender.com'
+  apiUrl: 'gimnacio-app-backend-de2q.vercel.app'
 };
