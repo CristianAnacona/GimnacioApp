@@ -28,7 +28,7 @@ export class AuthService {
   // --- MÉTODOS DE AUTENTICACIÓN ---
   login(credenciales: any) {
     return this.http.post(`${this.apiUrl}/login`, credenciales).pipe(
-      timeout(5000),
+      timeout(90000),
       tap((response: any) => {
         if (response.usuario) {
           this.userStateService.updateUser(response.usuario);
