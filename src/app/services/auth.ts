@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap, timeout } from 'rxjs/operators';
+import { retry, tap, timeout } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserStateService } from './user-state.service'; 
 
@@ -27,8 +27,14 @@ export class AuthService {
 
   // --- MÉTODOS DE AUTENTICACIÓN ---
   login(credenciales: any) {
+    console.log('🔐 Iniciando login...');
+    const startTime = Date.now();
     return this.http.post(`${this.apiUrl}/login`, credenciales).pipe(
-      timeout(90000),
+      timeout(120000),
+       retry({
+        count: 1, // Reintenta 1 vez
+        delay: 2000 // Espera 2 segundos antes de reintentar
+      }),
       tap((response: any) => {
         if (response.usuario) {
           this.userStateService.updateUser(response.usuario);
