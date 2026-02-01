@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { retry, tap, timeout } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserStateService } from './user-state.service'; 
 
@@ -27,14 +27,8 @@ export class AuthService {
 
   // --- MÉTODOS DE AUTENTICACIÓN ---
   login(credenciales: any) {
-    console.log('🔐 Iniciando login...');
     const startTime = Date.now();
     return this.http.post(`${this.apiUrl}/login`, credenciales).pipe(
-      timeout(120000),
-       retry({
-        count: 1, // Reintenta 1 vez
-        delay: 2000 // Espera 2 segundos antes de reintentar
-      }),
       tap((response: any) => {
         if (response.usuario) {
           this.userStateService.updateUser(response.usuario);
@@ -54,9 +48,10 @@ export class AuthService {
   // --- MÉTODOS DE GESTIÓN DE USUARIOS (Dashboard Admin) ---
   
   // 🔥 Este es el que te daba el error TS2339
-  getUsuarios(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/usuarios`, { headers: this.getHeaders() });
-  }
+getUsuarios(): Observable<any> {
+  const urlSinAuth = `${environment.apiUrl}/api/auth/usuarios`; 
+  return this.http.get(urlSinAuth, { headers: this.getHeaders() });
+}
 
   // 🔥 Revisa que aquí estés pasando los días correctos
   renovarMembresia(id: string, dias: number): Observable<any> {

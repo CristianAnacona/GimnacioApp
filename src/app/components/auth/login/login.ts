@@ -62,8 +62,6 @@ export class Login {
         // Manejo inteligente de errores para no ensuciar la consola
         if (err.status === 400 || err.status === 401) {
           alert('❌ Credenciales incorrectas. Revisa tu email y contraseña.');
-        } else if (err.status === 0 || err.status === 504) {
-          alert('⏳ El servidor Drakkar está despertando. Espera 10 segundos e intenta de nuevo.');
         } else {
           console.error('Error no controlado:', err);
           alert('🔥 Hubo un problema en el Valhalla. Inténtalo más tarde.');
