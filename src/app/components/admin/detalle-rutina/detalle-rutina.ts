@@ -44,15 +44,18 @@ private route = inject(ActivatedRoute);
   });
 }
 
-  borrarRutina(idRutina: string) {
-    if (confirm('¿Estás seguro de eliminar esta rutina?')) {
-      this.authService.eliminarRutina(idRutina).subscribe({
-        next: () => {
-          alert('Rutina eliminada');
-          this.cargarRutinas(); // Refrescar lista
-        },
-        error: (err) => alert('Error al borrar')
-      });
-    }
+ borrarRutina(idRutina: string) {
+  if (confirm('¿Estás seguro de eliminar esta rutina?')) {
+    this.authService.eliminarRutina(idRutina).subscribe({
+      next: () => {
+        alert('Rutina eliminada correctamente');
+        this.cargarRutinas(); // 👈 Esto recargará la lista automáticamente
+      },
+      error: (err) => {
+        console.error('Error al borrar:', err);
+        alert('No se pudo eliminar la rutina. Revisa la consola.');
+      }
+    });
   }
+}
 }

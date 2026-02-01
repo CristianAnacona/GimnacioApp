@@ -22,13 +22,29 @@ export class MiRutina implements OnInit {
   private authService = inject(AuthService);
   // Asegúrate de que NO tenga 'private' adelante
   rutinas: any[] = [];
+  rutinaActual: any = null;
   username = '';
   hasDay = (r: any) => r.dia === this.diaActivo;
   diasRutina: string[] = Object.values(DIAS_RUTINA);
   diaActivo: string = this.diasRutina[0];
   rutina: any;
 
+
   constructor(private http: HttpClient) { }
+
+
+  scrollToActiveDay() {
+    setTimeout(() => {
+      const activeBtn = document.getElementById('btn-' + this.diaActivo);
+      if (activeBtn) {
+        activeBtn.scrollIntoView({
+          behavior: 'smooth', // Hace que el movimiento sea suave y no brusco
+          block: 'nearest',
+          inline: 'center'    // ¡Esta es la clave para centrarlo!
+        });
+      }
+    }, 200); // Pequeño retraso para asegurar que el HTML ya cargó
+  }
 
   ngOnInit() {
     // Definimos el día activo como el día real de la semana
@@ -40,53 +56,56 @@ export class MiRutina implements OnInit {
       const usuario = JSON.parse(data);
       const idSocio = usuario._id || usuario.id;
       this.username = usuario.nombre || 'Socio';
-
       if (idSocio) {
         this.authService.obtenerRutina(idSocio).subscribe({
           next: (res: any) => {
-            // Asignamos directamente a la variable de la clase
-            if (Array.isArray(res) && res.length > 0) {
-              this.rutinas = res;
-            } else {
-              this.rutinas = [res];
-            }
+            this.rutinas = Array.isArray(res) ? res : [res];
+            this.buscarRutinaDelDia(this.diaActivo);
             this.cdr.detectChanges();
+            this.scrollToActiveDay();
           },
           error: (err) => console.error(err)
         });
       }
     }
   }
-
+  buscarRutinaDelDia(dia: string) {
+    if (this.rutinas && this.rutinas.length > 0) {
+      // Usamos .toLowerCase() en ambos lados para que coincidan siempre
+      this.rutinaActual = this.rutinas.find(r =>
+        r.dia.toLowerCase() === dia.toLowerCase()
+      );
+    }
+  }
   // Función para cambiar el día al hacer clic
   cambiarDia(dia: string) {
     this.diaActivo = dia;
+    this.buscarRutinaDelDia(dia); // 🔥 Usamos la función de búsqueda
     this.cdr.detectChanges();
   }
-
-  // Getter para obtener solo la rutina del día seleccionado
-  get rutinaActual() {
-    return this.rutinas.find(r => r.dia === this.diaActivo);
-  }
-// Función para alternar el estado de completado de un ejercicio
+  // Función para alternar el estado de completado de un ejercicio
   toggleEjercicio(ejer: any, index: number) {
     const rutinaDelDia = this.rutinaActual;
     if (!rutinaDelDia?._id) return;
-    const estadoAnterior = ejer.completado;
-    ejer.completado = !estadoAnterior;
+
     const url = `${environment.apiUrl}/api/rutinas/${rutinaDelDia._id}/ejercicio/${index}`;
-    this.http.patch(url, { completado: ejer.completado }).subscribe({
+    const token = localStorage.getItem('token');
+    const headers = { 'Authorization': `Bearer ${token}` };
+
+    // Primero enviamos al servidor, y LUEGO pintamos de verde
+    this.http.patch(url, { completado: !ejer.completado }, { headers }).subscribe({
       next: () => {
-        console.log('✅ Sincronizado correctamente');
+        ejer.completado = !ejer.completado; // Solo cambia si el servidor dijo que sí
+        console.log('✅ Confirmado por el servidor');
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('❌ Error al guardar:', err);
-        ejer.completado = estadoAnterior; // Revertimos si falla
-        this.cdr.detectChanges();
-        alert('Error de conexión');
+        console.error('❌ El servidor no respondió:', err);
+        alert('No se pudo guardar el progreso. Intenta de nuevo.');
       }
     });
   }
+
+
 
 }

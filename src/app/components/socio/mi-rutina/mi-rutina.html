@@ -1,15 +1,17 @@
 <div class="rutina-container">
-  <nav class="flex gap-2 overflow-x-auto p-2 scrollbar-hide">
-    @for (item of diasRutina; track item) {
-    <button (click)="cambiarDia(item)" 
-      [class]="diaActivo === item
-                ? 'bg-orange-500 text-white shadow-lg shadow-orange-200 border-orange-500' 
-                : 'bg-white text-slate-500 border-slate-200 hover:border-orange-300'"
-      class="px-5 py-2 rounded-full border font-bold text-xs whitespace-nowrap transition-all active:scale-95">
-      {{ item }}
-    </button>
-    }
-  </nav>
+  <nav #scrollContainer class="flex gap-2 overflow-x-auto p-2 scrollbar-hide">
+  @for (item of diasRutina; track item) {
+  <button 
+    [id]="'btn-' + item" 
+    (click)="cambiarDia(item)" 
+    [class]="diaActivo === item
+              ? 'bg-[#cc0000] text-white shadow-lg shadow-orange-200 border-[#cc0000] ' 
+              : 'bg-white text-slate-500 border-slate-200 hover:border-orange-300'"
+    class="px-5 py-2 rounded-full border font-bold text-xs whitespace-nowrap transition-all active:scale-95">
+    {{ item }}
+  </button>
+  }
+</nav>
 
   @if (rutinas && rutinas.length > 0) {
     
