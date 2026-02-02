@@ -17,13 +17,18 @@ export class AuthService {
     private userStateService: UserStateService 
   ) {}
 
-  private getHeaders() {
-    const token = localStorage.getItem('token');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    });
-  }
+// auth.service.ts
+private getHeaders() {
+  const token = localStorage.getItem('token');
+  const usuarioRaw = localStorage.getItem('usuario');
+  const usuario = usuarioRaw ? JSON.parse(usuarioRaw) : {};
+
+  return new HttpHeaders({
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'user-id': usuario._id || 'publico' // 👈 Esto es vital para tu index.js
+  });
+}
 
   // --- MÉTODOS DE AUTENTICACIÓN ---
   login(credenciales: any) {
@@ -84,29 +89,35 @@ getUsuarios(): Observable<any> {
     return this.getPerfilSocio(userId);
   }
 
-  actualizarPerfil(id: string, datos: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/actualizar-perfil/${id}`, datos).pipe(
-      tap((res: any) => {
-        const user = res.usuario || res;
-        this.userStateService.updateUser(user);
-      })
-    );
-  }
+actualizarPerfil(id: string, datos: any) {
+  // Asegúrate de que environment.apiUrl sea 'http://localhost:3000' 
+  // y no incluya ya el '/api/auth'
+  const url = `${environment.apiUrl}/api/auth/actualizar-perfil/${id}`;
+  
+  const token = localStorage.getItem('token');
+  const headers = { 'Authorization': `Bearer ${token}` };
+
+  return this.http.put(url, datos, { headers });
+}
 
   // --- MÉTODOS DE RUTINAS ---
-  obtenerRutina(usuarioId: string) {
-    return this.http.get(`${this.rutinasUrl}/${usuarioId}`);
-  }
+// --- MÉTODOS DE RUTINAS CORREGIDOS ---
 
-  asignarRutina(datos: any) {
-    return this.http.post(`${this.rutinasUrl}/asignar`, datos, { headers: this.getHeaders() });
-  }
+obtenerRutina(usuarioId: string) {
+  // Añadimos headers para romper el caché (304)
+  return this.http.get(`${this.rutinasUrl}/${usuarioId}`, { headers: this.getHeaders() });
+}
 
-  actualizarRutina(idRutina: string, datos: any) {
-    return this.http.put(`${this.rutinasUrl}/actualizar/${idRutina}`, datos, { headers: this.getHeaders() });
-  }
+asignarRutina(datos: any) {
+  return this.http.post(`${this.rutinasUrl}/asignar`, datos, { headers: this.getHeaders() });
+}
 
-  eliminarRutina(idRutina: string) {
-    return this.http.delete(`${this.rutinasUrl}/eliminar/${idRutina}`, { headers: this.getHeaders() });
-  }
+actualizarRutina(idRutina: string, datos: any) {
+  return this.http.put(`${this.rutinasUrl}/actualizar/${idRutina}`, datos, { headers: this.getHeaders() });
+}
+
+eliminarRutina(idRutina: string) {
+  // Coincide con router.delete('/eliminar/:id', ...)
+  return this.http.delete(`${this.rutinasUrl}/eliminar/${idRutina}`, { headers: this.getHeaders() });
+}
 }

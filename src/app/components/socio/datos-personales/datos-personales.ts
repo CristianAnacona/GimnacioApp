@@ -24,7 +24,6 @@ export class DatosPersonales implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Usamos el UserStateService para obtener el usuario actual de forma segura
     const user = this.userStateService.getCurrentUser();
     
     if (user && user._id) {
@@ -38,33 +37,59 @@ export class DatosPersonales implements OnInit {
   cargarDatos(id: string) {
     this.authService.getPerfilSocio(id).subscribe({
       next: (res: any) => {
-        this.perfil = res.datosCompletos || res; 
+        this.perfil = res.datosCompletos || res;
+        
+        // ✅ SOLUCIÓN: Asegurar que datosPersonales existe con valores por defecto
+        if (!this.perfil.datosPersonales) {
+          this.perfil.datosPersonales = {
+            identificacion: '',
+            fechaNacimiento: '',
+            sexo: '',
+            pesoActual: 0,
+            altura: 0,
+            telefono: ''
+          };
+        }
+        
+        // ✅ También asegurar que stats existe
+        if (!this.perfil.stats) {
+          this.perfil.stats = {
+            racha: 0,
+            asistenciasMes: 0
+          };
+        }
+        
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error al cargar perfil:', err)
     });
   }
 
-  // LÓGICA DE FOTO (Mantenemos la compresión para evitar el error 413)
-  async onFotoChange(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
+async onFotoChange(event: any) {
+  const file = event.target.files[0];
+  if (!file) return;
 
-    try {
-      const fotoComprimida = await this.redimensionarImagen(file);
-      this.perfil.fotoUrl = fotoComprimida; // Vista previa inmediata
-      
-      // Actualizamos solo la foto en el servidor
-      this.authService.actualizarPerfil(this.perfil._id, { fotoUrl: fotoComprimida }).subscribe({
-        next: (res) => {
-          this.userStateService.updateUser(res.usuario || res);
-          this.cdr.detectChanges();
-        }
-      });
-    } catch (error) {
-      console.error("Error al procesar la imagen:", error);
-    }
+  try {
+    const fotoComprimida = await this.redimensionarImagen(file);
+    this.perfil.fotoUrl = fotoComprimida;
+     this.cdr.detectChanges();
+    this.authService.actualizarPerfil(this.perfil._id, { fotoUrl: fotoComprimida }).subscribe({
+      next: (res: any) => { 
+        const usuarioActualizado = res.usuario || res;
+        this.userStateService.updateUser(usuarioActualizado);
+        
+        console.log('✅ Foto de perfil actualizada en el servidor');
+       
+      },
+      error: (err) => {
+        console.error("❌ Error al subir la foto:", err);
+        alert('No se pudo guardar la foto. Verifica tu conexión.');
+      }
+    });
+  } catch (error) {
+    console.error("Error al procesar la imagen:", error);
   }
+}
 
   private redimensionarImagen(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -93,13 +118,13 @@ export class DatosPersonales implements OnInit {
     
     this.cargando = true;
 
-    // 🔥 SOLUCIÓN AL RESETEO DE DÍAS: 
-    // Enviamos SOLO los campos que el usuario puede editar.
+    // ✅ Incluir datosPersonales al guardar
     const datosAEditar = {
       nombre: this.perfil.nombre,
       email: this.perfil.email,
-      fotoUrl: this.perfil.fotoUrl
-      // NO enviamos "vencimiento", "role", ni "cards"
+      fotoUrl: this.perfil.fotoUrl,
+      datosPersonales: this.perfil.datosPersonales, // ✅ Agregar esto
+      mensajeMotivador: this.perfil.mensajeMotivador // ✅ Y esto si lo usas
     };
 
     this.authService.actualizarPerfil(this.perfil._id, datosAEditar).subscribe({

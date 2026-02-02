@@ -141,6 +141,12 @@ export class Rutinas implements OnInit {
   }
 
 guardarRutina() {
+  const idSocioActual = this.usuarioId; 
+  if (!this.nombreRutina) {
+    this.nombreRutina = `${this.enfoque} - ${this.dia}`;
+  }
+  
+  // Validaciones básicas de campos vacíos
   if (!this.usuarioId) return alert('Por favor, selecciona un socio');
   if (!this.dia) return alert('Selecciona un día de la semana');
   if (!this.enfoque) return alert('Indica el enfoque (ej: Pecho y Tríceps)');
@@ -154,67 +160,67 @@ guardarRutina() {
     ejercicios: this.rutinaParaSocio
   };
 
+  // 🔥 CAMBIO CLAVE: Solo buscamos por día. Si el día ya existe, lo atrapamos.
   const rutinaExistenteEnEseDia = this.rutinasExistentesDelSocio.find(r => 
-    r.dia === this.dia && r.enfoque === this.enfoque
+    r.dia.toLowerCase() === this.dia.toLowerCase()
   );
 
   if (this.editandoModo || rutinaExistenteEnEseDia) {
+    // Si estamos editando o si encontramos que el día ya está ocupado
     const idParaActualizar = this.editandoModo ? this.idRutinaParaEditar : (rutinaExistenteEnEseDia?._id || '');
     
-    if (confirm(`¿Deseas guardar los cambios en la rutina "${this.nombreRutina}"?`)) {
+    // Cambiamos el mensaje para que sea más claro
+    const mensajeConfirm = this.editandoModo 
+      ? `¿Deseas guardar los cambios en la rutina "${this.nombreRutina}"?`
+      : `El día ${this.dia} ya tiene una rutina (${rutinaExistenteEnEseDia?.enfoque}). ¿Deseas SOBRESCRIBIRLA con esta nueva información?`;
+
+    if (confirm(mensajeConfirm)) {
       this.authService.actualizarRutina(idParaActualizar, data).subscribe({
         next: () => {
           alert('¡Rutina actualizada correctamente!');
           this.finalizarProceso(this.editandoModo); 
         },
-        error: (err) => alert('Error al actualizar: ' + err.message)
+        error: (err) => alert('Error al actualizar: ' + (err.error?.mensaje || err.message))
       });
     }
   } else {
+    // Si el día está libre, creamos una nueva
     this.authService.asignarRutina(data).subscribe({
       next: () => {
         alert('¡Nueva rutina creada con éxito!');
-        this.finalizarProceso(false); // <--- FALSE para quedarse y ver el cambio
+        this.finalizarProceso(false); 
       },
-      error: (err) => alert('Error al guardar: ' + err.message)
+      error: (err) => {
+        // Leemos el mensaje de error del Backend que configuramos antes
+        const mensajeError = err.error?.mensaje || 'Error al guardar';
+        alert('⚠️ ' + mensajeError);
+      }
     });
   }
 }
 
 // Corregido para limpiar la pantalla TOTALMENTE antes de cualquier otra acción
 finalizarProceso(volverALista: boolean) {
-  // 1. IMPORTANTE: NO reseteamos this.usuarioId para que el select no se vacíe
-  
-  // 2. Limpiamos los datos de la rutina de trabajo
-  this.usuarioId = '';          // Reiniciamos el select del socio
-  this.rutinaParaSocio = [];      // Borra los ejercicios de la derecha
+  const idTemporal = this.usuarioId; // Guardamos el ID un momento
+
+  // Limpiamos solo el formulario, NO el socio
+  this.rutinaParaSocio = [];
   this.dia = ''; 
-  this.enfoque = '';                // Borra el input "Lunes, Martes..."
-  this.editandoModo = false;      // Quitamos el modo edición
-  this.idRutinaParaEditar = '';   // Borramos el ID técnico de la rutina
+  this.enfoque = '';
+  this.editandoModo = false;
+  this.idRutinaParaEditar = '';
 
-  // 3. Limpiamos el catálogo de la izquierda (Buscador)
-  this.categoriaActiva = 'Pecho'; 
-  this.limiteActual = 12;
-  this.filtrarPorCategoria(this.categoriaActiva); 
-
-  // 4. Forzamos a Angular a que pinte los cambios (el borrado)
   this.cdr.detectChanges();
 
   if (volverALista) {
-    // Si veníamos de edición, regresamos a la pantalla celeste
-    this.router.navigate(['/admin/rutinas', this.usuarioId]);
+    this.router.navigate(['/admin/rutinas', idTemporal]);
   } else {
-    // Si agregamos una nueva, refrescamos la lista interna de validación 
-    // para que el sistema sepa qué rutinas nuevas tiene el socio ahora
-    this.cargarRutinasDelSocio(this.usuarioId);
-    
-    // Un pequeño delay para asegurar que el select mantenga el foco visual
-    setTimeout(() => {
-      this.cdr.detectChanges();
-    }, 100);
+    // Usamos el ID guardado para refrescar la lista de Celeste
+    this.cargarRutinasDelSocio(idTemporal);
   }
 }
+// Añade esto a tu archivo rutinas.ts
+
 
 // Asegúrate de que limpiarFormulario sea así de radical:
 limpiarFormulario() {

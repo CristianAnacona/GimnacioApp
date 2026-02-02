@@ -1,6 +1,5 @@
-<nav class="bg-slate-900 shadow-xl relative">
-  <div class="flex items-center justify-between px-4 md:px-6 py-3">
-
+<nav class="bg-linear-to-t from-[#8B0000] via-[#3a0202] to-[#1a0505]  text-center text-white shadow-xl relative">
+  <div class="flex items-center justify-between px-4 md:px-6 py-1">
     <div class="flex items-center gap-2">
       @if (role === 'admin' || role === 'socio') {
       <button (click)="menuOpen = !menuOpen"
@@ -8,12 +7,8 @@
         ☰
       </button>
       }
-      <span class="font-black text-lg tracking-tighter">
-        <span class="text-white">GYM</span>
-        <span class="text-orange-500">APP</span>
-      </span>
+      <img src="icons/LogoGymSinFondo.png" alt="Logo" class="w-20 h-20 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
     </div>
-
     <div class="flex items-center gap-3">
       <span
         class="hidden sm:block text-slate-400 text-[9px] font-black uppercase bg-slate-800 px-2 py-1 rounded border border-slate-700">
@@ -27,19 +22,18 @@
       </div>
     </div>
   </div>
-
-  <div class="md:hidden px-6 pb-3 border-t border-slate-800/50 pt-2 bg-slate-900">
+  <div class="md:hidden px-6 pb-2 border-t border-slate-800/50 pt-2 bg-slate-900">
     <div class="flex items-center gap-2">
       <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
       <span class="text-white font-medium text-xs tracking-wide">
-        Bienvenido, <span class="text-orange-500 font-bold">{{ username }}</span>
+        Bienvenido, <span class="text-[#8B0000] font-bold">{{ username }}</span>
       </span>
     </div>
   </div>
 
   <div class="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
     <span class="text-white font-semibold text-sm whitespace-nowrap">
-      Bienvenido, <span class="text-orange-500">{{ username }}</span>
+      Bienvenido, <span class="text-[#cc0000]">{{ username }}</span>
     </span>
   </div>
 
@@ -58,6 +52,6 @@
       </a>
     </li>
     }
-   </ul>
+  </ul>
   }
 </nav>
