@@ -1,0 +1,27 @@
+<!-- TOASTS -->
+<div class="toast-container">
+  @for (toast of toasts$ | async; track toast.id) {
+    <div class="toast" [ngClass]="toast.type">
+      <span class="toast-icon">
+        @if (toast.type === 'success') { ✓ }
+        @if (toast.type === 'error') { ✕ }
+        @if (toast.type === 'info') { i }
+      </span>
+      <span>{{ toast.message }}</span>
+      <button class="toast-close" (click)="toastService.remove(toast.id)">×</button>
+    </div>
+  }
+</div>
+
+<!-- CONFIRM MODAL -->
+@if ((confirmState$ | async)?.visible) {
+  <div class="confirm-overlay">
+    <div class="confirm-box">
+      <p class="confirm-message">{{ (confirmState$ | async)?.message }}</p>
+      <div class="confirm-actions">
+        <button class="btn-cancel" (click)="responder(false)">Cancelar</button>
+        <button class="btn-confirm" (click)="responder(true)">Confirmar</button>
+      </div>
+    </div>
+  </div>
+}

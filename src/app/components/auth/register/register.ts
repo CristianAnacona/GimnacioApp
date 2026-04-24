@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../services/auth'; // Verifica que la ruta a tu servicio sea esta
+
+import { AuthService } from '../../../services/auth';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -12,17 +14,16 @@ import { AuthService } from '../../../services/auth'; // Verifica que la ruta a 
   styleUrl: './register.css'
 })
 export class Register {
-  nuevoUsuario = {
-    nombre: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: 'socio'
-  };
+  nuevoUsuario = { nombre: '', email: '', password: '', confirmPassword: '', role: 'socio' };
+  verPass = false;
+  verConfirmPass = false;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private toast: ToastService,
+    private router: Router
+  ) {}
 
-  // Verifica que las contraseñas coincidan y tengan longitud mínima
   esFormularioValido(): boolean {
     return (
       this.nuevoUsuario.nombre.length > 2 &&
@@ -31,30 +32,25 @@ export class Register {
       this.nuevoUsuario.password === this.nuevoUsuario.confirmPassword
     );
   }
-  verPass: boolean = false;
-  verConfirmPass: boolean = false;
+
   contrasenasCoinciden(): boolean {
     return this.nuevoUsuario.password === this.nuevoUsuario.confirmPassword;
   }
 
-registrar() {
-  if (this.esFormularioValido()) {
-    // Forzamos que el rol sea siempre 'socio' por seguridad
-    const usuarioAEnviar = { 
-      ...this.nuevoUsuario, 
-      role: 'socio' 
-    };
+  registrar() {
+    if (!this.esFormularioValido()) return;
+
+    const usuarioAEnviar = { ...this.nuevoUsuario, role: 'socio' };
 
     this.authService.registrar(usuarioAEnviar).subscribe({
-      next: (res: any) => {
-        alert('✅ ¡Cuenta creada con éxito! Ahora puedes iniciar sesión.');
+      next: () => {
+        this.toast.success('¡Cuenta creada con éxito! Ahora puedes iniciar sesión.');
         this.router.navigate(['/login']);
       },
       error: (err: any) => {
-        alert('❌ Error: El correo ya está registrado o hubo un problema con el servidor.');
-        console.error(err);
+        const msg = err.error?.mensaje || 'El correo ya está registrado o hubo un problema con el servidor.';
+        this.toast.error(msg);
       }
     });
   }
-}
 }
