@@ -1,0 +1,249 @@
+/* ---- Wrapper flotante ---- */
+.crono-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: #0f172a;
+  border-radius: 1.5rem 1.5rem 0 0;
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.crono-wrapper.terminado {
+  animation: flash-verde 0.4s ease 3;
+}
+
+/* ---- Handle ---- */
+.crono-handle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.25rem 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  gap: 0.5rem;
+}
+
+.handle-pill {
+  display: none;
+}
+
+.handle-label {
+  flex: 1;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dot-activo {
+  width: 6px;
+  height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulso 1s ease infinite;
+}
+
+.chevron {
+  color: #475569;
+  font-size: 1.2rem;
+  transition: transform 0.25s;
+  transform: rotate(90deg);
+}
+.chevron.up {
+  transform: rotate(-90deg);
+}
+
+/* ---- Body ---- */
+.crono-body {
+  padding: 0.25rem 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ---- Presets ---- */
+.presets-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.preset-btn {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  border: 1.5px solid #1e293b;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.preset-btn.activo {
+  background: #cc0000;
+  border-color: #cc0000;
+  color: #ffffff;
+}
+
+.preset-btn:hover:not(.activo) {
+  border-color: #475569;
+  color: #cbd5e1;
+}
+
+/* ---- Display circular ---- */
+.crono-display {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crono-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.track-circle {
+  fill: none;
+  stroke: #1e293b;
+  stroke-width: 6;
+}
+
+.progress-circle {
+  fill: none;
+  stroke: #cc0000;
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.9s linear, stroke 0.3s;
+}
+
+.progress-circle.casi-terminado {
+  stroke: #f97316;
+  animation: parpadeo 0.5s ease infinite;
+}
+
+.progress-circle.terminado-circle {
+  stroke: #22c55e;
+}
+
+/* ---- Tiempo ---- */
+.crono-tiempo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+  z-index: 1;
+}
+
+.tiempo-numero {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #f1f5f9;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.finish-icon {
+  font-size: 1.8rem;
+  color: #22c55e;
+}
+.finish-text {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #22c55e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.terminado-texto .tiempo-numero { color: #22c55e; }
+
+.pulsando .tiempo-numero {
+  animation: parpadeo-numero 0.5s ease infinite;
+}
+
+/* ---- Controles ---- */
+.controles-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn-play {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: #cc0000;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, background 0.2s;
+  box-shadow: 0 4px 20px rgba(204, 0, 0, 0.4);
+}
+.btn-play:active { transform: scale(0.92); }
+.btn-play.pausar { background: #475569; box-shadow: none; }
+
+.btn-reset {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: #1e293b;
+  border: none;
+  color: #64748b;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+.btn-reset:disabled { opacity: 0.3; cursor: default; }
+.btn-reset:not(:disabled):hover { color: #cbd5e1; }
+
+/* ---- Minimizado ---- */
+.crono-wrapper.minimizado {
+  border-radius: 1rem 1rem 0 0;
+}
+
+/* ---- Animaciones ---- */
+@keyframes pulso {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+
+@keyframes parpadeo {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes parpadeo-numero {
+  0%, 100% { color: #f1f5f9; }
+  50%       { color: #f97316; }
+}
+
+@keyframes flash-verde {
+  0%, 100% { background: #0f172a; }
+  50%       { background: #14532d; }
+}

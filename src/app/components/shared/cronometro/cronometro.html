@@ -1,0 +1,73 @@
+<div class="crono-wrapper" [class.minimizado]="minimizado" [class.terminado]="terminado">
+
+  <!-- Handle / pill para minimizar -->
+  <div class="crono-handle" (click)="toggleMinimizar()">
+    <div class="handle-pill"></div>
+    <span class="handle-label">
+      @if (minimizado) {
+        ⏱ {{ minutos }}:{{ segundosDisplay }}
+        @if (activo) { <span class="dot-activo"></span> }
+      } @else {
+        Temporizador de descanso
+      }
+    </span>
+    <span class="chevron" [class.up]="!minimizado">›</span>
+  </div>
+
+  <!-- Contenido expandido -->
+  @if (!minimizado) {
+    <div class="crono-body">
+
+      <!-- Presets -->
+      <div class="presets-row">
+        @for (p of presets; track p.segundos) {
+          <button
+            class="preset-btn"
+            [class.activo]="tiempoTotal === p.segundos"
+            (click)="seleccionarPreset(p.segundos)">
+            {{ p.label }}
+          </button>
+        }
+      </div>
+
+      <!-- Círculo + tiempo -->
+      <div class="crono-display">
+        <svg class="crono-svg" viewBox="0 0 100 100">
+          <!-- Track -->
+          <circle cx="50" cy="50" r="44" class="track-circle"/>
+          <!-- Progress -->
+          <circle
+            cx="50" cy="50" r="44"
+            class="progress-circle"
+            [style.strokeDasharray]="circunferencia"
+            [style.strokeDashoffset]="dashOffset"
+            [class.casi-terminado]="tiempoRestante <= 10 && tiempoRestante > 0"
+            [class.terminado-circle]="terminado"/>
+        </svg>
+
+        <div class="crono-tiempo" [class.terminado-texto]="terminado" [class.pulsando]="activo && tiempoRestante <= 10">
+          @if (terminado) {
+            <span class="finish-icon">✓</span>
+            <span class="finish-text">¡Listo!</span>
+          } @else {
+            <span class="tiempo-numero">{{ minutos }}:{{ segundosDisplay }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Controles -->
+      <div class="controles-row">
+        <button class="btn-reset" (click)="reiniciar()" [disabled]="tiempoRestante === tiempoTotal && !activo">
+          ↺
+        </button>
+        <button class="btn-play" (click)="toggleTimer()" [class.pausar]="activo">
+          @if (terminado) { ↺ }
+          @else if (activo) { ⏸ }
+          @else { ▶ }
+        </button>
+        <div style="width: 2.5rem;"></div>
+      </div>
+
+    </div>
+  }
+</div>

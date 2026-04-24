@@ -7,11 +7,12 @@ import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../../services/auth';
 import { ToastService } from '../../../services/toast.service';
 import { DIAS_RUTINA } from '../../../../data/ejercicios-catalogo';
+import { Cronometro } from '../../shared/cronometro/cronometro';
 
 @Component({
   selector: 'app-mi-rutina',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, Cronometro],
   templateUrl: './mi-rutina.html',
   styleUrl: './mi-rutina.css',
 })
