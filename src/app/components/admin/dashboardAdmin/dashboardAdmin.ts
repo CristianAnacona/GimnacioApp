@@ -1,10 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router,RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { Navbar } from '../../shared/navbar/navbar';
 import { AuthService } from '../../../services/auth';
-
+import { UserStateService } from '../../../services/user-state.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -13,32 +16,36 @@ import { AuthService } from '../../../services/auth';
   templateUrl: './dashboardAdmin.html',
   styleUrl: './dashboardAdmin.css',
 })
-export class AdminDashboard implements OnInit {
-role: string = '';
+export class AdminDashboard implements OnInit, OnDestroy {
+  role = '';
   username = '';
   usuarios: any[] = [];
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
+    private userStateService: UserStateService,
+    private toast: ToastService,
     private cdr: ChangeDetectorRef,
     private router: Router
   ) {}
 
   ngOnInit() {
-    // El guard ya validó que es admin
-    this.role = localStorage.getItem('role') || 'admin';
+    this.role = this.userStateService.getRole() || 'admin';
     this.username = localStorage.getItem('nombre') || 'Admin';
     this.cargarUsuarios();
   }
 
   cargarUsuarios() {
-    this.authService.getUsuarios().subscribe({
-      next: (res: any) => {
-        this.usuarios = res;
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error(err)
-    });
+    this.authService.getUsuarios()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          this.usuarios = res;
+          this.cdr.detectChanges();
+        },
+        error: () => this.toast.error('Error al cargar usuarios')
+      });
   }
 
   esVencido(fecha: any): boolean {
@@ -47,10 +54,19 @@ role: string = '';
   }
 
   renovar(id: string, dias: number) {
-    this.authService.renovarMembresia(id, dias).subscribe({
-      next: () => this.cargarUsuarios(),
-      error: (err) =>
-        alert('Error al renovar: ' + (err.error?.mensaje || 'Intenta de nuevo'))
-    });
+    this.authService.renovarMembresia(id, dias)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.toast.success('Membresía renovada');
+          this.cargarUsuarios();
+        },
+        error: (err) => this.toast.error('Error al renovar: ' + (err.error?.mensaje || 'Intenta de nuevo'))
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

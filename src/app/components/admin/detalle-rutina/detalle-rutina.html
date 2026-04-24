@@ -1,25 +1,61 @@
-<div class="gestion-container" style="padding: 20px;">
-  <h2 style="color: #333;">📋 Gestión de Rutinas</h2>
-  <hr>
+<div class="page">
 
-  @if (rutinas && rutinas.length > 0) {
-    <div class="grid-rutinas" style="display: flex; flex-direction: column; gap: 15px;">
-      @for (rutina of rutinas; track rutina._id) {
-        <div class="card-admin" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; background: white; box-shadow: 2px 2px 5px rgba(0,0,0,0.05);">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="margin: 0; color: #e63946;">{{ rutina.nombre }}</h3>
-            <div class="botones">
-              <button (click)="editarRutina(rutina)" style="background: #4a90e2; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-right: 10px;">✏️ Editar</button>
-              <button (click)="borrarRutina(rutina._id)" style="background: #d0021b; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer;">🗑️ Borrar</button>
-            </div>
-          </div>
-          <p style="font-size: 0.9em; color: #666;">Ejercicios: {{ rutina.ejercicios?.length }}</p>
-        </div>
-      }
-    </div>
-  } @else {
-    <div style="text-align: center; padding: 40px;">
-      <p>Cargando datos o no se encontraron rutinas...</p>
+  <!-- Header -->
+  <div class="page-header">
+    <h2 class="page-title">Gestión de Rutinas</h2>
+    <span class="badge-total">{{ rutinas.length }} día{{ rutinas.length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  <!-- Sin rutinas -->
+  @if (!rutinas.length) {
+    <div class="empty-state">
+      <span class="empty-icon">📋</span>
+      <p>No hay rutinas asignadas todavía.</p>
     </div>
   }
+
+  <!-- Lista de rutinas -->
+  <div class="rutinas-list">
+    @for (rutina of rutinas; track rutina._id) {
+      <div class="rutina-card">
+
+        <!-- Cabecera de la tarjeta -->
+        <div class="card-header">
+          <div class="card-title-block">
+            <span class="dia-badge">{{ rutina.dia }}</span>
+            <h3 class="enfoque-title">{{ rutina.enfoque || rutina.nombre }}</h3>
+          </div>
+          <div class="card-actions">
+            <button class="btn-edit" (click)="editarRutina(rutina)">✏️ Editar</button>
+            <button class="btn-delete" (click)="borrarRutina(rutina._id)">🗑️ Borrar</button>
+          </div>
+        </div>
+
+        <!-- Resumen rápido -->
+        <div class="card-summary">
+          <span class="summary-pill">💪 {{ rutina.ejercicios?.length || 0 }} ejercicios</span>
+        </div>
+
+        <!-- Lista de ejercicios -->
+        @if (rutina.ejercicios?.length) {
+          <div class="ejercicios-list">
+            @for (ej of rutina.ejercicios; track $index) {
+              <div class="ejercicio-item">
+                <div class="ej-info">
+                  <span class="ej-num">{{ $index + 1 }}</span>
+                  <span class="ej-nombre">{{ ej.nombre }}</span>
+                </div>
+                <div class="ej-meta">
+                  <span class="ej-series">{{ ej.series }} series</span>
+                  <span class="ej-reps">× {{ ej.repeticiones }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+
 </div>

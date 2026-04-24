@@ -1,8 +1,11 @@
-import { UserStateService } from './../../../services/user-state.service';
-import { ChangeDetectorRef, Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { AuthService } from '../../../services/auth';
+import { UserStateService } from '../../../services/user-state.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,27 +14,28 @@ import { AuthService } from '../../../services/auth';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar implements OnInit {
-  constructor(private router: Router, private authService: AuthService,
-    private cdr: ChangeDetectorRef, private UserStateService: UserStateService) { }
-
-  role: string = '';
-  username: string = '';
-  fotoUrl: string = 'https://ui-avatars.com/api/?name=Usuario&background=random';
+export class Navbar implements OnInit, OnDestroy {
+  role = '';
+  username = '';
+  fotoUrl = 'https://ui-avatars.com/api/?name=Usuario&background=random';
   menuOpen = false;
 
-  // Cache estático para evitar recargas
   private static perfilCache: any = null;
-  private static lastLoadTime: number = 0;
-  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+  private static lastLoadTime = 0;
+  private readonly CACHE_DURATION = 5 * 60 * 1000;
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
+    private userStateService: UserStateService
+  ) {}
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    const clickedInsideMenu = target.closest('.menu-container');
-    const clickedMenuButton = target.closest('.menu-button');
-
-    if (!clickedInsideMenu && !clickedMenuButton && this.menuOpen) {
+    if (!target.closest('.menu-container') && !target.closest('.menu-button') && this.menuOpen) {
       this.menuOpen = false;
     }
   }
@@ -61,25 +65,24 @@ export class Navbar implements OnInit {
   }
 
   ngOnInit() {
-    this.role = localStorage.getItem('role') || 'socio';
+    this.role = this.userStateService.getRole() || 'socio';
     this.username = localStorage.getItem('nombre') || 'Usuario';
 
+    this.userStateService.user$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(userData => {
+        if (!userData) return;
+        this.username = userData.nombre || this.username;
+        if (userData.fotoUrl?.trim()) {
+          this.fotoUrl = userData.fotoUrl;
+        }
+      });
 
-    this.UserStateService.user$.subscribe(userData => {
-      if (!userData) return;
-
-      this.username = userData.nombre || this.username;
-
-      if (userData.fotoUrl && userData.fotoUrl.trim() !== '') {
-        this.fotoUrl = userData.fotoUrl;
-      }
-    });
-
-    const userId = localStorage.getItem('userId');
+    const userId = this.userStateService.getUserId();
     if (userId) {
-      this.cargarDatosUsuario();
+      this.cargarDatosUsuario(userId);
     } else {
-      this.fotoUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(this.username) + '&background=random';
+      this.fotoUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(this.username)}&background=random`;
     }
   }
 
@@ -87,58 +90,41 @@ export class Navbar implements OnInit {
     this.menuOpen = !this.menuOpen;
   }
 
-  cargarDatosUsuario() {
-    const userId = localStorage.getItem('userId');
-
-    if (!userId) {
-      this.fotoUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(this.username) + '&background=random';
-      return;
-    }
-
-    // Verificar si tenemos cache válido
+  cargarDatosUsuario(userId: string) {
     const now = Date.now();
     const cacheValido = Navbar.perfilCache &&
-      (now - Navbar.lastLoadTime) < this.CACHE_DURATION;
+      (now - Navbar.lastLoadTime) < this.CACHE_DURATION &&
+      Navbar.perfilCache.userId === userId;
 
-    if (cacheValido && Navbar.perfilCache.userId === userId) {
-      // Usar datos del cache
+    if (cacheValido) {
       this.aplicarDatosPerfil(Navbar.perfilCache.data);
       return;
     }
 
-    // Si no hay cache válido, hacer la petición
-    this.authService.obtenerPerfil(userId).subscribe({
-      next: (perfil: any) => {
-        // Guardar en cache
-        Navbar.perfilCache = {
-          userId: userId,
-          data: perfil
-        };
-        Navbar.lastLoadTime = Date.now();
-
-        this.aplicarDatosPerfil(perfil);
-      },
-      error: (error: any) => {
-        console.error('Error al cargar perfil:', error);
-        this.fotoUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(this.username) + '&background=random';
-      }
-    });
+    this.authService.obtenerPerfil(userId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (perfil: any) => {
+          Navbar.perfilCache = { userId, data: perfil };
+          Navbar.lastLoadTime = Date.now();
+          this.aplicarDatosPerfil(perfil);
+        },
+        error: () => {
+          this.fotoUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(this.username)}&background=random`;
+        }
+      });
   }
 
   private aplicarDatosPerfil(perfil: any) {
     this.username = perfil.nombre || 'Usuario';
-
-    if (perfil.fotoUrl && perfil.fotoUrl.trim() !== '') {
-      this.fotoUrl = perfil.fotoUrl;
-    } else {
-      this.fotoUrl = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(perfil.nombre) + '&background=random';
-    }
+    this.fotoUrl = perfil.fotoUrl?.trim()
+      ? perfil.fotoUrl
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(perfil.nombre)}&background=random`;
     this.cdr.detectChanges();
   }
 
   manejarErrorFoto(event: any) {
-    event.target.src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(this.username)
-      + '&background=random';
+    event.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(this.username)}&background=random`;
   }
 
   handleMenuClick(link: any) {
@@ -151,10 +137,14 @@ export class Navbar implements OnInit {
   }
 
   logout() {
-    // Limpiar cache al cerrar sesión
     Navbar.perfilCache = null;
     Navbar.lastLoadTime = 0;
-    localStorage.clear();
+    this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

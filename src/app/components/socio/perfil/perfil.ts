@@ -4,9 +4,9 @@ import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-// Importa tus servicios
 import { AuthService } from '../../../services/auth';
 import { UserStateService } from '../../../services/user-state.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-perfil',
@@ -18,21 +18,19 @@ import { UserStateService } from '../../../services/user-state.service';
 })
 export class Perfil implements OnInit, OnDestroy {
   perfil: any = null;
-  diasRestantes: number = 0;
+  diasRestantes = 0;
   private destroy$ = new Subject<void>();
 
   constructor(
-    private authService: AuthService, 
-    private userStateService: UserStateService, // Inyectamos el servicio de estado
+    private authService: AuthService,
+    private userStateService: UserStateService,
+    private toast: ToastService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    const usuarioString = localStorage.getItem('usuario');
-    if (usuarioString) {
-      const usuarioObj = JSON.parse(usuarioString);
-      this.cargarPerfil(usuarioObj._id);
-    }
+    const usuario = this.userStateService.getCurrentUser();
+    if (usuario?._id) this.cargarPerfil(usuario._id);
   }
 
   cargarPerfil(id: string) {
@@ -44,11 +42,10 @@ export class Perfil implements OnInit, OnDestroy {
           this.diasRestantes = data.cards?.vencimiento || 0;
           this.cdr.markForCheck();
         },
-        error: (err) => console.error('Error al traer el perfil', err)
+        error: () => this.toast.error('Error al cargar el perfil')
       });
   }
 
-  
   actualizarFotoPerfil(nuevaFotoUrl: string) {
     if (!this.perfil) return;
 
@@ -57,23 +54,16 @@ export class Perfil implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.perfil = res;
-          
-          // 🔥 LA CLAVE: Usamos el servicio de estado global
-          // Esto actualiza el localStorage y avisa al Navbar al instante
-          this.userStateService.updateUser({
-            fotoUrl: res.fotoUrl
-          });
-
+          this.userStateService.updateUser({ fotoUrl: res.fotoUrl });
           this.cdr.markForCheck();
-          alert('¡Foto actualizada correctamente!');
+          this.toast.success('¡Foto actualizada correctamente!');
         },
         error: (err) => {
           if (err.status === 413) {
-            alert('Error: La imagen es demasiado pesada para el servidor.');
+            this.toast.error('La imagen es demasiado pesada para el servidor.');
           } else {
-            alert('Error al actualizar la foto.');
+            this.toast.error('Error al actualizar la foto.');
           }
-          console.error('❌ Error al actualizar', err);
         }
       });
   }
