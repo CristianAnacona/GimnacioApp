@@ -1,73 +1,97 @@
-<div class="crono-wrapper" [class.minimizado]="minimizado" [class.terminado]="terminado">
-
-  <!-- Handle / pill para minimizar -->
-  <div class="crono-handle" (click)="toggleMinimizar()">
-    <div class="handle-pill"></div>
-    <span class="handle-label">
-      @if (minimizado) {
-        ⏱ {{ minutos }}:{{ segundosDisplay }}
-        @if (activo) { <span class="dot-activo"></span> }
-      } @else {
-        Temporizador de descanso
-      }
-    </span>
-    <span class="chevron" [class.up]="!minimizado">›</span>
+<!-- ===== CONFETI (se muestra encima de todo al terminar) ===== -->
+@if (terminado) {
+  <div class="confetti-container" (click)="onClickInterno($event)">
+    @for (p of confettiPiezas; track p.id) {
+      <div
+        class="confetti-pieza"
+        [class.circulo]="p.isCircle"
+        [style.left.%]="p.left"
+        [style.background]="p.color"
+        [style.width.px]="p.size"
+        [style.height.px]="p.size"
+        [style.animation-delay.s]="p.delay"
+        [style.animation-duration.s]="p.duration">
+      </div>
+    }
   </div>
+}
 
-  <!-- Contenido expandido -->
-  @if (!minimizado) {
+<!-- ===== ESTADO MINIMIZADO ===== -->
+@if (minimizado) {
+  <div class="crono-mini"
+       [class.mini-alerta]="casiTerminado"
+       [class.mini-fin]="terminado"
+       (click)="abrir($event)">
+    <span class="mini-label">Cronómetro</span>
+    <div class="mini-reloj">
+      <span class="mini-icono">⏱</span>
+      <span class="mini-tiempo"
+            [class.tiempo-alerta]="casiTerminado"
+            [class.tiempo-fin]="terminado">
+        {{ minutos }}:{{ segundosDisplay }}
+      </span>
+      @if (activo && !terminado) { <span class="mini-dot" [class.dot-alerta]="casiTerminado"></span> }
+    </div>
+
+    @if (terminado) {
+      <span class="mini-fin-texto">¡A darle! 💪</span>
+    }
+  </div>
+}
+
+<!-- ===== MENSAJE DE CELEBRACIÓN ===== -->
+@if (terminado && !minimizado) {
+  <div class="celebracion-overlay" (click)="onClickInterno($event)">
+    <div class="celebracion-box">
+      <div class="celeb-emoji">🎉</div>
+      <p class="celeb-titulo">¡Tiempo de descanso terminado!</p>
+      <p class="celeb-sub">¡A darle con todo, guerrero!</p>
+      <button class="celeb-btn" (click)="reiniciar()">↺ Otra serie</button>
+    </div>
+  </div>
+}
+
+<!-- ===== ESTADO EXPANDIDO ===== -->
+@if (!minimizado && !terminado) {
+  <div class="crono-wrapper" (click)="onClickInterno($event)">
+
+    <div class="crono-handle">
+      <span class="handle-label">⏱ Temporizador de descanso</span>
+    </div>
+
     <div class="crono-body">
 
-      <!-- Presets -->
       <div class="presets-row">
         @for (p of presets; track p.segundos) {
-          <button
-            class="preset-btn"
-            [class.activo]="tiempoTotal === p.segundos"
-            (click)="seleccionarPreset(p.segundos)">
+          <button class="preset-btn" [class.activo]="tiempoTotal === p.segundos" (click)="seleccionarPreset(p.segundos)">
             {{ p.label }}
           </button>
         }
       </div>
 
-      <!-- Círculo + tiempo -->
       <div class="crono-display">
         <svg class="crono-svg" viewBox="0 0 100 100">
-          <!-- Track -->
           <circle cx="50" cy="50" r="44" class="track-circle"/>
-          <!-- Progress -->
           <circle
             cx="50" cy="50" r="44"
             class="progress-circle"
             [style.strokeDasharray]="circunferencia"
             [style.strokeDashoffset]="dashOffset"
-            [class.casi-terminado]="tiempoRestante <= 10 && tiempoRestante > 0"
-            [class.terminado-circle]="terminado"/>
+            [class.casi-terminado]="casiTerminado"/>
         </svg>
-
-        <div class="crono-tiempo" [class.terminado-texto]="terminado" [class.pulsando]="activo && tiempoRestante <= 10">
-          @if (terminado) {
-            <span class="finish-icon">✓</span>
-            <span class="finish-text">¡Listo!</span>
-          } @else {
-            <span class="tiempo-numero">{{ minutos }}:{{ segundosDisplay }}</span>
-          }
+        <div class="crono-tiempo" [class.pulsando]="casiTerminado">
+          <span class="tiempo-numero">{{ minutos }}:{{ segundosDisplay }}</span>
         </div>
       </div>
 
-      <!-- Controles -->
       <div class="controles-row">
-        <button class="btn-reset" (click)="reiniciar()" [disabled]="tiempoRestante === tiempoTotal && !activo">
-          ↺
-        </button>
+        <button class="btn-reset" (click)="reiniciar()" [disabled]="tiempoRestante === tiempoTotal && !activo">↺</button>
         <button class="btn-play" (click)="toggleTimer()" [class.pausar]="activo">
-          @if (terminado) { ↺ }
-          @else if (activo) { ⏸ }
-          @else { ▶ }
+          @if (activo) { ⏸ } @else { ▶ }
         </button>
-        <div style="width: 2.5rem;"></div>
+        <div style="width:2.5rem"></div>
       </div>
 
     </div>
-  }
-</div>
+  </div>
+}
