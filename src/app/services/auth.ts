@@ -85,6 +85,10 @@ export class AuthService {
     return this.http.delete(`${this.rutinasUrl}/eliminar/${idRutina}`);
   }
 
+  resetDiario(usuarioId: string): Observable<any> {
+    return this.http.patch(`${this.rutinasUrl}/reset-dia/${usuarioId}`, {});
+  }
+
   toggleEjercicioCompletado(rutinaId: string, ejercicioIdx: number, completado: boolean): Observable<any> {
     return this.http.patch(
       `${this.rutinasUrl}/${rutinaId}/ejercicio/${ejercicioIdx}`,
