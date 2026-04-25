@@ -29,10 +29,38 @@
     </div>
   }
 
+  <!-- Formulario de edición (desde card última medición) -->
+  @if (editando && !mostrarForm) {
+    <div class="form-card">
+      <p class="form-titulo">✏️ Editando · {{ formatFecha(editando.fecha) }}</p>
+      <div class="form-grid">
+        @for (campo of campos; track campo.key) {
+          <div class="field">
+            <label class="field-label">{{ campo.emoji }} {{ campo.label }}</label>
+            <div class="field-wrap">
+              <input type="number" [(ngModel)]="editForm[campo.key]"
+                     [placeholder]="campo.unidad" class="field-input" min="0" step="0.1">
+              <span class="field-unidad">{{ campo.unidad }}</span>
+            </div>
+          </div>
+        }
+      </div>
+      <div class="edit-acciones">
+        <button class="btn-cancelar" (click)="cancelarEditar()">Cancelar</button>
+        <button class="btn-guardar" (click)="guardarEdicion()" [disabled]="guardando">
+          {{ guardando ? 'Guardando...' : '💾 Guardar' }}
+        </button>
+      </div>
+    </div>
+  }
+
   <!-- Última medición destacada -->
-  @if (ultima) {
+  @if (ultima && !editando) {
     <div class="ultima-card">
-      <p class="ultima-titulo">Última medición · {{ formatFecha(ultima.fecha) }}</p>
+      <div class="ultima-header">
+        <p class="ultima-titulo">Última medición · {{ formatFecha(ultima.fecha) }}</p>
+        <button class="btn-edit-ultima" (click)="abrirEditar(ultima)">✏️ Editar</button>
+      </div>
       <div class="ultima-grid">
         @for (campo of campos; track campo.key) {
           @if (ultima[campo.key] != null) {
@@ -51,7 +79,7 @@
         }
       </div>
     </div>
-  }
+  } @else if (ultima && editando) {}
 
   <!-- Sin registros -->
   @if (!historial.length) {
@@ -63,7 +91,7 @@
   }
 
   <!-- Historial -->
-  @if (historial.length > 1) {
+  @if (historial.length >= 1) {
     <div class="historial-card">
       <p class="historial-titulo">Historial</p>
       <div class="historial-scroll">
