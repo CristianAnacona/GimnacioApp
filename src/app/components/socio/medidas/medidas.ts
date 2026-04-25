@@ -33,6 +33,8 @@ export class Medidas implements OnInit {
   readonly campos = CAMPOS;
 
   nueva: Partial<Record<CampoKey, number | null>> = {};
+  editando: Medida | null = null;
+  editForm: Partial<Record<CampoKey, number | null>> = {};
 
   constructor(
     private medidasService: MedidasService,
@@ -96,6 +98,33 @@ export class Medidas implements OnInit {
         this.cargar();
       },
       error: () => { this.toast.error('Error al guardar'); this.guardando = false; }
+    });
+  }
+
+  abrirEditar(m: Medida) {
+    this.editando = m;
+    this.editForm = {
+      peso: m.peso ?? null, cintura: m.cintura ?? null,
+      cadera: m.cadera ?? null, pecho: m.pecho ?? null,
+      brazo: m.brazo ?? null, muslo: m.muslo ?? null,
+    };
+    this.mostrarForm = false;
+  }
+
+  cancelarEditar() { this.editando = null; this.editForm = {}; }
+
+  guardarEdicion() {
+    if (!this.editando?._id) return;
+    this.guardando = true;
+    this.medidasService.actualizar(this.editando._id, this.editForm).subscribe({
+      next: () => {
+        this.toast.success('Medidas actualizadas');
+        this.editando = null;
+        this.editForm = {};
+        this.guardando = false;
+        this.cargar();
+      },
+      error: () => { this.toast.error('Error al actualizar'); this.guardando = false; }
     });
   }
 

@@ -29,6 +29,10 @@ export class MedidasService {
     return this.http.get<Medida[]>(`${this.apiUrl}/${usuarioId}`);
   }
 
+  actualizar(id: string, datos: Partial<Medida>): Observable<Medida> {
+    return this.http.put<Medida>(`${this.apiUrl}/${id}`, datos);
+  }
+
   eliminar(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
