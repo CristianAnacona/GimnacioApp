@@ -1,6 +1,29 @@
 @import "tailwindcss";
 
 /* ============================================
+   COMPATIBILIDAD — prefijos y fallbacks
+   ============================================ */
+
+/* Flexbox gap — fallback para Android < 8 */
+.flex { display: -webkit-box; display: -webkit-flex; display: flex; }
+.flex-col { -webkit-box-orient: vertical; -webkit-flex-direction: column; flex-direction: column; }
+
+/* Aspect-ratio fallback */
+.aspect-square { aspect-ratio: 1 / 1; }
+
+/* Gradientes con prefijo */
+[class*="bg-gradient-to-"] {
+  background-image: -webkit-linear-gradient(var(--tw-gradient-stops));
+}
+
+/* Transiciones */
+* { -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+
+/* Scrollbar invisible en webkit */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ============================================
    TEMA AZUL — tonos suaves en blancos y grises
    ============================================ */
 

@@ -1,65 +1,69 @@
-<div class="min-h-screen bg-slate-900 flex items-center justify-center p-4 font-sans">
-  <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
+<div class="min-h-screen bg-[#090f1e] flex items-center justify-center p-4 font-sans">
 
-    <div
-      class="bg-linear-to-t from-[#1e3a8a] via-[#172554] to-[#0f172a] py-2 text-center text-white rounded-t-3xl shadow-2xl">
-      <div class=" flex justify-center">
-        <img src="icons/LogoGymSinFondo.png" alt="Logo" class="w-20 h-20 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
+  <div class="w-full max-w-sm">
+
+    <!-- Header con logo -->
+    <div class="bg-gradient-to-b from-[#1e3a8a] via-[#172554] to-[#0f172a] rounded-t-3xl pt-5 pb-4 text-center px-6 shadow-2xl">
+
+      <div class="flex justify-center mb-2">
+        <div class="p-1 rounded-2xl bg-white/10 backdrop-blur-sm shadow-lg shadow-blue-900/50">
+          <img src="icons/LogoGym.jpg" alt="Logo"
+            class="w-16 h-16 rounded-xl object-cover logo-blend">
+        </div>
       </div>
 
-      <h2 class="text-3xl font-black italic tracking-tighter uppercase">
-        DRAKKAR<span class="text-white/40 ml-1">GYM</span>
-      </h2>
-
-      <p class="text-xs uppercase tracking-[0.3em] font-extrabold text-blue-300/90 mt-3">
-        ¡Crea tu cuenta!
+      <h1 class="text-2xl font-black tracking-tight text-white uppercase">
+        KODIAK<span class="text-blue-400/70 font-light ml-1">GYM</span>
+      </h1>
+      <p class="text-[10px] uppercase tracking-[0.3em] font-bold text-blue-300/70 mt-0.5">
+        Crea tu cuenta
       </p>
     </div>
 
-    <form (ngSubmit)="registrar()" #registerForm="ngForm" class="p-8 space-y-4">
+    <!-- Formulario -->
+    <div class="bg-[#f8fbff] rounded-b-3xl shadow-2xl px-6 pt-6 pb-8 space-y-4">
 
-      <div>
-        <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Nombre Completo</label>
+      <div class="space-y-1">
+        <label class="block text-xs font-extrabold text-[#1d4ed8] uppercase tracking-widest ml-1">Nombre completo</label>
         <input type="text" name="nombre" [(ngModel)]="nuevoUsuario.nombre" required
-          class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#1e3a8a] rounded-xl outline-none transition-all"
+          class="w-full px-4 py-3 bg-[#f0f5ff] border-2 border-[#c8dcff] focus:border-[#1d4ed8] rounded-2xl outline-none transition-all text-slate-800 font-medium placeholder-slate-400 text-sm"
           placeholder="Juan Pérez">
       </div>
 
-      <div>
-        <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Correo Electrónico</label>
+      <div class="space-y-1">
+        <label class="block text-xs font-extrabold text-[#1d4ed8] uppercase tracking-widest ml-1">Correo electrónico</label>
         <input type="email" name="email" [(ngModel)]="nuevoUsuario.email" required
-          class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#1e3a8a] rounded-xl outline-none transition-all"
-          placeholder="correo@gym.com">
+          class="w-full px-4 py-3 bg-[#f0f5ff] border-2 border-[#c8dcff] focus:border-[#1d4ed8] rounded-2xl outline-none transition-all text-slate-800 font-medium placeholder-slate-400 text-sm"
+          placeholder="correo@kodiak.com">
       </div>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div class="grid grid-cols-2 gap-3">
 
-        <div class="relative">
-          <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Contraseña</label>
+        <div class="space-y-1">
+          <label class="block text-xs font-extrabold text-[#1d4ed8] uppercase tracking-widest ml-1">Contraseña</label>
           <div class="relative">
             <input #passwordInput [type]="verPass ? 'text' : 'password'" name="password"
               [(ngModel)]="nuevoUsuario.password" required
-              class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#1e3a8a] rounded-xl outline-none transition-all pr-12"
-              placeholder="Min. 8 carac.">
-
+              class="w-full px-3 py-3 bg-[#f0f5ff] border-2 border-[#c8dcff] focus:border-[#1d4ed8] rounded-2xl outline-none transition-all text-slate-800 font-medium placeholder-slate-400 pr-9 text-sm"
+              placeholder="Min 8">
             <button type="button" (click)="verPass = !verPass; passwordInput.focus()"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-2xl focus:outline-none transition-transform active:scale-90">
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-lg focus:outline-none">
               {{ verPass ? '🙉' : '🙈' }}
             </button>
           </div>
         </div>
 
-        <div class="relative">
-          <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Confirmar</label>
+        <div class="space-y-1">
+          <label class="block text-xs font-extrabold text-[#1d4ed8] uppercase tracking-widest ml-1">Confirmar</label>
           <div class="relative">
             <input #confirmPasswordInput [type]="verConfirmPass ? 'text' : 'password'" name="confirmPassword"
               [(ngModel)]="nuevoUsuario.confirmPassword" required
-              [class.border-blue-600]="nuevoUsuario.confirmPassword && !contrasenasCoinciden()"
-              class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#1e3a8a] rounded-xl outline-none transition-all pr-12"
-              placeholder="Repetir...">
-
+              [class.border-red-400]="nuevoUsuario.confirmPassword && !contrasenasCoinciden()"
+              [class.border-green-400]="nuevoUsuario.confirmPassword && contrasenasCoinciden()"
+              class="w-full px-3 py-3 bg-[#f0f5ff] border-2 border-[#c8dcff] focus:border-[#1d4ed8] rounded-2xl outline-none transition-all text-slate-800 font-medium placeholder-slate-400 pr-9 text-sm"
+              placeholder="Repetir">
             <button type="button" (click)="verConfirmPass = !verConfirmPass; confirmPasswordInput.focus()"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-2xl focus:outline-none transition-transform active:scale-90">
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-lg focus:outline-none">
               {{ verConfirmPass ? '🙉' : '🙈' }}
             </button>
           </div>
@@ -67,27 +71,28 @@
 
       </div>
 
-      <div *ngIf="nuevoUsuario.confirmPassword && !contrasenasCoinciden()" class="bg-red-50 p-2 rounded-lg">
-        <p class="text-red-500 text-[10px] font-bold italic text-center uppercase tracking-wider">
+      <!-- Validaciones -->
+      @if (nuevoUsuario.password && nuevoUsuario.password.length < 8) {
+        <p class="text-amber-500 text-[10px] font-bold text-center uppercase tracking-wider">
+          ⚠️ La contraseña debe tener al menos 8 caracteres
+        </p>
+      }
+      @if (nuevoUsuario.confirmPassword && !contrasenasCoinciden()) {
+        <p class="text-red-500 text-[10px] font-bold text-center uppercase tracking-wider">
           ❌ Las contraseñas no coinciden
         </p>
-      </div>
+      }
 
-      <div *ngIf="nuevoUsuario.password && nuevoUsuario.password.length < 8" class="bg-amber-50 p-2 rounded-lg">
-        <p class="text-amber-600 text-[10px] font-bold italic text-center uppercase tracking-wider">
-          ⚠️ La contraseña es muy corta
-        </p>
-      </div>
-
-      <button type="submit" [disabled]="!esFormularioValido()" [class.opacity-50]="!esFormularioValido()"
-        class="w-full bg-slate-900 text-white font-extrabold py-4 rounded-2xl transform hover:scale-[1.02] transition-all shadow-lg active:scale-95 disabled:bg-slate-500 disabled:cursor-not-allowed flex justify-center items-center gap-2">
-        CREAR CUENTA
+      <button type="button" [disabled]="!esFormularioValido()" (click)="registrar()"
+        class="w-full bg-gradient-to-r from-[#1e40af] to-[#1d4ed8] text-white font-extrabold py-4 rounded-2xl transition-all shadow-lg shadow-blue-700/40 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-sm tracking-widest uppercase">
+        Crear Cuenta
       </button>
 
-      <p class="text-center text-sm text-slate-500 mt-4">
-        ¿Ya tienes cuenta? <a routerLink="/login"
-          class="text-[#60a5fa] font-bold hover:underline cursor-pointer">Inicia sesión</a>
+      <p class="text-center text-sm text-[#7a9bc0]">
+        ¿Ya tienes cuenta?
+        <a routerLink="/login" class="text-[#1d4ed8] font-bold hover:underline">Inicia sesión</a>
       </p>
-    </form>
+
+    </div>
   </div>
 </div>
