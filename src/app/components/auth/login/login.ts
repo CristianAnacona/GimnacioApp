@@ -7,7 +7,6 @@ import { AuthService } from '../../../services/auth';
 import { ToastService } from '../../../services/toast.service';
 
 const GOOGLE_CLIENT_ID = '976541861094-pcm89afbvhdi6fttf7si2cc7gbtuf2pn.apps.googleusercontent.com';
-let googleYaInicializado = false;
 
 @Component({
   selector: 'app-login',
@@ -29,36 +28,21 @@ export class Login implements AfterViewInit {
   ) {}
 
   ngAfterViewInit() {
-    this.initGoogleBtn();
+    this.initGoogle();
   }
 
-  private initGoogleBtn() {
-    if (googleYaInicializado) return;
-
+  private initGoogle() {
     const tryInit = () => {
       const google = (window as any).google;
       if (google?.accounts?.id) {
-        if (googleYaInicializado) return;
-        googleYaInicializado = true;
-
         google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
           callback: (response: any) => {
             this.ngZone.run(() => this.handleGoogleResponse(response));
           },
-          use_fedcm_for_prompt: false
+          use_fedcm_for_prompt: false,
+          auto_select: false
         });
-
-        const btnEl = document.getElementById('google-signin-btn');
-        if (btnEl) {
-          google.accounts.id.renderButton(btnEl, {
-            theme: 'outline',
-            size: 'large',
-            width: 200,
-            text: 'signin_with',
-            locale: 'es'
-          });
-        }
       } else {
         setTimeout(tryInit, 400);
       }
@@ -67,11 +51,11 @@ export class Login implements AfterViewInit {
   }
 
   clickGoogleBtn() {
-    const iframe = document.querySelector('#google-signin-btn iframe') as HTMLElement;
-    if (iframe) {
-      iframe.click();
+    const google = (window as any).google;
+    if (google?.accounts?.id) {
+      google.accounts.id.prompt();
     } else {
-      (window as any).google?.accounts?.id?.prompt();
+      this.toast.error('Google no está disponible. Intenta de nuevo.');
     }
   }
 
