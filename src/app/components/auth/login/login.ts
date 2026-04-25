@@ -31,36 +31,29 @@ export class Login implements AfterViewInit {
     this.initGoogle();
   }
 
-  private initGoogle() {
-    const tryInit = () => {
-      const google = (window as any).google;
-      if (google?.accounts?.id) {
-        google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: (response: any) => {
-            this.ngZone.run(() => this.handleGoogleResponse(response));
-          },
-          use_fedcm_for_prompt: false,
-          auto_select: false
-        });
-      } else {
-        setTimeout(tryInit, 400);
-      }
-    };
-    setTimeout(tryInit, 200);
-  }
+  private initGoogle() {}
 
   clickGoogleBtn() {
     const google = (window as any).google;
-    if (google?.accounts?.id) {
-      google.accounts.id.prompt();
-    } else {
+    if (!google?.accounts?.oauth2) {
       this.toast.error('Google no está disponible. Intenta de nuevo.');
+      return;
     }
+
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'openid email profile',
+      callback: (tokenResponse: any) => {
+        if (tokenResponse.access_token) {
+          this.ngZone.run(() => this.handleGoogleToken(tokenResponse.access_token));
+        }
+      }
+    });
+    client.requestAccessToken();
   }
 
-  private handleGoogleResponse(response: any) {
-    this.authService.loginConGoogle(response.credential).subscribe({
+  private handleGoogleToken(accessToken: string) {
+    this.authService.loginConGoogle(accessToken).subscribe({
       next: (res: any) => {
         localStorage.clear();
         const role = res.usuario.role.toLowerCase().trim();
