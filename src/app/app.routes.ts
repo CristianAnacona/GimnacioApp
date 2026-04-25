@@ -99,6 +99,10 @@ export const routes: Routes = [
         path: 'progreso',
         loadComponent: () => import('./components/socio/progreso/progreso').then(m => m.Progreso)
       },
+      {
+        path: 'medidas',
+        loadComponent: () => import('./components/socio/medidas/medidas').then(m => m.Medidas)
+      },
       { path: '', redirectTo: 'noticias', pathMatch: 'full' }
     ]
   },

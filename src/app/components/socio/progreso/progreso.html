@@ -2,6 +2,16 @@
 
   <div class="page-header">
     <h2 class="page-title">📈 Mi Progreso</h2>
+    <div class="header-stats">
+      <div class="stat-box">
+        <span class="stat-label">⚖️ Peso</span>
+        <span class="stat-val">{{ pesoActual ? pesoActual + ' kg' : '—' }}</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">📏 Estatura</span>
+        <span class="stat-val">{{ altura ? altura + ' cm' : '—' }}</span>
+      </div>
+    </div>
   </div>
 
   <!-- Sin registros -->
@@ -51,54 +61,96 @@
         <button [class.activo]="modo === 'reps'" (click)="modo = 'reps'">Repeticiones</button>
       </div>
 
-      <!-- SVG Chart -->
-      <div class="svg-wrapper">
-        <svg [attr.viewBox]="'0 0 ' + W + ' ' + H" preserveAspectRatio="xMidYMid meet">
+      <!-- Chart: eje Y fijo + datos con scroll -->
+      <div class="chart-container">
 
-          <!-- Grid lines -->
+        <!-- Eje Y fijo -->
+        <svg class="yaxis-svg" [attr.height]="H" [attr.width]="PAD.left">
           @for (label of yLabels(); track label.val) {
-            <line [attr.x1]="PAD.left" [attr.x2]="W - PAD.right"
+            <line [attr.x1]="PAD.left - 4" [attr.x2]="PAD.left"
                   [attr.y1]="label.y" [attr.y2]="label.y"
-                  stroke="#f1f5f9" stroke-width="1"/>
+                  stroke="#e2e8f0" stroke-width="1"/>
             <text [attr.x]="PAD.left - 6" [attr.y]="label.y + 4"
                   text-anchor="end" font-size="9" fill="#94a3b8">{{ label.val }}</text>
           }
-
-          <!-- Área bajo la línea -->
-          <path [attr.d]="areaPath" fill="#1d4ed8" fill-opacity="0.08"/>
-
-          <!-- Línea -->
-          <polyline
-            [attr.points]="polyline"
-            fill="none" stroke="#1d4ed8" stroke-width="2.5"
-            stroke-linejoin="round" stroke-linecap="round"/>
-
-          <!-- Puntos + fechas -->
-          @for (p of historial; track $index) {
-            <circle
-              [attr.cx]="xPos($index)"
-              [attr.cy]="yPos(datos[$index])"
-              r="4" fill="#1d4ed8" stroke="white" stroke-width="1.5"/>
-            <text
-              [attr.x]="xPos($index)"
-              [attr.y]="H - PAD.bottom + 14"
-              text-anchor="middle" font-size="8" fill="#94a3b8">
-              {{ p.fecha }}
-            </text>
-          }
-
         </svg>
+
+        <!-- Área de datos scrollable -->
+        <div class="chart-scroll" #chartScroll>
+          <svg [attr.width]="dataW" [attr.height]="H">
+
+            <!-- Grid lines horizontales -->
+            @for (label of yLabels(); track label.val) {
+              <line x1="0" [attr.x2]="dataW"
+                    [attr.y1]="label.y" [attr.y2]="label.y"
+                    stroke="#f1f5f9" stroke-width="1"/>
+            }
+
+            <!-- Área bajo la línea -->
+            <path [attr.d]="areaPath" fill="#1d4ed8" fill-opacity="0.08"/>
+
+            <!-- Línea -->
+            <polyline
+              [attr.points]="polyline"
+              fill="none" stroke="#1d4ed8" stroke-width="2.5"
+              stroke-linejoin="round" stroke-linecap="round"/>
+
+            <!-- Puntos + valor + fecha -->
+            @for (p of historial; track $index) {
+              @let esUltimo = $index === historial.length - 1;
+
+              <circle
+                [attr.cx]="xPos($index)"
+                [attr.cy]="yPos(datos[$index])"
+                [attr.r]="esUltimo ? 6 : 4"
+                [attr.fill]="esUltimo ? '#f97316' : '#1d4ed8'"
+                stroke="white" stroke-width="2"/>
+
+              @if (datos[$index] !== null) {
+                <text
+                  [attr.x]="xPos($index)"
+                  [attr.y]="yPos(datos[$index]) - 9"
+                  text-anchor="middle"
+                  [attr.font-size]="esUltimo ? 9.5 : 8"
+                  [attr.font-weight]="esUltimo ? 'bold' : 'normal'"
+                  [attr.fill]="esUltimo ? '#f97316' : '#1d4ed8'">
+                  {{ datos[$index] }}
+                </text>
+              }
+
+              <text
+                [attr.x]="xPos($index)"
+                [attr.y]="H - PAD.bottom + 14"
+                text-anchor="middle"
+                [attr.font-size]="esUltimo ? 8.5 : 7.5"
+                [attr.font-weight]="esUltimo ? 'bold' : 'normal'"
+                [attr.fill]="esUltimo ? '#f97316' : '#94a3b8'">
+                {{ p.fecha }}
+              </text>
+            }
+
+          </svg>
+        </div>
       </div>
 
-      <!-- Tabla de registros -->
-      <div class="tabla-registros">
-        @for (p of historial | slice: -5; track $index) {
-          <div class="tabla-fila">
-            <span class="tabla-fecha">{{ p.fecha }}</span>
-            <span class="tabla-val">{{ p.peso !== null ? p.peso + ' kg' : '—' }}</span>
-            <span class="tabla-val">{{ p.reps !== null ? p.reps + ' reps' : '—' }}</span>
-          </div>
-        }
+      <!-- Historial de registros -->
+      <div class="historial-card">
+        <p class="historial-titulo">Historial</p>
+        <div class="historial-header">
+          <span>Fecha</span>
+          <span>Peso</span>
+          <span>Reps</span>
+        </div>
+        <div class="historial-scroll">
+          @for (p of historialReverso; track $index) {
+            @let esPrimero = $index === 0;
+            <div class="historial-fila" [class.fila-destacada]="esPrimero">
+              <span class="h-fecha">{{ p.fecha }}</span>
+              <span class="h-val h-peso">{{ p.peso !== null ? p.peso + ' kg' : '—' }}</span>
+              <span class="h-val h-reps">{{ p.reps !== null ? p.reps + ' reps' : '—' }}</span>
+            </div>
+          }
+        </div>
       </div>
 
     </div>

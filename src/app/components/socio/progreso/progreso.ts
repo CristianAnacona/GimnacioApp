@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProgresoService } from '../../../services/progreso.service';
@@ -14,6 +14,8 @@ interface Punto { fecha: string; peso: number | null; reps: number | null; }
   styleUrl: './progreso.css'
 })
 export class Progreso implements OnInit {
+  @ViewChild('chartScroll') chartScroll!: ElementRef<HTMLDivElement>;
+
   usuarioId = '';
   ejercicios: string[] = [];
   ejercicioSeleccionado = '';
@@ -21,10 +23,14 @@ export class Progreso implements OnInit {
   cargando = false;
   modo: 'peso' | 'reps' = 'peso';
 
+  pesoActual: number | null = null;
+  altura: number | null = null;
+
+
   // SVG config
-  readonly W = 320;
+  readonly PUNTO_ANCHO = 52;
   readonly H = 180;
-  readonly PAD = { top: 16, right: 16, bottom: 36, left: 44 };
+  readonly PAD = { top: 16, right: 24, bottom: 36, left: 44 };
 
   constructor(
     private progresoService: ProgresoService,
@@ -38,6 +44,9 @@ export class Progreso implements OnInit {
       this.usuarioId = user._id;
       this.cargarEjercicios();
     }
+    const datos = user?.datosPersonales;
+    this.pesoActual = datos?.pesoActual || user?.pesoActual || null;
+    this.altura     = datos?.altura     || user?.altura     || null;
   }
 
   cargarEjercicios() {
@@ -53,15 +62,26 @@ export class Progreso implements OnInit {
     this.progresoService.getHistorial(this.usuarioId, nombre).subscribe({
       next: (data) => {
         this.historial = data.map(r => ({
-          fecha: new Date(r.fecha).toLocaleDateString('es', { day: '2-digit', month: 'short' }),
+          fecha: this.formatFecha(r.fecha),
           peso: r.pesoKg,
           reps: r.repeticiones
         }));
         this.cargando = false;
         this.cdr.detectChanges();
+        setTimeout(() => {
+          if (this.chartScroll?.nativeElement) {
+            this.chartScroll.nativeElement.scrollLeft = this.chartScroll.nativeElement.scrollWidth;
+          }
+        }, 50);
       },
       error: () => { this.cargando = false; }
     });
+  }
+
+  // Parsea la fecha evitando el desfase UTC→local
+  private formatFecha(fechaStr: string): string {
+    const [y, m, d] = fechaStr.split('T')[0].split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('es', { day: '2-digit', month: 'short' });
   }
 
   // --- SVG helpers ---
@@ -76,12 +96,17 @@ export class Progreso implements OnInit {
   get minVal(): number { return this.valoresValidos.length ? Math.min(...this.valoresValidos) : 0; }
   get maxVal(): number { return this.valoresValidos.length ? Math.max(...this.valoresValidos) : 10; }
 
-  get innerW(): number { return this.W - this.PAD.left - this.PAD.right; }
+  // Ancho del área de datos (sin el eje Y, que es fijo)
+  get dataW(): number {
+    return this.PAD.right + Math.max(1, this.historial.length) * this.PUNTO_ANCHO;
+  }
+
   get innerH(): number { return this.H - this.PAD.top - this.PAD.bottom; }
 
+  // xPos relativo al área de datos (sin PAD.left)
   xPos(i: number): number {
-    const n = this.historial.length;
-    return this.PAD.left + (n <= 1 ? this.innerW / 2 : (i / (n - 1)) * this.innerW);
+    if (this.historial.length <= 1) return this.PUNTO_ANCHO / 2;
+    return i * this.PUNTO_ANCHO + this.PUNTO_ANCHO / 2;
   }
 
   yPos(val: number | null): number {
@@ -101,7 +126,7 @@ export class Progreso implements OnInit {
     const pts = this.historial.map((_, i) => `${this.xPos(i)},${this.yPos(this.datos[i])}`).join(' ');
     const last = this.historial.length - 1;
     const bottom = this.PAD.top + this.innerH;
-    return `M${this.PAD.left},${bottom} L${pts.split(' ').join(' L')} L${this.xPos(last)},${bottom} Z`;
+    return `M0,${bottom} L${pts.split(' ').join(' L')} L${this.xPos(last)},${bottom} Z`;
   }
 
   yLabels(): { val: string; y: number }[] {
@@ -123,5 +148,9 @@ export class Progreso implements OnInit {
   get mejoraPositiva(): boolean {
     const v = this.valoresValidos;
     return v.length >= 2 && v[v.length - 1] >= v[0];
+  }
+
+  get historialReverso(): typeof this.historial {
+    return [...this.historial].reverse();
   }
 }

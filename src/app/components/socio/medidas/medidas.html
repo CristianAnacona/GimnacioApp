@@ -1,0 +1,89 @@
+<div class="page">
+
+  <div class="page-header">
+    <h2 class="page-title">📐 Mis Medidas</h2>
+    <button class="btn-nueva" (click)="mostrarForm = !mostrarForm">
+      {{ mostrarForm ? '✕ Cancelar' : '+ Registrar' }}
+    </button>
+  </div>
+
+  <!-- Formulario nuevo registro -->
+  @if (mostrarForm) {
+    <div class="form-card">
+      <p class="form-titulo">Nueva medición</p>
+      <div class="form-grid">
+        @for (campo of campos; track campo.key) {
+          <div class="field">
+            <label class="field-label">{{ campo.emoji }} {{ campo.label }}</label>
+            <div class="field-wrap">
+              <input type="number" [(ngModel)]="nueva[campo.key]"
+                     [placeholder]="campo.unidad" class="field-input" min="0" step="0.1">
+              <span class="field-unidad">{{ campo.unidad }}</span>
+            </div>
+          </div>
+        }
+      </div>
+      <button class="btn-guardar" (click)="guardar()" [disabled]="guardando">
+        {{ guardando ? 'Guardando...' : '💾 Guardar medidas' }}
+      </button>
+    </div>
+  }
+
+  <!-- Última medición destacada -->
+  @if (ultima) {
+    <div class="ultima-card">
+      <p class="ultima-titulo">Última medición · {{ formatFecha(ultima.fecha) }}</p>
+      <div class="ultima-grid">
+        @for (campo of campos; track campo.key) {
+          @if (ultima[campo.key] != null) {
+            <div class="stat-item">
+              <span class="stat-emoji">{{ campo.emoji }}</span>
+              <span class="stat-val">{{ ultima[campo.key] }}<small>{{ campo.unidad }}</small></span>
+              <span class="stat-label">{{ campo.label }}</span>
+              @if (diferencia(campo.key)) {
+                <span class="diff" [class.diff-pos]="diferenciaPositiva(campo.key)"
+                                   [class.diff-neg]="!diferenciaPositiva(campo.key)">
+                  {{ diferencia(campo.key) }}
+                </span>
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Sin registros -->
+  @if (!historial.length) {
+    <div class="empty-state">
+      <span class="empty-icon">📏</span>
+      <p class="empty-title">Sin medidas registradas</p>
+      <p class="empty-sub">Tocá "+ Registrar" para añadir tu primera medición.</p>
+    </div>
+  }
+
+  <!-- Historial -->
+  @if (historial.length > 1) {
+    <div class="historial-card">
+      <p class="historial-titulo">Historial</p>
+      <div class="historial-scroll">
+        @for (m of historialReverso; track m._id) {
+          <div class="historial-fila">
+            <span class="h-fecha">{{ formatFecha(m.fecha) }}</span>
+            <div class="h-medidas">
+              @for (campo of campos; track campo.key) {
+                @if (m[campo.key] != null) {
+                  <span class="h-dato">
+                    {{ campo.emoji }} {{ m[campo.key] }}{{ campo.unidad }}
+                  </span>
+                }
+              }
+            </div>
+            <button class="btn-del" (click)="eliminar(m._id!)">🗑</button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+</div>
