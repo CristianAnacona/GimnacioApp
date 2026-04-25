@@ -21,7 +21,7 @@ export class Noticias implements OnInit {
   noticiaEditando: any = null;
   role = '';
 
-  formulario = { titulo: '', descripcion: '', dia: '', horaInicio: '', horaFin: '' };
+  formulario = { titulo: '', descripcion: '', dia: '', horaInicio: '', horaFin: '', imageUrl: '', whatsappUrl: '' };
   dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
   constructor(
@@ -59,7 +59,7 @@ export class Noticias implements OnInit {
   }
 
   limpiarFormulario() {
-    this.formulario = { titulo: '', descripcion: '', dia: '', horaInicio: '', horaFin: '' };
+    this.formulario = { titulo: '', descripcion: '', dia: '', horaInicio: '', horaFin: '', imageUrl: '', whatsappUrl: '' };
     this.noticiaEditando = null;
   }
 
@@ -82,6 +82,8 @@ export class Noticias implements OnInit {
 
     if (this.formulario.horaInicio) datosAEnviar.horaInicio = this.formulario.horaInicio;
     if (this.formulario.horaFin)    datosAEnviar.horaFin = this.formulario.horaFin;
+    datosAEnviar.imageUrl = this.formulario.imageUrl?.trim() || '';
+    datosAEnviar.whatsappUrl = this.formulario.whatsappUrl?.trim() || '';
 
     const operacion = this.esEdicion
       ? this.noticiaService.actualizarNoticia(this.noticiaEditando._id, datosAEnviar)
@@ -108,7 +110,9 @@ export class Noticias implements OnInit {
       descripcion: noticia.descripcion || '',
       dia: noticia.dia ?? '',
       horaInicio: noticia.horaInicio || '',
-      horaFin: noticia.horaFin || ''
+      horaFin: noticia.horaFin || '',
+      imageUrl: noticia.imageUrl || '',
+      whatsappUrl: noticia.whatsappUrl || ''
     };
     this.esEdicion = true;
     this.mostrarFormulario = true;

@@ -1,52 +1,63 @@
 <div class="noticias-container">
+
+  <!-- HEADER -->
   <div class="noticias-header">
-    <h1>📰 Noticias</h1>
-    
+    <div class="header-texto">
+      <h1 class="header-titulo">Noticias</h1>
+      <p class="header-sub">Novedades y avisos del gimnasio</p>
+    </div>
     @if (role === 'admin') {
       <button type="button" (click)="abrirFormulario()" class="btn-agregar">
-        + Agregar Noticia
+        + Nueva noticia
       </button>
     }
   </div>
 
-  <!-- FORMULARIO (modal) -->
+  <!-- MODAL FORMULARIO -->
   @if (mostrarFormulario) {
-    <div class="modal-overlay">
-      <div class="modal-contenido">
+    <div class="modal-overlay" (click)="cerrarFormulario()">
+      <div class="modal-contenido" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h2>{{ esEdicion ? 'Editar Noticia' : 'Nueva Noticia' }}</h2>
+          <h2>{{ esEdicion ? 'Editar noticia' : 'Nueva noticia' }}</h2>
           <button type="button" (click)="cerrarFormulario()" class="btn-cerrar">✕</button>
         </div>
 
         <form #form="ngForm" (ngSubmit)="guardarNoticia(form)" class="formulario">
-          <!-- CAMPOS OBLIGATORIOS -->
+
           <div class="form-grupo">
-            <label for="titulo">Título: <span class="requerido">*</span></label>
-            <input 
-              id="titulo"
-              type="text" 
-              [(ngModel)]="formulario.titulo" 
-              name="titulo"
-              placeholder="Ej: Coloca un título aquí"
-              required>
+            <label>Título <span class="requerido">*</span></label>
+            <input type="text" [(ngModel)]="formulario.titulo" name="titulo"
+              placeholder="Ej: Nueva clase de spinning" required>
           </div>
 
           <div class="form-grupo">
-            <label for="descripcion">Descripción: <span class="requerido">*</span></label>
-            <textarea 
-              id="descripcion"
-              [(ngModel)]="formulario.descripcion" 
-              name="descripcion"
-              placeholder="Ej: Coloca una descripción aquí"
-              rows="4"
-              required></textarea>
+            <label>Descripción <span class="requerido">*</span></label>
+            <textarea [(ngModel)]="formulario.descripcion" name="descripcion"
+              placeholder="Describe la novedad..." rows="4" required></textarea>
           </div>
 
-          <!-- CAMPOS OPCIONALES -->
           <div class="form-grupo">
-            <label for="dia">Día:</label>
-            <select id="dia" [(ngModel)]="formulario.dia" name="dia">
-              <option value="">Ninguno</option>
+            <label>URL de imagen <span class="opcional">(opcional)</span></label>
+            <input type="url" [(ngModel)]="formulario.imageUrl" name="imageUrl"
+              placeholder="https://ejemplo.com/imagen.jpg">
+            @if (formulario.imageUrl) {
+              <div class="img-preview">
+                <img [src]="formulario.imageUrl" alt="Vista previa" (error)="formulario.imageUrl=''">
+              </div>
+            }
+          </div>
+
+          <div class="form-grupo">
+            <label>WhatsApp <span class="opcional">(opcional)</span></label>
+            <input type="text" [(ngModel)]="formulario.whatsappUrl" name="whatsappUrl"
+              placeholder="https://wa.me/573001234567">
+            <small class="form-hint">Formato: https://wa.me/ + número sin el +</small>
+          </div>
+
+          <div class="form-grupo">
+            <label>Día</label>
+            <select [(ngModel)]="formulario.dia" name="dia">
+              <option value="">Sin día específico</option>
               @for (dia of dias; track dia) {
                 <option [value]="dia">{{ dia }}</option>
               }
@@ -55,87 +66,89 @@
 
           <div class="form-row">
             <div class="form-grupo">
-              <label for="horaInicio">Hora Inicio:</label>
-              <input 
-                id="horaInicio"
-                type="time" 
-                [(ngModel)]="formulario.horaInicio" 
-                name="horaInicio">
+              <label>Hora inicio</label>
+              <input type="time" [(ngModel)]="formulario.horaInicio" name="horaInicio">
             </div>
-
             <div class="form-grupo">
-              <label for="horaFin">Hora Fin:</label>
-              <input 
-                id="horaFin"
-                type="time" 
-                [(ngModel)]="formulario.horaFin" 
-                name="horaFin">
+              <label>Hora fin</label>
+              <input type="time" [(ngModel)]="formulario.horaFin" name="horaFin">
             </div>
           </div>
 
           <div class="modal-botones">
-            <button 
-              type="submit" 
-              class="btn-guardar"
+            <button type="submit" class="btn-guardar"
               [disabled]="!formulario.titulo || !formulario.descripcion">
-              {{ esEdicion ? 'Actualizar' : 'Guardar' }}
+              {{ esEdicion ? 'Actualizar' : 'Publicar' }}
             </button>
-            <button 
-              type="button" 
-              (click)="cerrarFormulario()" 
-              class="btn-cancelar">
-              Cancelar
-            </button>
+            <button type="button" (click)="cerrarFormulario()" class="btn-cancelar">Cancelar</button>
           </div>
         </form>
       </div>
     </div>
   }
 
-  <!-- LISTA DE NOTICIAS -->
-  <div class="noticias-lista">
+  <!-- GRID DE NOTICIAS -->
+  <div class="noticias-grid">
     @if (noticias.length === 0) {
       <div class="sin-noticias">
+        <span class="sin-icon">📭</span>
         <p>No hay noticias disponibles</p>
       </div>
     } @else {
       @for (noticia of noticias; track noticia._id) {
         <div class="noticia-card">
-          <div class="noticia-header">
-            <h3>{{ noticia.titulo }}</h3>
+
+          <!-- IMAGEN O PLACEHOLDER -->
+          <div class="card-imagen" [class.card-imagen--placeholder]="!noticia.imageUrl">
+            @if (noticia.imageUrl) {
+              <img [src]="noticia.imageUrl" [alt]="noticia.titulo" class="card-img">
+            } @else {
+              <div class="card-placeholder">
+                <span class="placeholder-icon">🏋️</span>
+              </div>
+            }
             @if (role === 'admin') {
-              <div class="noticia-acciones">
-                <button 
-                  type="button"
-                  (click)="editarNoticia(noticia)" 
-                  class="btn-editar">
-                  ✏️ Editar
-                </button>
-                <button 
-                  type="button"
-                  (click)="eliminarNoticia(noticia._id)" 
-                  class="btn-eliminar">
-                  🗑️ Eliminar
-                </button>
+              <div class="card-acciones">
+                <button type="button" (click)="editarNoticia(noticia)" class="btn-accion btn-editar">✏️</button>
+                <button type="button" (click)="eliminarNoticia(noticia._id)" class="btn-accion btn-eliminar">🗑️</button>
               </div>
             }
           </div>
 
-          <p class="noticia-descripcion">{{ noticia.descripcion }}</p>
+          <!-- SEPARADOR -->
+          <div class="card-divider"></div>
 
-          <!-- Solo mostrar info adicional si existe -->
-          @if (noticia.dia || noticia.horaInicio || noticia.horaFin) {
-            <div class="noticia-info">
-              @if (noticia.dia) {
-                <span class="info-item">📅 {{ noticia.dia }}</span>
-              }
-              @if (noticia.horaInicio && noticia.horaFin) {
-                <span class="info-item">🕐 {{ noticia.horaInicio }} - {{ noticia.horaFin }}</span>
+          <!-- CONTENIDO -->
+          <div class="card-body">
+            @if (noticia.dia || noticia.horaInicio) {
+              <div class="card-badges">
+                @if (noticia.dia) {
+                  <span class="badge badge-dia">📅 {{ noticia.dia }}</span>
+                }
+                @if (noticia.horaInicio && noticia.horaFin) {
+                  <span class="badge badge-hora">🕐 {{ noticia.horaInicio }} – {{ noticia.horaFin }}</span>
+                }
+              </div>
+            }
+            <div class="card-titulo-row">
+              <h3 class="card-titulo">{{ noticia.titulo }}</h3>
+              @if (noticia.whatsappUrl) {
+                <a [href]="noticia.whatsappUrl" target="_blank" rel="noopener" class="icon-whatsapp" title="Consultar por WhatsApp">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  </svg>
+                </a>
               }
             </div>
-          }
+
+            <div class="card-desc-box">
+              <p class="card-desc">{{ noticia.descripcion }}</p>
+            </div>
+          </div>
+
         </div>
       }
     }
   </div>
+
 </div>
