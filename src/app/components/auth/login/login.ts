@@ -7,6 +7,7 @@ import { AuthService } from '../../../services/auth';
 import { ToastService } from '../../../services/toast.service';
 
 const GOOGLE_CLIENT_ID = '976541861094-pcm89afbvhdi6fttf7si2cc7gbtuf2pn.apps.googleusercontent.com';
+let googleYaInicializado = false;
 
 @Component({
   selector: 'app-login',
@@ -32,15 +33,21 @@ export class Login implements AfterViewInit {
   }
 
   private initGoogleBtn() {
+    if (googleYaInicializado) return;
+
     const tryInit = () => {
       const google = (window as any).google;
       if (google?.accounts?.id) {
+        if (googleYaInicializado) return;
+        googleYaInicializado = true;
+
         google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
           callback: (response: any) => {
             this.ngZone.run(() => this.handleGoogleResponse(response));
           }
         });
+
         const btnEl = document.getElementById('google-signin-btn');
         if (btnEl) {
           google.accounts.id.renderButton(btnEl, {
