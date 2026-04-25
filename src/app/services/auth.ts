@@ -17,6 +17,14 @@ export class AuthService {
 
   // --- AUTENTICACIÓN ---
 
+  loginConGoogle(credential: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/google`, { credential }).pipe(
+      tap((response: any) => {
+        if (response.usuario) this.userStateService.updateUser(response.usuario);
+      })
+    );
+  }
+
   login(credenciales: any) {
     return this.http.post(`${this.apiUrl}/login`, credenciales).pipe(
       tap((response: any) => {
@@ -83,6 +91,10 @@ export class AuthService {
 
   eliminarRutina(idRutina: string): Observable<any> {
     return this.http.delete(`${this.rutinasUrl}/eliminar/${idRutina}`);
+  }
+
+  resetDiario(usuarioId: string): Observable<any> {
+    return this.http.patch(`${this.rutinasUrl}/reset-dia/${usuarioId}`, {});
   }
 
   toggleEjercicioCompletado(rutinaId: string, ejercicioIdx: number, completado: boolean): Observable<any> {

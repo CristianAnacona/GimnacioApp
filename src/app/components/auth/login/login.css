@@ -227,3 +227,68 @@
   text-decoration: none;
 }
 .card-link:hover { text-decoration: underline; }
+
+/* ===== DIVISOR ===== */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.25rem 0;
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #c8dcff;
+}
+.divider span {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #7a9bc0;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ===== FILA SOCIAL ===== */
+.social-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.btn-social {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 44px;
+  border: 1.5px solid #c8dcff;
+  background: #f8fbff;
+  color: #1e293b;
+  border-radius: 0.875rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.btn-social:hover:not(:disabled) {
+  border-color: #1d4ed8;
+  background: #eff6ff;
+  transform: translateY(-1px);
+}
+.btn-social:active:not(:disabled) { transform: scale(0.96); }
+.btn-social:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Botón Google oculto (solo para trigger de autenticación) */
+.google-hidden {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  pointer-events: none;
+}

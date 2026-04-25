@@ -44,6 +44,18 @@ export class MiRutina implements OnInit, OnDestroy {
     }, 200);
   }
 
+  private resetarSiEsDiaDistinto(usuarioId: string) {
+    const hoy = new Date().toISOString().split('T')[0];
+    const ultima = localStorage.getItem('ultimoResetRutina');
+    if (ultima === hoy) return;
+    this.authService.resetDiario(usuarioId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => localStorage.setItem('ultimoResetRutina', hoy),
+        error: (err) => console.error('Error reset diario:', err)
+      });
+  }
+
   ngOnInit() {
     const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     this.diaActivo = diasSemana[new Date().getDay()];
@@ -51,6 +63,8 @@ export class MiRutina implements OnInit, OnDestroy {
     const usuario = this.userState.getCurrentUser();
     if (!usuario) return;
     this.username = usuario.nombre || 'Socio';
+
+    this.resetarSiEsDiaDistinto(usuario._id);
 
     this.authService.obtenerRutina(usuario._id)
       .pipe(takeUntil(this.destroy$))
