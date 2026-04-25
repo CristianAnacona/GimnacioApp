@@ -1,8 +1,8 @@
 {
-  "name": "Drakkar Gym ",
-  "short_name": "Drakkar Gym",
-  "theme_color": "#000000",
-  "background_color": "#000000",
+  "name": "Kodiak Gym",
+  "short_name": "Kodiak",
+  "theme_color": "#1d4ed8",
+  "background_color": "#eef3ff",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

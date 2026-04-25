@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Notification } from './components/shared/notification/notification';
 import { Cronometro } from './components/shared/cronometro/cronometro';
 import { UserStateService } from './services/user-state.service';
+import { UpdateService } from './services/update.service';
 
 @Component({
   selector: 'app-root',
@@ -13,4 +14,5 @@ import { UserStateService } from './services/user-state.service';
 })
 export class App {
   userState = inject(UserStateService);
+  private _update = inject(UpdateService);
 }
