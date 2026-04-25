@@ -33,6 +33,15 @@ export const routes: Routes = [
     canActivate: [noAuthGuard],
     loadComponent: () => import('./components/auth/register/register').then(m => m.Register)
   },
+  {
+    path: 'forgot-password',
+    canActivate: [noAuthGuard],
+    loadComponent: () => import('./components/auth/forgot-password/forgot-password').then(m => m.ForgotPassword)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./components/auth/reset-password/reset-password').then(m => m.ResetPassword)
+  },
 
   // ADMIN
   {
