@@ -45,7 +45,8 @@ export class Login implements AfterViewInit {
           client_id: GOOGLE_CLIENT_ID,
           callback: (response: any) => {
             this.ngZone.run(() => this.handleGoogleResponse(response));
-          }
+          },
+          use_fedcm_for_prompt: false
         });
 
         const btnEl = document.getElementById('google-signin-btn');
