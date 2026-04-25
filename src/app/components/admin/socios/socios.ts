@@ -21,6 +21,9 @@ export class Socios implements OnInit, OnDestroy {
   username = '';
   usuarios: any[] = [];
   loadingId: string | null = null;
+
+  get socios() { return this.usuarios.filter(u => u.role !== 'admin'); }
+  get admins() { return this.usuarios.filter(u => u.role === 'admin'); }
   private destroy$ = new Subject<void>();
 
   constructor(

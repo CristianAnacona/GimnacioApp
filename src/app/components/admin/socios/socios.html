@@ -1,70 +1,138 @@
-<p class="p-4 text-slate-500 font-medium">Gestión de Socios</p>
+<div class="page-wrapper">
 
-<div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-slate-200 m-2">
+  <!-- ── SOCIOS ─────────────────────────────────────────────── -->
+  <section class="section-card">
 
-  <table class="w-full text-left border-collapse">
-    <thead class="hidden md:table-header-group">
-      <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase font-bold hidden md:table-row">
-        <th class="p-4">Socio</th>
-        <th class="p-4">Email</th>
-        <th class="p-4">Vencimiento</th>
-        <th class="p-4 text-center">Acciones</th>
-      </tr>
-    </thead>
+    <div class="section-header">
+      <div class="section-title">
+        <span class="section-icon">👥</span>
+        <h2>Socios</h2>
+        <span class="badge badge-blue">{{ socios.length }}</span>
+      </div>
+    </div>
 
-    <tbody class="block md:table-row-group">
-      @for (u of usuarios; track u._id) {
-      <tr class="mb-10 hover:bg-slate-50 block md:table-row p-4 md:p-0">
-        
-        <td class="block md:table-cell p-1 md:p-4">
-          <span class="md:hidden text-[10px] font-bold text-slate-400 uppercase block">Socio</span>
-          <span class="font-bold text-slate-800 text-lg md:text-base">{{ u.nombre }}</span>
-        </td>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Socio</th>
+            <th>Email</th>
+            <th>Membresía</th>
+            <th class="text-center">Renovar días</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of socios; track u._id) {
+          <tr [class.row-active]="u.fechaVencimiento && !esVencido(u.fechaVencimiento)"
+              [class.row-expired]="u.fechaVencimiento && esVencido(u.fechaVencimiento)"
+              [class.row-none]="!u.fechaVencimiento">
 
-        <td class="block md:table-cell p-1 md:p-4 text-slate-500 text-sm md:text-base">
-          <span class="md:hidden text-[10px] font-bold text-slate-400 uppercase block">Email</span>
-          {{ u.email }}
-        </td>
+            <td>
+              <div class="user-info">
+                <div class="avatar">{{ u.nombre[0] | uppercase }}</div>
+                <span class="user-name">{{ u.nombre }}</span>
+              </div>
+            </td>
 
-        <td class="block md:table-cell p-1 md:p-4">
-          <span class="md:hidden text-[10px] font-bold text-slate-400 uppercase block">Vencimiento</span>
-          @if (u.fechaVencimiento) {
-          <span [class]="esVencido(u.fechaVencimiento) ? 'text-red-600 font-bold' : 'text-green-600 font-bold'">
-            {{ u.fechaVencimiento | date:'dd/MM/yyyy' }}
-          </span>
-          } @else {
-          <span class="text-slate-400 italic text-xs">Sin membresía</span>
+            <td class="email-cell">{{ u.email }}</td>
+
+            <td>
+              @if (u.fechaVencimiento) {
+                <span [class]="esVencido(u.fechaVencimiento) ? 'pill pill-red' : 'pill pill-green'">
+                  {{ u.fechaVencimiento | date:'dd/MM/yyyy' }}
+                </span>
+              } @else {
+                <span class="pill pill-gray">Sin membresía</span>
+              }
+            </td>
+
+            <td>
+              <div class="renew-group">
+                <button (click)="renovar(u._id, 7, u.nombre)"
+                        [disabled]="loadingId === u._id"
+                        class="btn-days btn-7">+7</button>
+                <button (click)="renovar(u._id, 15, u.nombre)"
+                        [disabled]="loadingId === u._id"
+                        class="btn-days btn-15">+15</button>
+                <button (click)="renovar(u._id, 30, u.nombre)"
+                        [disabled]="loadingId === u._id"
+                        class="btn-days btn-30">+30</button>
+              </div>
+            </td>
+
+            <td>
+              <div class="action-group">
+                @if (u.fechaVencimiento) {
+                  <button [routerLink]="['/admin/detalle-rutina', u._id]" class="btn-rutina">
+                    🏋️ Rutina
+                  </button>
+                  <button (click)="limpiarMembresia(u._id, u.nombre)"
+                          [disabled]="loadingId === u._id"
+                          class="btn-delete" title="Limpiar membresía">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                } @else {
+                  <span class="text-slate-300 text-xs italic">—</span>
+                }
+              </div>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="5" class="empty-row">No hay socios registrados</td>
+          </tr>
           }
-        </td>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-        <td class="block md:table-cell p-1 md:p-4 text-center">
-          <span class="md:hidden text-[10px] font-bold text-slate-400 uppercase block mb-2">Acciones de Socio</span>
-          
-          <div class="flex flex-wrap gap-2 justify-start md:justify-center items-center mt-2 md:mt-0">
-            <button (click)="renovar(u._id, 7, u.nombre)" class="btn-renovar bg-blue-100 text-blue-700">+7</button>
-            <button (click)="renovar(u._id, 15, u.nombre)" class="btn-renovar bg-purple-100 text-purple-700">+15</button>
-            <button (click)="renovar(u._id, 30, u.nombre)" class="btn-renovar bg-emerald-100 text-emerald-700">+30</button>
+  <!-- ── ADMINISTRADORES ────────────────────────────────────── -->
+  <section class="section-card">
 
-            @if (u.fechaVencimiento) {
-              <button [routerLink]="['/admin/detalle-rutina', u._id]" 
-                      class="px-4 py-2 bg-orange-500 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-orange-600 transition-all flex items-center gap-1">
-                🏋️ Ver Rutina
-              </button>
-              
-              <button (click)="limpiarMembresia(u._id, u.nombre)" class="p-2 text-black hover:text-red-500 transition-colors duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </button>
-            }
-          </div>
-        </td>
-      </tr>
-      } @empty {
-      <tr>
-        <td colspan="4" class="p-10 text-center text-slate-400">No hay usuarios registrados</td>
-      </tr>
-      }
-    </tbody>
-  </table>
+    <div class="section-header">
+      <div class="section-title">
+        <span class="section-icon">🛡️</span>
+        <h2>Administradores</h2>
+        <span class="badge badge-purple">{{ admins.length }}</span>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of admins; track a._id) {
+          <tr class="row-admin">
+            <td>
+              <div class="user-info">
+                <div class="avatar avatar-purple">{{ a.nombre[0] | uppercase }}</div>
+                <span class="user-name">{{ a.nombre }}</span>
+              </div>
+            </td>
+            <td class="email-cell">{{ a.email }}</td>
+            <td>
+              <span class="pill pill-purple">Admin</span>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="3" class="empty-row">No hay administradores</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
 </div>

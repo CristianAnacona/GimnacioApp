@@ -78,9 +78,15 @@
 
 .img-wrapper img {
   width: 100%;
-  aspect-ratio: 1/1;
+  height: 160px;
   object-fit: cover;
   padding: 8px;
+}
+@supports (aspect-ratio: 1) {
+  .img-wrapper img {
+    height: auto;
+    aspect-ratio: 1/1;
+  }
 }
 
 .card-body {
