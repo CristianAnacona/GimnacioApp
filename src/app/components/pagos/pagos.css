@@ -49,7 +49,7 @@
 
 /* --- TARJETA COMPACTA --- */
 .pago-card {
-  background: white;
+  background: #f8fbff;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -167,7 +167,7 @@
 }
 
 .modal-contenido {
-  background: white;
+  background: #f8fbff;
   border-radius: 12px;
   width: 90%;
   max-width: 450px;

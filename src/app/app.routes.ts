@@ -82,9 +82,13 @@ export const routes: Routes = [
         loadComponent: () => import('./components/socio/datos-personales/datos-personales')
         .then(m => m.DatosPersonales) 
       },
-      { 
-        path: 'mi-rutina', 
-        loadComponent: () => import('./components/socio/mi-rutina/mi-rutina').then(m => m.MiRutina) 
+      {
+        path: 'mi-rutina',
+        loadComponent: () => import('./components/socio/mi-rutina/mi-rutina').then(m => m.MiRutina)
+      },
+      {
+        path: 'progreso',
+        loadComponent: () => import('./components/socio/progreso/progreso').then(m => m.Progreso)
       },
       { path: '', redirectTo: 'noticias', pathMatch: 'full' }
     ]

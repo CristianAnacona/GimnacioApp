@@ -20,7 +20,7 @@
 }
 
 .badge-total {
-  background: #f1f5f9;
+  background: #e8f0ff;
   color: #64748b;
   font-size: 0.75rem;
   font-weight: 700;
@@ -49,7 +49,7 @@
 
 /* Card */
 .rutina-card {
-  background: #ffffff;
+  background: #f8fbff;
   border-radius: 1.25rem;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
   overflow: hidden;
@@ -73,8 +73,8 @@
 
 .dia-badge {
   display: inline-block;
-  background: #fff0f0;
-  color: #cc0000;
+  background: #eff6ff;
+  color: #1d4ed8;
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -112,7 +112,7 @@
 .btn-delete:hover { opacity: 0.82; }
 
 .btn-edit   { background: #e0f2fe; color: #0369a1; }
-.btn-delete { background: #fee2e2; color: #b91c1c; }
+.btn-delete { background: #dbeafe; color: #1d4ed8; }
 
 /* Summary pill */
 .card-summary {
@@ -123,8 +123,8 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: #64748b;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: #f0f5ff;
+  border: 1.5px solid #c8dcff;
   padding: 0.2rem 0.65rem;
   border-radius: 999px;
 }
@@ -142,7 +142,7 @@
   padding: 0.55rem 1.1rem;
   transition: background 0.12s;
 }
-.ejercicio-item:hover { background: #f8fafc; }
+.ejercicio-item:hover { background: #f0f5ff; }
 
 .ej-info {
   display: flex;
@@ -154,7 +154,7 @@
 .ej-num {
   width: 1.4rem;
   height: 1.4rem;
-  background: #f1f5f9;
+  background: #e8f0ff;
   color: #64748b;
   font-size: 0.65rem;
   font-weight: 800;
@@ -185,7 +185,7 @@
   font-size: 0.75rem;
   font-weight: 700;
   color: #ffffff;
-  background: #cc0000;
+  background: #1d4ed8;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
 }

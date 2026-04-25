@@ -2,7 +2,7 @@
   <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
 
     <div
-      class="bg-linear-to-t from-[#8B0000] via-[#3a0202] to-[#1a0505] py-2 text-center text-white rounded-t-3xl shadow-2xl">
+      class="bg-linear-to-t from-[#1e3a8a] via-[#172554] to-[#0f172a] py-2 text-center text-white rounded-t-3xl shadow-2xl">
       <div class=" flex justify-center">
         <img src="icons/LogoGymSinFondo.png" alt="Logo" class="w-20 h-20 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
       </div>
@@ -11,7 +11,7 @@
         DRAKKAR<span class="text-white/40 ml-1">GYM</span>
       </h2>
 
-      <p class="text-xs uppercase tracking-[0.3em] font-extrabold text-red-500/90 mt-3">
+      <p class="text-xs uppercase tracking-[0.3em] font-extrabold text-blue-300/90 mt-3">
         ¡Crea tu cuenta!
       </p>
     </div>
@@ -21,14 +21,14 @@
       <div>
         <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Nombre Completo</label>
         <input type="text" name="nombre" [(ngModel)]="nuevoUsuario.nombre" required
-          class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#8B0000] rounded-xl outline-none transition-all"
+          class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#1e3a8a] rounded-xl outline-none transition-all"
           placeholder="Juan Pérez">
       </div>
 
       <div>
         <label class="block text-xs font-bold text-slate-500 uppercase mb-1 ml-1">Correo Electrónico</label>
         <input type="email" name="email" [(ngModel)]="nuevoUsuario.email" required
-          class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#8B0000] rounded-xl outline-none transition-all"
+          class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#1e3a8a] rounded-xl outline-none transition-all"
           placeholder="correo@gym.com">
       </div>
 
@@ -39,7 +39,7 @@
           <div class="relative">
             <input #passwordInput [type]="verPass ? 'text' : 'password'" name="password"
               [(ngModel)]="nuevoUsuario.password" required
-              class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#8B0000] rounded-xl outline-none transition-all pr-12"
+              class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#1e3a8a] rounded-xl outline-none transition-all pr-12"
               placeholder="Min. 8 carac.">
 
             <button type="button" (click)="verPass = !verPass; passwordInput.focus()"
@@ -54,8 +54,8 @@
           <div class="relative">
             <input #confirmPasswordInput [type]="verConfirmPass ? 'text' : 'password'" name="confirmPassword"
               [(ngModel)]="nuevoUsuario.confirmPassword" required
-              [class.border-red-500]="nuevoUsuario.confirmPassword && !contrasenasCoinciden()"
-              class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#8B0000] rounded-xl outline-none transition-all pr-12"
+              [class.border-blue-600]="nuevoUsuario.confirmPassword && !contrasenasCoinciden()"
+              class="w-full p-3 bg-slate-100 border-2 border-transparent focus:border-[#1e3a8a] rounded-xl outline-none transition-all pr-12"
               placeholder="Repetir...">
 
             <button type="button" (click)="verConfirmPass = !verConfirmPass; confirmPasswordInput.focus()"
@@ -86,7 +86,7 @@
 
       <p class="text-center text-sm text-slate-500 mt-4">
         ¿Ya tienes cuenta? <a routerLink="/login"
-          class="text-[#8B0000] font-bold hover:underline cursor-pointer">Inicia sesión</a>
+          class="text-[#60a5fa] font-bold hover:underline cursor-pointer">Inicia sesión</a>
       </p>
     </form>
   </div>

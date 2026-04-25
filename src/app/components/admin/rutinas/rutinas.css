@@ -14,7 +14,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
-  background: white;
+  background: #f8fbff;
   padding: 25px;
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -31,10 +31,10 @@
 .modern-select, .modern-input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #c8dcff;
   border-radius: 12px;
   font-size: 1rem;
-  background: white;
+  background: #f8fbff;
 }
 
 /* --- CATEGORÍAS (PILLS) --- */
@@ -48,7 +48,7 @@
   padding: 10px 22px;
   border-radius: 25px;
   border: none;
-  background: white;
+  background: #f8fbff;
   color: #475569;
   font-weight: 600;
   cursor: pointer;
@@ -70,7 +70,7 @@
 }
 
 .card-ejercicio {
-  background: white;
+  background: #f8fbff;
   border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
@@ -108,8 +108,8 @@
 
 .btn-descripcion {
   flex: 1;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: #f8fbff;
+  border: 1.5px solid #c8dcff;
   padding: 6px 12px;
   border-radius: 25px;
   font-size: 0.75rem;
@@ -134,7 +134,7 @@
 
 /* --- SECCIÓN RESUMEN FINAL --- */
 .rutina-resumen-final {
-  background: white;
+  background: #f8fbff;
   padding: 30px;
   border-radius: 25px;
   border-top: 5px solid #2e5cff;
@@ -155,7 +155,7 @@
 }
 
 .resumen-item {
-  background: #f8fafc;
+  background: #f0f5ff;
   padding: 15px;
   border-radius: 15px;
   display: flex;
@@ -169,7 +169,7 @@
   height: 50px;
   border-radius: 8px;   
   object-fit: cover;   
-  background: #f1f5f9;
+  background: #e8f0ff;
   flex-shrink: 0;       
 }
 .item-nombre {
@@ -194,7 +194,7 @@
 }
 
 .btn-remove {
-  background: #fee2e2;
+  background: #dbeafe;
   color: #ef4444;
   border: none;
   border-radius: 8px;

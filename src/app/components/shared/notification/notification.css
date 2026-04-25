@@ -64,7 +64,7 @@
 }
 
 .confirm-box {
-  background: #fff;
+  background: #f8fbff;
   border-radius: 1.25rem;
   padding: 1.75rem;
   max-width: 24rem;
@@ -90,7 +90,7 @@
   padding: 0.55rem 1.25rem;
   border-radius: 0.75rem;
   border: none;
-  background: #f1f5f9;
+  background: #e8f0ff;
   color: #475569;
   font-weight: 600;
   cursor: pointer;
@@ -108,7 +108,7 @@
   cursor: pointer;
   transition: background 0.15s;
 }
-.btn-confirm:hover { background: #dc2626; }
+.btn-confirm:hover { background: #2563eb; }
 
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(2rem); }

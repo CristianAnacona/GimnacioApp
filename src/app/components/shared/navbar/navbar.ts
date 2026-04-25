@@ -55,6 +55,7 @@ export class Navbar implements OnInit, OnDestroy {
       return [
         { icon: '📢', name: 'noticias', route: '/socio/noticias' },
         { icon: '🏋️‍♂️', name: 'mi rutina', route: '/socio/mi-rutina' },
+        { icon: '📈', name: 'mi progreso', route: '/socio/progreso' },
         { icon: '👤', name: 'perfil', route: '/socio/perfil' },
         { icon: '💎', name: 'planes', route: '/socio/planes' },
         { icon: '💰', name: 'pagos', route: '/socio/pagos' },

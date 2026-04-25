@@ -25,13 +25,13 @@
   
   border-radius: 10px;    /* Bordes redondeados */
   background-color: #f8fafc; /* Color de fondo base */
-  border: 1px solid #e2e8f0;
+  border: 1.5px solid #c8dcff;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Efecto al pasar el mouse */
 .nav-item:hover {
-  background-color: #fff5f0;
+  background-color: #f8fbff5f0;
   border-color: #ff4500;
   color: #ff4500;
   transform: translateY(-2px);

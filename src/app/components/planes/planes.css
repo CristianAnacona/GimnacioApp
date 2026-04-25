@@ -53,7 +53,7 @@
 }
 
 .modal-contenido {
-  background: white;
+  background: #f8fbff;
   border-radius: 12px;
   width: 90%;
   max-width: 550px;
@@ -133,7 +133,7 @@
 }
 
 .plan-card {
-  background: white;
+  background: #f8fbff;
   border-radius: 12px;
   padding: 25px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -225,7 +225,7 @@
 }
 
 .plan-card:hover .btn-elegir {
-  background: white;
+  background: #f8fbff;
   border-color: white;
   color: #5a367d;
 }

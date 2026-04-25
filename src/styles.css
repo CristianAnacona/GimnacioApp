@@ -1,3 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import "tailwindcss";
+
+/* ============================================
+   TEMA AZUL — tonos suaves en blancos y grises
+   ============================================ */
+
+/* Fondo general de la app */
+body {
+  background-color: #eef3ff;
+}
+
+/* --- Tailwind overrides con tono azulado --- */
+.bg-white        { background-color: #f8fbff !important; }
+.bg-slate-50     { background-color: #f0f5ff !important; }
+.bg-slate-100    { background-color: #e8f0ff !important; }
+.bg-slate-200    { background-color: #d8e6ff !important; }
+.bg-slate-800    { background-color: #101d36 !important; }
+.bg-slate-900    { background-color: #090f1e !important; }
+
+/* Bordes con tinte azul */
+.border-slate-100 { border-color: #d8e8ff !important; }
+.border-slate-200 { border-color: #c8dcff !important; }
+.border-slate-300 { border-color: #b0caff !important; }
+
+/* Textos grises con tinte azul */
+.text-slate-300  { color: #9ab5da !important; }
+.text-slate-400  { color: #7a9bc0 !important; }
+.text-slate-500  { color: #5c7fa8 !important; }
+
+/* Input backgrounds */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  background-color: #f0f5ff;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  background-color: #e8f0ff;
+}

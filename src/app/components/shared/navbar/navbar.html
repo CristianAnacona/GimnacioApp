@@ -1,9 +1,9 @@
-<nav class="bg-linear-to-t from-[#8B0000] via-[#3a0202] to-[#1a0505]  text-center text-white shadow-xl relative">
+<nav class="bg-linear-to-t from-[#1e3a8a] via-[#172554] to-[#0f172a]  text-center text-white shadow-xl relative">
   <div class="flex items-center justify-between px-4 md:px-6 py-1">
     <div class="flex items-center gap-2">
       @if (role === 'admin' || role === 'socio') {
       <button (click)="menuOpen = !menuOpen"
-        class="menu-button text-white text-2xl font-bold cursor-pointer hover:text-orange-500 p-1 transition-colors">
+        class="menu-button text-white text-2xl font-bold cursor-pointer hover:text-cyan-500 p-1 transition-colors">
         ☰
       </button>
       }
@@ -26,14 +26,14 @@
     <div class="flex items-center gap-2">
       <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
       <span class="text-white font-medium text-xs tracking-wide">
-        Bienvenido, <span class="text-[#8B0000] font-bold">{{ username }}</span>
+        Bienvenido, <span class="text-[#60a5fa] font-bold">{{ username }}</span>
       </span>
     </div>
   </div>
 
   <div class="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
     <span class="text-white font-semibold text-sm whitespace-nowrap">
-      Bienvenido, <span class="text-[#cc0000]">{{ username }}</span>
+      Bienvenido, <span class="text-[#93c5fd]">{{ username }}</span>
     </span>
   </div>
 
@@ -47,8 +47,8 @@
     <li>
       <a (click)="handleMenuClick(link)"
         class="flex items-center gap-3 p-4 cursor-pointer text-slate-300 hover:text-white hover:bg-slate-800 transition-all uppercase text-xs font-black tracking-widest border-b border-slate-800/50">
-        <span class="text-orange-500 text-lg">{{ link.icon }}</span>
-        <span [class.text-red-400]="link.route === 'logout'">{{ link.name }}</span>
+        <span class="text-cyan-500 text-lg">{{ link.icon }}</span>
+        <span [class.text-blue-400]="link.route === 'logout'">{{ link.name }}</span>
       </a>
     </li>
     }

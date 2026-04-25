@@ -60,7 +60,7 @@
 }
 
 .modal-contenido {
-  background: white;
+  background: #f8fbff;
   border-radius: 12px;
   width: 90%;
   max-width: 600px;
@@ -175,7 +175,7 @@
   color: #666;
   font-size: 0.9rem;
   font-style: italic;
-  background: white;
+  background: #f8fbff;
   padding: 0 10px;
 }
 
@@ -246,7 +246,7 @@
 }
 
 .noticia-card {
-  background: white;
+  background: #f8fbff;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

@@ -1,0 +1,114 @@
+<div class="page">
+
+  <div class="page-header">
+    <h2 class="page-title">📈 Mi Progreso</h2>
+  </div>
+
+  <!-- Sin registros -->
+  @if (!ejercicios.length) {
+    <div class="empty-state">
+      <span class="empty-icon">🏋️</span>
+      <p class="empty-title">Aún no hay registros</p>
+      <p class="empty-sub">Completa ejercicios en tu rutina y registra el peso para ver tu progreso aquí.</p>
+    </div>
+  }
+
+  <!-- Lista de ejercicios registrados -->
+  @if (ejercicios.length) {
+    <div class="section-label">Elige un ejercicio</div>
+    <div class="ejercicios-chips">
+      @for (ej of ejercicios; track ej) {
+        <button
+          class="chip"
+          [class.chip-activo]="ejercicioSeleccionado === ej"
+          (click)="seleccionarEjercicio(ej)">
+          {{ ej }}
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Gráfico -->
+  @if (ejercicioSeleccionado && historial.length) {
+    <div class="grafico-card">
+
+      <!-- Header del gráfico -->
+      <div class="grafico-header">
+        <div>
+          <p class="grafico-titulo">{{ ejercicioSeleccionado }}</p>
+          <p class="grafico-sub">{{ historial.length }} registro{{ historial.length !== 1 ? 's' : '' }}</p>
+        </div>
+        @if (mejora) {
+          <span class="mejora-badge" [class.positiva]="mejoraPositiva" [class.negativa]="!mejoraPositiva">
+            {{ mejora }} {{ mejoraPositiva ? '↑' : '↓' }}
+          </span>
+        }
+      </div>
+
+      <!-- Toggle peso / reps -->
+      <div class="modo-toggle">
+        <button [class.activo]="modo === 'peso'" (click)="modo = 'peso'">Peso (kg)</button>
+        <button [class.activo]="modo === 'reps'" (click)="modo = 'reps'">Repeticiones</button>
+      </div>
+
+      <!-- SVG Chart -->
+      <div class="svg-wrapper">
+        <svg [attr.viewBox]="'0 0 ' + W + ' ' + H" preserveAspectRatio="xMidYMid meet">
+
+          <!-- Grid lines -->
+          @for (label of yLabels(); track label.val) {
+            <line [attr.x1]="PAD.left" [attr.x2]="W - PAD.right"
+                  [attr.y1]="label.y" [attr.y2]="label.y"
+                  stroke="#f1f5f9" stroke-width="1"/>
+            <text [attr.x]="PAD.left - 6" [attr.y]="label.y + 4"
+                  text-anchor="end" font-size="9" fill="#94a3b8">{{ label.val }}</text>
+          }
+
+          <!-- Área bajo la línea -->
+          <path [attr.d]="areaPath" fill="#1d4ed8" fill-opacity="0.08"/>
+
+          <!-- Línea -->
+          <polyline
+            [attr.points]="polyline"
+            fill="none" stroke="#1d4ed8" stroke-width="2.5"
+            stroke-linejoin="round" stroke-linecap="round"/>
+
+          <!-- Puntos + fechas -->
+          @for (p of historial; track $index) {
+            <circle
+              [attr.cx]="xPos($index)"
+              [attr.cy]="yPos(datos[$index])"
+              r="4" fill="#1d4ed8" stroke="white" stroke-width="1.5"/>
+            <text
+              [attr.x]="xPos($index)"
+              [attr.y]="H - PAD.bottom + 14"
+              text-anchor="middle" font-size="8" fill="#94a3b8">
+              {{ p.fecha }}
+            </text>
+          }
+
+        </svg>
+      </div>
+
+      <!-- Tabla de registros -->
+      <div class="tabla-registros">
+        @for (p of historial | slice: -5; track $index) {
+          <div class="tabla-fila">
+            <span class="tabla-fecha">{{ p.fecha }}</span>
+            <span class="tabla-val">{{ p.peso !== null ? p.peso + ' kg' : '—' }}</span>
+            <span class="tabla-val">{{ p.reps !== null ? p.reps + ' reps' : '—' }}</span>
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+
+  @if (ejercicioSeleccionado && !historial.length && !cargando) {
+    <div class="empty-state" style="margin-top: 1rem;">
+      <span class="empty-icon">📊</span>
+      <p class="empty-title">Sin registros para este ejercicio</p>
+    </div>
+  }
+
+</div>
