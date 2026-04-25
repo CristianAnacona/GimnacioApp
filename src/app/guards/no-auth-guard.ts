@@ -7,7 +7,17 @@ export const noAuthGuard: CanActivateFn = (route, state) => {
   const role = localStorage.getItem('role')?.toLowerCase().trim();
 
   if (token) {
-    // Si ya hay sesión, redirige según el rol
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.exp * 1000 < Date.now()) {
+        localStorage.clear();
+        return true;
+      }
+    } catch {
+      localStorage.clear();
+      return true;
+    }
+
     if (role === 'admin') {
       router.navigate(['/admin']);
     } else {
@@ -16,6 +26,5 @@ export const noAuthGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  // Si no hay sesión, permite ver login
   return true;
 };

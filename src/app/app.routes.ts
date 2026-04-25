@@ -70,6 +70,10 @@ export const routes: Routes = [
         path: 'detalle-rutina/:id', 
         loadComponent: () => import('./components/admin/detalle-rutina/detalle-rutina').then(m => m.DetalleRutina) 
       },
+      {
+        path: 'settings',
+        loadComponent: () => import('./components/admin/settings/settings').then(m => m.Settings)
+      },
       { path: '', redirectTo: 'noticias', pathMatch: 'full' }
     ]
   },

@@ -52,7 +52,7 @@ export class MiRutina implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => localStorage.setItem('ultimoResetRutina', hoy),
-        error: (err) => console.error('Error reset diario:', err)
+        error: () => this.toast.error('Error al resetear la rutina diaria')
       });
   }
 
@@ -75,7 +75,7 @@ export class MiRutina implements OnInit, OnDestroy {
           this.cdr.detectChanges();
           this.scrollToActiveDay();
         },
-        error: (err) => console.error(err)
+        error: () => this.toast.error('No se pudo cargar tu rutina')
       });
   }
 

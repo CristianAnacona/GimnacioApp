@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-entrenadores',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './entrenadores.html',
   styleUrl: './entrenadores.css',
 })
-export class Entrenadores {
-
-}
+export class Entrenadores {}

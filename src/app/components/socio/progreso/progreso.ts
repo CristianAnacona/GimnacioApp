@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProgresoService } from '../../../services/progreso.service';
 import { UserStateService } from '../../../services/user-state.service';
+import { ToastService } from '../../../services/toast.service';
 
 interface Punto { fecha: string; peso: number | null; reps: number | null; }
 
@@ -35,6 +36,7 @@ export class Progreso implements OnInit {
   constructor(
     private progresoService: ProgresoService,
     private userState: UserStateService,
+    private toast: ToastService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -52,7 +54,7 @@ export class Progreso implements OnInit {
   cargarEjercicios() {
     this.progresoService.getEjercicios(this.usuarioId).subscribe({
       next: (data) => { this.ejercicios = data; this.cdr.detectChanges(); },
-      error: (err) => console.error(err)
+      error: () => this.toast.error('Error al cargar los ejercicios')
     });
   }
 

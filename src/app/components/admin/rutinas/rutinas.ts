@@ -124,7 +124,7 @@ export class Rutinas implements OnInit, OnDestroy {
   }
 
   agregarA_Rutina(ej: any) {
-    this.rutinaParaSocio.push({ ...ej, series: 4, repeticiones: '12', completado: false });
+    this.rutinaParaSocio.push({ ...ej, series: 4, repeticiones: '10', completado: false });
   }
 
   quitarDeRutina(index: number) {

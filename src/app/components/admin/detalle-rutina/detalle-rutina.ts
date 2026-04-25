@@ -39,7 +39,7 @@ export class DetalleRutina implements OnInit, OnDestroy {
           this.rutinas = res;
           this.cdr.detectChanges();
         },
-        error: (err) => console.error('Error al cargar rutinas:', err)
+        error: () => this.toast.error('Error al cargar las rutinas del socio')
       });
   }
 

@@ -218,26 +218,84 @@
 
 /* ── Mobile ─────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .page-wrapper { padding: 6px 6px 24px; gap: 18px; }
+  .page-wrapper { padding: 6px 10px 32px; gap: 20px; }
 
+  /* La section-card se vuelve transparente, cada fila es su propia card */
+  .section-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  /* El header flota solo */
+  .section-header {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e8eaf0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    margin-bottom: 10px;
+  }
+
+  .table-wrapper { overflow-x: visible; }
+
+  .data-table { display: block; }
   .data-table thead { display: none; }
+  .data-table tbody { display: flex; flex-direction: column; gap: 10px; }
 
+  /* Cada fila = card individual */
   .data-table tbody tr {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 14px 16px;
-    border-left: 3px solid #cbd5e1;
+    gap: 10px;
+    padding: 16px;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e8eaf0;
+    box-shadow: 0 3px 10px rgba(0,0,0,.06);
     margin: 0;
+    /* mantiene la franja de color */
+    border-left-width: 4px;
+    border-left-style: solid;
   }
+
+  /* Colores de estado en mobile */
+  .row-active  { border-left-color: #22c55e; background: #f0fdf4; }
+  .row-expired { border-left-color: #ef4444; background: #fff5f5; }
+  .row-none    { border-left-color: #cbd5e1; background: #fff; }
+  .row-admin   { border-left-color: #8b5cf6; background: #faf5ff; }
 
   .data-table td {
     padding: 0;
     font-size: 13px;
   }
 
+  /* Avatar más grande en mobile */
+  .avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 16px;
+  }
+
+  .user-name { font-size: 16px; }
+
+  /* Línea divisoria entre info y acciones */
+  .data-table td:last-child {
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+  }
+
   .renew-group,
   .action-group {
     justify-content: flex-start;
+  }
+
+  .btn-days {
+    padding: 7px 16px;
+    font-size: 13px;
+  }
+
+  .btn-rutina {
+    padding: 8px 16px;
+    font-size: 13px;
   }
 }
