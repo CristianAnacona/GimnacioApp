@@ -156,7 +156,7 @@
 }
 
 .celeb-btn {
-  background: #1d4ed8;
+  background: var(--color-secundario);
   color: #fff;
   border: none;
   padding: 0.65rem 1.75rem;
@@ -221,7 +221,7 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.preset-btn.activo { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+.preset-btn.activo { background: var(--color-secundario); border-color: var(--color-secundario); color: #fff; }
 .preset-btn:hover:not(.activo) { border-color: #475569; color: #cbd5e1; }
 
 .crono-display {
@@ -245,7 +245,7 @@
 
 .progress-circle {
   fill: none;
-  stroke: #1d4ed8;
+  stroke: var(--color-secundario);
   stroke-width: 6;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.9s linear, stroke 0.3s;
@@ -281,7 +281,7 @@
 .btn-play {
   width: 3.5rem; height: 3.5rem;
   border-radius: 50%;
-  background: #1d4ed8;
+  background: var(--color-secundario);
   border: none; color: #fff;
   font-size: 1.2rem; cursor: pointer;
   display: flex; align-items: center; justify-content: center;

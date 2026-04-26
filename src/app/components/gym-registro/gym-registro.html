@@ -1,0 +1,159 @@
+<div class="registro-bg">
+  <div class="registro-wrapper">
+
+    <!-- Header -->
+    <div class="brand">
+      <span class="brand-icon">🏋️</span>
+      <h1 class="brand-title">Registrar Gimnasio</h1>
+      <p class="brand-sub">Creá tu espacio en minutos</p>
+    </div>
+
+    <!-- Indicador de pasos -->
+    <div class="pasos">
+      <div class="paso-item" [class.activo]="paso === 1" [class.completo]="paso > 1">
+        <span class="paso-num">1</span>
+        <span class="paso-label">Tu Gimnasio</span>
+      </div>
+      <div class="paso-linea"></div>
+      <div class="paso-item" [class.activo]="paso === 2">
+        <span class="paso-num">2</span>
+        <span class="paso-label">Cuenta Admin</span>
+      </div>
+    </div>
+
+    <!-- PASO 1 — Datos del gimnasio -->
+    @if (paso === 1) {
+      <div class="form-card">
+        <p class="form-titulo">📋 Datos del gimnasio</p>
+
+        <!-- Logo -->
+        <div class="logo-upload">
+          <label class="logo-label" for="logoInput">
+            @if (gym.logo) {
+              <img [src]="gym.logo" alt="Logo" class="logo-preview">
+              <span class="logo-change">Cambiar logo</span>
+            } @else {
+              <div class="logo-placeholder">
+                <span class="logo-icon">🏋️</span>
+                <span class="logo-text">Subir logo</span>
+              </div>
+            }
+          </label>
+          <input type="file" id="logoInput" accept="image/*"
+                 (change)="onLogoChange($event)" class="hidden-input">
+        </div>
+
+        <div class="field">
+          <label class="field-label">Nombre del gimnasio *</label>
+          <input type="text" [(ngModel)]="gym.nombre" (input)="generarSlug()"
+                 placeholder="Ej: Kodiak Gym" class="field-input">
+        </div>
+
+        <div class="field">
+          <label class="field-label">Código único (slug) *</label>
+          <div class="slug-wrap">
+            <span class="slug-prefix">gymapp.com/</span>
+            <input type="text" [(ngModel)]="gym.slug"
+                   placeholder="kodiak-gym" class="field-input slug-input"
+                   pattern="[a-z0-9-]+">
+          </div>
+          <p class="field-hint">Solo minúsculas, números y guiones</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Slogan (opcional)</label>
+          <input type="text" [(ngModel)]="gym.slogan"
+                 placeholder="Ej: Strength · Discipline · Power" class="field-input">
+        </div>
+
+        <p class="form-titulo" style="margin-top: 1rem">🎨 Colores del tema</p>
+        <div class="colores-grid">
+          <div class="color-field">
+            <label class="field-label">Color primario</label>
+            <div class="color-wrap">
+              <input type="color" [(ngModel)]="gym.colores.primario" class="color-picker">
+              <span class="color-val">{{ gym.colores.primario }}</span>
+            </div>
+          </div>
+          <div class="color-field">
+            <label class="field-label">Color secundario</label>
+            <div class="color-wrap">
+              <input type="color" [(ngModel)]="gym.colores.secundario" class="color-picker">
+              <span class="color-val">{{ gym.colores.secundario }}</span>
+            </div>
+          </div>
+          <div class="color-field">
+            <label class="field-label">Fondo</label>
+            <div class="color-wrap">
+              <input type="color" [(ngModel)]="gym.colores.fondo" class="color-picker">
+              <span class="color-val">{{ gym.colores.fondo }}</span>
+            </div>
+          </div>
+          <div class="color-field">
+            <label class="field-label">Navbar</label>
+            <div class="color-wrap">
+              <input type="color" [(ngModel)]="gym.colores.navbar" class="color-picker">
+              <span class="color-val">{{ gym.colores.navbar }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview navbar -->
+        <div class="navbar-preview" [style.background]="gym.colores.navbar">
+          <span class="preview-label">Vista previa del navbar</span>
+          <div class="preview-dot" [style.background]="gym.colores.primario"></div>
+        </div>
+
+        <button class="btn-siguiente" (click)="siguiente()" [disabled]="!paso1Valido()">
+          Siguiente →
+        </button>
+      </div>
+    }
+
+    <!-- PASO 2 — Cuenta admin -->
+    @if (paso === 2) {
+      <div class="form-card">
+        <button class="btn-volver" (click)="paso = 1">← Volver</button>
+        <p class="form-titulo">👤 Cuenta de administrador</p>
+
+        <div class="field">
+          <label class="field-label">Tu nombre *</label>
+          <input type="text" [(ngModel)]="admin.nombre"
+                 placeholder="Ej: Cristian Anacona" class="field-input">
+        </div>
+
+        <div class="field">
+          <label class="field-label">Email *</label>
+          <input type="email" [(ngModel)]="admin.email"
+                 placeholder="admin@kodiak.com" class="field-input">
+        </div>
+
+        <div class="field">
+          <label class="field-label">Contraseña * (mín. 8 caracteres)</label>
+          <input type="password" [(ngModel)]="admin.password"
+                 placeholder="••••••••" class="field-input">
+        </div>
+
+        <div class="field">
+          <label class="field-label">Confirmar contraseña *</label>
+          <input type="password" [(ngModel)]="admin.confirmar"
+                 placeholder="••••••••" class="field-input"
+                 [class.input-error]="admin.confirmar && admin.password !== admin.confirmar">
+          @if (admin.confirmar && admin.password !== admin.confirmar) {
+            <p class="field-error">Las contraseñas no coinciden</p>
+          }
+        </div>
+
+        <button class="btn-siguiente" (click)="registrar()"
+                [disabled]="!paso2Valido() || guardando">
+          {{ guardando ? 'Registrando...' : '🚀 Crear gimnasio' }}
+        </button>
+      </div>
+    }
+
+    <p class="login-link">
+      ¿Ya tenés cuenta? <a routerLink="/gimnasios">Buscá tu gimnasio</a>
+    </p>
+
+  </div>
+</div>

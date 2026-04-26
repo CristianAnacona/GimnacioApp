@@ -17,8 +17,8 @@ export class AuthService {
 
   // --- AUTENTICACIÓN ---
 
-  loginConGoogle(accessToken: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/google`, { access_token: accessToken }).pipe(
+  loginConGoogle(accessToken: string, gymId?: string | null): Observable<any> {
+    return this.http.post(`${this.apiUrl}/google`, { access_token: accessToken, gymId }).pipe(
       tap((response: any) => {
         if (response.usuario) this.userStateService.updateUser(response.usuario);
       })

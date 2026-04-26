@@ -79,7 +79,7 @@
   height: 200px;
   overflow: hidden;
   flex-shrink: 0;
-  background: #eef3ff;
+  background: var(--color-fondo);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ProgresoService } from '../../../services/progreso.service';
 import { UserStateService } from '../../../services/user-state.service';
 import { ToastService } from '../../../services/toast.service';
+import { GymService } from '../../../services/gym.service';
 
 interface Punto { fecha: string; peso: number | null; reps: number | null; }
 
@@ -33,10 +34,14 @@ export class Progreso implements OnInit {
   readonly H = 180;
   readonly PAD = { top: 16, right: 24, bottom: 36, left: 44 };
 
+  get colorPrimario(): string  { return this.gymService.getGym()?.colores?.primario   || '#f97316'; }
+  get colorSecundario(): string { return this.gymService.getGym()?.colores?.secundario || '#1d4ed8'; }
+
   constructor(
     private progresoService: ProgresoService,
     private userState: UserStateService,
     private toast: ToastService,
+    private gymService: GymService,
     private cdr: ChangeDetectorRef
   ) {}
 

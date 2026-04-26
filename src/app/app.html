@@ -1,5 +1,5 @@
 <app-notification></app-notification>
 <router-outlet></router-outlet>
-@if (userState.isLoggedIn() && !isAdmin()) {
+@if (isSocioRoute() && gymService.moduloActivo('cronometro')) {
   <app-cronometro></app-cronometro>
 }

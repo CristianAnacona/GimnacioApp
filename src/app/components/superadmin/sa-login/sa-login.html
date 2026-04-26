@@ -1,0 +1,39 @@
+<div class="sa-login-bg">
+  <div class="sa-login-card">
+
+    <div class="sa-brand">
+      <span class="sa-icon">⚡</span>
+      <p class="sa-label">Panel Central</p>
+    </div>
+
+    <div class="field">
+      <label class="flabel">Correo</label>
+      <input
+        type="email"
+        [(ngModel)]="email"
+        placeholder="correo@ejemplo.com"
+        class="finput"
+        autocomplete="off">
+    </div>
+
+    <div class="field">
+      <label class="flabel">Contraseña</label>
+      <div class="pass-wrap">
+        <input
+          [type]="verPass ? 'text' : 'password'"
+          [(ngModel)]="password"
+          placeholder="••••••••"
+          class="finput"
+          (keyup.enter)="entrar()">
+        <button type="button" class="toggle-pass" (click)="verPass = !verPass">
+          {{ verPass ? '🙉' : '🙈' }}
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-entrar" (click)="entrar()" [disabled]="!email || !password || cargando">
+      {{ cargando ? 'Entrando...' : 'Entrar' }}
+    </button>
+
+  </div>
+</div>

@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../../services/auth';
 import { UserStateService } from '../../../services/user-state.service';
 import { ToastService } from '../../../services/toast.service';
+import { GymService } from '../../../services/gym.service';
 
 @Component({
   selector: 'app-perfil',
@@ -25,7 +26,8 @@ export class Perfil implements OnInit, OnDestroy {
     private authService: AuthService,
     private userStateService: UserStateService,
     private toast: ToastService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public gymService: GymService
   ) {}
 
   ngOnInit() {

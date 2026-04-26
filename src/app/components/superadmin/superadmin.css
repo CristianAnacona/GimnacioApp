@@ -1,0 +1,359 @@
+.sa-page {
+  min-height: 100vh;
+  background: #0f172a;
+  padding: 1.5rem;
+  font-family: system-ui, sans-serif;
+}
+
+/* Header */
+.sa-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+.sa-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #f97316;
+  margin: 0;
+}
+
+.sa-sub {
+  font-size: .8rem;
+  color: #94a3b8;
+  margin: 0;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.sa-header-actions {
+  display: flex;
+  gap: .6rem;
+}
+
+.btn-nuevo {
+  background: #f97316;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: .55rem 1.1rem;
+  font-weight: 700;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-nuevo:hover { background: #ea6c0e; }
+
+.btn-salir {
+  background: #1e293b;
+  color: #94a3b8;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: .55rem 1.1rem;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-salir:hover { background: #334155; color: #fff; }
+
+/* Form card */
+.form-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-titulo {
+  font-size: .95rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0 0 .75rem;
+}
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.logo-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+  cursor: pointer;
+}
+
+.logo-preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #f97316;
+}
+
+.logo-empty {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #0f172a;
+  border: 2px dashed #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+.logo-hint {
+  font-size: .72rem;
+  color: #64748b;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: .75rem;
+  margin-bottom: .5rem;
+}
+
+.field { display: flex; flex-direction: column; gap: .3rem; }
+
+.flabel {
+  font-size: .75rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.finput {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #e2e8f0;
+  padding: .5rem .75rem;
+  font-size: .88rem;
+  outline: none;
+  transition: border-color .2s;
+}
+.finput:focus { border-color: #f97316; }
+
+/* Colores */
+.colores-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: .5rem;
+}
+
+.color-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .3rem;
+}
+
+.cpicker {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 2px;
+  background: #0f172a;
+}
+
+/* Módulos */
+.modulos-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
+
+.modulo-toggle {
+  padding: .35rem .8rem;
+  border-radius: 20px;
+  border: 1.5px solid #334155;
+  color: #64748b;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  user-select: none;
+}
+.modulo-toggle.activo {
+  border-color: #f97316;
+  color: #f97316;
+  background: rgba(249,115,22,.08);
+}
+
+.btn-crear {
+  width: 100%;
+  background: #f97316;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: .7rem;
+  font-weight: 700;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-crear:hover:not(:disabled) { background: #ea6c0e; }
+.btn-crear:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Cargando */
+.cargando {
+  color: #94a3b8;
+  text-align: center;
+  padding: 2rem;
+  font-size: .9rem;
+}
+
+/* Grid de gyms */
+.gyms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.gym-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 1.1rem;
+  transition: border-color .2s;
+}
+.gym-card:hover { border-color: #475569; }
+.gym-card.inactivo { opacity: .55; }
+
+.gym-top {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .75rem;
+}
+
+.gym-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.gym-inicial {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.gym-info { flex: 1; min-width: 0; }
+
+.gym-nombre {
+  font-weight: 700;
+  color: #e2e8f0;
+  font-size: .95rem;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gym-slug {
+  font-size: .75rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.gym-badge {
+  font-size: .7rem;
+  font-weight: 700;
+  padding: .2rem .55rem;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+.badge-on { background: rgba(34,197,94,.12); color: #22c55e; }
+.badge-off { background: rgba(239,68,68,.12); color: #ef4444; }
+
+.gym-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: .78rem;
+  color: #64748b;
+  margin-bottom: .75rem;
+}
+
+.gym-actions {
+  display: flex;
+  gap: .5rem;
+}
+
+.edit-actions {
+  display: flex;
+  gap: .5rem;
+  margin-top: .5rem;
+}
+
+.btn-cancelar {
+  flex: 1;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  color: #94a3b8;
+  padding: .7rem;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-editar {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #94a3b8;
+  padding: .45rem .7rem;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-editar:hover { border-color: #f97316; color: #f97316; }
+
+.btn-toggle {
+  flex: 1;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #94a3b8;
+  padding: .45rem;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-toggle:hover { border-color: #f97316; color: #f97316; }
+
+.btn-eliminar {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #ef4444;
+  padding: .45rem .7rem;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-eliminar:hover { background: rgba(239,68,68,.1); border-color: #ef4444; }

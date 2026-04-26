@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../../../services/auth';
 import { UserStateService } from '../../../services/user-state.service';
+import { GymService } from '../../../services/gym.service';
 
 @Component({
   selector: 'app-navbar',
@@ -25,11 +26,17 @@ export class Navbar implements OnInit, OnDestroy {
   private readonly CACHE_DURATION = 5 * 60 * 1000;
   private destroy$ = new Subject<void>();
 
+  get gymNombre(): string { return this.gymService.getGym()?.nombre || 'GymApp'; }
+  get gymLogo(): string | null { return this.gymService.getGym()?.logo || null; }
+  get navbarBg(): string { return this.gymService.getGym()?.colores?.navbar || '#0f172a'; }
+  get menuBg(): string { return (this.gymService.getGym()?.colores as any)?.menu || '#1e293b'; }
+
   constructor(
     private router: Router,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
-    private userStateService: UserStateService
+    private userStateService: UserStateService,
+    private gymService: GymService
   ) {}
 
   @HostListener('document:click', ['$event'])
@@ -41,26 +48,29 @@ export class Navbar implements OnInit, OnDestroy {
   }
 
   get menuLinks() {
+    const m = (mod: Parameters<typeof this.gymService.moduloActivo>[0]) =>
+      this.gymService.moduloActivo(mod);
+
     if (this.role === 'admin') {
       return [
-        { icon: '📰', name: 'noticias', route: '/admin/noticias' },
-        { icon: '👥', name: 'socios', route: '/admin/socios' },
-        { icon: '💳', name: 'planes', route: '/admin/planes' },
-        { icon: '💰', name: 'pagos', route: '/admin/pagos' },
-        { icon: '🏋️', name: 'entrenadores', route: '/admin/entrenadores' },
-        { icon: '📋', name: 'rutinas', route: '/admin/rutinas' },
-        { icon: '🚪', name: 'Cerrar Sesión', route: 'logout', isAction: true }
-      ];
+        { icon: '📰', name: 'noticias',     route: '/admin/noticias',     show: m('noticias') },
+        { icon: '👥', name: 'socios',        route: '/admin/socios',        show: true },
+        { icon: '💳', name: 'planes',        route: '/admin/planes',        show: m('pagos') },
+        { icon: '💰', name: 'pagos',         route: '/admin/pagos',         show: m('pagos') },
+        { icon: '🏋️', name: 'entrenadores', route: '/admin/entrenadores',  show: true },
+        { icon: '📋', name: 'rutinas',       route: '/admin/rutinas',       show: m('rutinas') },
+        { icon: '🚪', name: 'Cerrar Sesión', route: 'logout', isAction: true, show: true }
+      ].filter(l => l.show);
     } else if (this.role === 'socio') {
       return [
-        { icon: '📢', name: 'noticias', route: '/socio/noticias' },
-        { icon: '🏋️‍♂️', name: 'mi rutina', route: '/socio/mi-rutina' },
-        { icon: '📈', name: 'mi progreso', route: '/socio/progreso' },
-        { icon: '👤', name: 'perfil', route: '/socio/perfil' },
-        { icon: '💎', name: 'planes', route: '/socio/planes' },
-        { icon: '💰', name: 'pagos', route: '/socio/pagos' },
-        { icon: '🏃‍♂️', name: 'Cerrar Sesión', route: 'logout', isAction: true }
-      ];
+        { icon: '📢',    name: 'noticias',    route: '/socio/noticias',   show: m('noticias') },
+        { icon: '🏋️‍♂️', name: 'mi rutina',  route: '/socio/mi-rutina',  show: m('rutinas') },
+        { icon: '📈',    name: 'mi progreso', route: '/socio/progreso',   show: m('progreso') },
+        { icon: '👤',    name: 'perfil',      route: '/socio/perfil',     show: true },
+        { icon: '💎',    name: 'planes',      route: '/socio/planes',     show: m('pagos') },
+        { icon: '💰',    name: 'pagos',       route: '/socio/pagos',      show: m('pagos') },
+        { icon: '🏃‍♂️', name: 'Cerrar Sesión', route: 'logout', isAction: true, show: true }
+      ].filter(l => l.show);
     }
     return [];
   }
@@ -68,6 +78,11 @@ export class Navbar implements OnInit, OnDestroy {
   ngOnInit() {
     this.role = this.userStateService.getRole() || 'socio';
     this.username = localStorage.getItem('nombre') || 'Usuario';
+
+    // Re-renderiza cuando cambian los datos del gym (módulos, colores, logo)
+    this.gymService.gymCambio$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.cdr.detectChanges());
 
     this.userStateService.user$
       .pipe(takeUntil(this.destroy$))

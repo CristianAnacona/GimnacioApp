@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 import { AuthService } from '../../../services/auth';
 import { ToastService } from '../../../services/toast.service';
+import { GymService, Gym } from '../../../services/gym.service';
 
 @Component({
   selector: 'app-register',
@@ -13,16 +14,25 @@ import { ToastService } from '../../../services/toast.service';
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
-export class Register {
+export class Register implements OnInit {
   nuevoUsuario = { nombre: '', email: '', password: '', confirmPassword: '', role: 'socio' };
   verPass = false;
   verConfirmPass = false;
+  gym: Gym | null = null;
 
   constructor(
     private authService: AuthService,
     private toast: ToastService,
-    private router: Router
+    private router: Router,
+    private gymService: GymService
   ) {}
+
+  ngOnInit() {
+    this.gym = this.gymService.getGym();
+    if (!this.gym) {
+      this.router.navigate(['/gimnasios']);
+    }
+  }
 
   esFormularioValido(): boolean {
     return (
@@ -40,7 +50,11 @@ export class Register {
   registrar() {
     if (!this.esFormularioValido()) return;
 
-    const usuarioAEnviar = { ...this.nuevoUsuario, role: 'socio' };
+    const usuarioAEnviar = {
+      ...this.nuevoUsuario,
+      role: 'socio',
+      gymId: this.gym?._id || null
+    };
 
     this.authService.registrar(usuarioAEnviar).subscribe({
       next: () => {

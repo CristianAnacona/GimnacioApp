@@ -74,7 +74,7 @@
 .dia-badge {
   display: inline-block;
   background: #eff6ff;
-  color: #1d4ed8;
+  color: var(--color-secundario);
   font-size: 0.7rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -112,7 +112,7 @@
 .btn-delete:hover { opacity: 0.82; }
 
 .btn-edit   { background: #e0f2fe; color: #0369a1; }
-.btn-delete { background: #dbeafe; color: #1d4ed8; }
+.btn-delete { background: #dbeafe; color: var(--color-secundario); }
 
 /* Summary pill */
 .card-summary {
@@ -185,7 +185,7 @@
   font-size: 0.75rem;
   font-weight: 700;
   color: #ffffff;
-  background: #1d4ed8;
+  background: var(--color-secundario);
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
 }

@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
 /* ============================================
+   VARIABLES DE TEMA POR GIMNASIO
+   Sobreescritas por ThemeService en runtime
+   ============================================ */
+:root {
+  --color-primario:   #f97316;
+  --color-secundario: #1d4ed8;
+  --color-fondo:      #eef3ff;
+  --color-navbar:     #0f172a;
+}
+
+/* ============================================
    COMPATIBILIDAD — prefijos y fallbacks
    ============================================ */
 
@@ -29,7 +40,7 @@
 
 /* Fondo general de la app */
 body {
-  background-color: #eef3ff;
+  background-color: var(--color-fondo);
 }
 
 /* --- Tailwind overrides con tono azulado --- */

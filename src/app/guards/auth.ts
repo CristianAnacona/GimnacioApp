@@ -4,6 +4,13 @@ import { Router, CanActivateFn } from '@angular/router';
 export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const token = localStorage.getItem('token');
+  const gym   = localStorage.getItem('gymActual');
+
+  // Sin gym seleccionado → selector
+  if (!gym) {
+    router.navigate(['/gimnasios']);
+    return false;
+  }
 
   if (!token) {
     router.navigate(['/login']);

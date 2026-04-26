@@ -43,7 +43,7 @@
 .stat-val {
   font-size: 0.82rem;
   font-weight: 900;
-  color: #1d4ed8;
+  color: var(--color-secundario);
   line-height: 1.2;
   margin-top: 0.05rem;
 }
@@ -82,8 +82,8 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.chip:hover { border-color: #1d4ed8; color: #1d4ed8; }
-.chip.chip-activo { background: #1d4ed8; border-color: #1d4ed8; color: #fff; }
+.chip:hover { border-color: var(--color-secundario); color: var(--color-secundario); }
+.chip.chip-activo { background: var(--color-secundario); border-color: var(--color-secundario); color: #fff; }
 
 /* Gráfico card */
 .grafico-card {
@@ -111,7 +111,7 @@
   border-radius: 999px;
 }
 .mejora-badge.positiva { background: #dcfce7; color: #15803d; }
-.mejora-badge.negativa { background: #dbeafe; color: #1d4ed8; }
+.mejora-badge.negativa { background: #dbeafe; color: var(--color-secundario); }
 
 /* Toggle */
 .modo-toggle {
@@ -135,7 +135,7 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.modo-toggle button.activo { background: #f8fbff; color: #1d4ed8; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.modo-toggle button.activo { background: #f8fbff; color: var(--color-secundario); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 
 /* Chart: eje Y fijo + scroll horizontal */
 .chart-container {
@@ -186,7 +186,7 @@
   background: #dbeafe;
   font-size: 0.65rem;
   font-weight: 800;
-  color: #1d4ed8;
+  color: var(--color-secundario);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -215,5 +215,5 @@
 
 .h-fecha { color: #64748b; font-weight: 600; min-width: 52px; }
 .h-val   { font-weight: 800; }
-.h-peso  { color: #1d4ed8; }
+.h-peso  { color: var(--color-secundario); }
 .h-reps  { color: #7c3aed; }

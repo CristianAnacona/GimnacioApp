@@ -12,6 +12,29 @@
       </div>
     </div>
 
+    <!-- Logo del Gimnasio -->
+    @if (gym) {
+      <div class="gym-logo-card">
+        <p class="section-title">Logo del Gimnasio</p>
+        <div class="logo-row">
+          <label class="logo-label" for="logoInput">
+            @if (gym.logo) {
+              <img [src]="gym.logo" class="logo-preview" [alt]="gym.nombre">
+            } @else {
+              <div class="logo-empty" [style.background]="gym.colores?.primario || '#f97316'">
+                {{ gym.nombre[0] }}
+              </div>
+            }
+            <span class="logo-hint">Toca para cambiar</span>
+          </label>
+          <input type="file" id="logoInput" accept="image/*" (change)="onLogoChange($event)" style="display:none">
+          <button class="btn-guardar" (click)="guardarLogo()" [disabled]="!gym.logo || guardando">
+            {{ guardando ? 'Guardando...' : 'Guardar logo' }}
+          </button>
+        </div>
+      </div>
+    }
+
     <div class="menu-card">
       <a routerLink="/admin/socios" class="menu-item">
         <span class="menu-icon">👥</span>

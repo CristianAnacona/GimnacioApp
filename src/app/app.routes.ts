@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth';
 import { AdminDashboard } from './components/admin/dashboardAdmin/dashboardAdmin';
 import { noAuthGuard } from './guards/no-auth-guard';
+import { superAdminGuard } from './guards/superadmin.guard';
 
 // Rutas compartidas entre admin y socio
 const sharedRoutes: Routes = [
@@ -20,8 +21,17 @@ const sharedRoutes: Routes = [
 ];
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  
+  { path: '', redirectTo: '/gimnasios', pathMatch: 'full' },
+
+  {
+    path: 'gimnasios',
+    loadComponent: () => import('./components/gym-selector/gym-selector').then(m => m.GymSelector)
+  },
+  {
+    path: 'gym/nuevo',
+    loadComponent: () => import('./components/gym-registro/gym-registro').then(m => m.GymRegistro)
+  },
+
   {
     path: 'login',
     canActivate: [noAuthGuard],
@@ -109,6 +119,17 @@ export const routes: Routes = [
       },
       { path: '', redirectTo: 'noticias', pathMatch: 'full' }
     ]
+  },
+
+  // SUPERADMIN
+  {
+    path: 'sa',
+    loadComponent: () => import('./components/superadmin/sa-login/sa-login').then(m => m.SaLogin)
+  },
+  {
+    path: 'plataforma',
+    canActivate: [superAdminGuard],
+    loadComponent: () => import('./components/superadmin/superadmin').then(m => m.SuperAdmin)
   },
 
   // OTRAS RUTAS

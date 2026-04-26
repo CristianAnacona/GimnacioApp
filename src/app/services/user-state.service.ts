@@ -11,6 +11,11 @@ export class UserStateService {
     return user ? JSON.parse(user) : null;
   }
 
+  private getGymFromStorage() {
+    const gym = localStorage.getItem('gymActual');
+    return gym ? JSON.parse(gym) : null;
+  }
+
   getCurrentUser() {
     return this.userSubject.value;
   }
@@ -25,6 +30,18 @@ export class UserStateService {
 
   getUserId(): string | null {
     return localStorage.getItem('userId');
+  }
+
+  // Retorna el gymId del usuario logueado o del gym seleccionado
+  getGymId(): string | null {
+    return this.userSubject.value?.gymId
+      || this.getGymFromStorage()?._id
+      || null;
+  }
+
+  // Retorna el objeto completo del gym seleccionado
+  getGym(): any {
+    return this.getGymFromStorage();
   }
 
   isLoggedIn(): boolean {
@@ -50,7 +67,10 @@ export class UserStateService {
   }
 
   clearSession() {
+    // Preservar el gym seleccionado para no tener que buscarlo de nuevo
+    const gymActual = localStorage.getItem('gymActual');
     localStorage.clear();
+    if (gymActual) localStorage.setItem('gymActual', gymActual);
     this.userSubject.next(null);
   }
 }

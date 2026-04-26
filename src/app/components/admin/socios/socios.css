@@ -42,7 +42,7 @@
   padding: 2px 9px;
   border-radius: 99px;
 }
-.badge-blue   { background: #dbeafe; color: #1d4ed8; }
+.badge-blue   { background: #dbeafe; color: var(--color-secundario); }
 .badge-purple { background: #ede9fe; color: #6d28d9; }
 
 /* ── Table ──────────────────────────────────────────────────── */
@@ -163,7 +163,7 @@
 .btn-days:disabled { opacity: .45; cursor: not-allowed; }
 .btn-days:not(:disabled):hover { transform: scale(1.08); }
 
-.btn-7  { background: #dbeafe; color: #1d4ed8; }
+.btn-7  { background: #dbeafe; color: var(--color-secundario); }
 .btn-15 { background: #ede9fe; color: #6d28d9; }
 .btn-30 { background: #dcfce7; color: #15803d; }
 
@@ -177,7 +177,7 @@
 
 .btn-rutina {
   padding: 6px 14px;
-  background: #f97316;
+  background: var(--color-primario);
   color: #fff;
   border: none;
   border-radius: 10px;

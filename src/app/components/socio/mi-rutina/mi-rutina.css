@@ -73,7 +73,7 @@
   color: #94a3b8;
 }
 
-.stat-val-series { color: #f97316; margin-left: 2px; }
+.stat-val-series { color: var(--color-primario); margin-left: 2px; }
 .stat-val-reps   { color: #2563eb; margin-left: 2px; }
 
 .card-footer { display: flex; gap: 8px; margin-top: auto; }
@@ -109,7 +109,7 @@
   margin: 0 1rem 1rem;
   background: #f8fbff;
   border-radius: 1.5rem;
-  border: 1.5px solid #1d4ed8;
+  border: 1.5px solid var(--color-secundario);
   padding: 1rem 1rem 1.1rem;
   animation: slideDown 0.2s ease;
 }
@@ -186,7 +186,7 @@
   justify-content: center;
   font-size: 0.72rem;
   font-weight: 800;
-  color: #1d4ed8;
+  color: var(--color-secundario);
   border: 1.5px solid #dbeafe;
   flex-shrink: 0;
 }
@@ -203,13 +203,13 @@
   outline: none;
   background: #f0f5ff;
 }
-.set-row input:focus { border-color: #1d4ed8; background: #f8fbff; }
+.set-row input:focus { border-color: var(--color-secundario); background: #f8fbff; }
 
 /* ---- Botón guardar ---- */
 .btn-guardar-panel {
   width: 100%;
   padding: 0.65rem;
-  background: #1d4ed8;
+  background: var(--color-secundario);
   color: #fff;
   border: none;
   border-radius: 1rem;

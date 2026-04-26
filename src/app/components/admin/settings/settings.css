@@ -85,6 +85,76 @@
 .menu-icon { font-size: 1.1rem; }
 .menu-arrow { margin-left: auto; color: #cbd5e1; }
 
+.gym-logo-card {
+  background: #fff;
+  border: 1.5px solid #c8dcff;
+  border-radius: 1.25rem;
+  padding: 1.1rem;
+  margin-bottom: 1.25rem;
+}
+
+.section-title {
+  font-size: .8rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin: 0 0 .85rem;
+}
+
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .3rem;
+  cursor: pointer;
+}
+
+.logo-preview {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #c8dcff;
+}
+
+.logo-empty {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.logo-hint {
+  font-size: .7rem;
+  color: #94a3b8;
+}
+
+.btn-guardar {
+  flex: 1;
+  padding: .7rem;
+  background: var(--color-secundario, #1d4ed8);
+  color: #fff;
+  border: none;
+  border-radius: .85rem;
+  font-size: .88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.btn-guardar:disabled { opacity: .5; cursor: not-allowed; }
+
 .btn-logout {
   width: 100%;
   padding: .85rem;
