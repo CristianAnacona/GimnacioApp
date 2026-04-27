@@ -4,10 +4,9 @@
   <button
     [id]="'btn-' + item"
     (click)="cambiarDia(item)"
-    [class]="diaActivo === item
-              ? 'bg-[#1d4ed8] text-white shadow-lg shadow-blue-200 border-[#1d4ed8] '
-              : 'bg-white text-slate-500 border-slate-200 hover:border-orange-300'"
-    class="px-5 py-2 rounded-full border font-bold text-xs whitespace-nowrap transition-all active:scale-95">
+    [style]="diaActivo === item ? 'background:var(--color-dias);color:#fff;border-color:var(--color-dias)' : ''"
+    [class]="diaActivo === item ? 'shadow-lg' : 'bg-white text-slate-500 border-slate-200'"
+    class="px-5 py-2 rounded-full border font-bold text-xs whitespace-nowrap transition-all">
     {{ item }}
   </button>
   }
@@ -141,7 +140,11 @@
 
   } @else {
     <div class="loader-container" style="text-align: center; padding: 50px;">
-      <p class="text-slate-400 font-medium italic">Cargando tus rutinas...</p>
+      @if (cargando) {
+        <p class="text-slate-400 font-medium italic">Cargando tus rutinas...</p>
+      } @else {
+        <p class="text-slate-400 font-medium italic">No tienes rutinas asignadas aún.</p>
+      }
     </div>
   }
 </div>

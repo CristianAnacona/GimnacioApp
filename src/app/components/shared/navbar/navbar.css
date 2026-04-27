@@ -1,21 +1,22 @@
 /* navbar.css */
+.navbar-gym-inicial {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 900;
+  flex-shrink: 0;
+}
 .logo-blend {
-  -webkit-mix-blend-mode: luminosity;
-  mix-blend-mode: luminosity;
-  filter:
-    brightness(1.15)
-    saturate(0.6)
-    drop-shadow(0 0 10px rgba(96, 165, 250, 0.5))
-    drop-shadow(0 0 24px rgba(30, 58, 138, 0.6));
   transition: filter 0.3s;
 }
 
 .logo-blend:hover {
-  filter:
-    brightness(1.25)
-    saturate(0.8)
-    drop-shadow(0 0 14px rgba(147, 197, 253, 0.7))
-    drop-shadow(0 0 30px rgba(59, 130, 246, 0.5));
+  filter: brightness(1.1);
 }
 
 /* Efecto de pulso al punto verde */

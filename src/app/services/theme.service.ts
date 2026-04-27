@@ -6,7 +6,8 @@ const DEFAULTS = {
   secundario: '#1d4ed8',
   fondo:      '#eef3ff',
   navbar:     '#0f172a',
-  menu:       '#1e293b'
+  menu:       '#1e293b',
+  dias:       '#1d4ed8'
 };
 
 @Injectable({ providedIn: 'root' })
@@ -23,6 +24,7 @@ export class ThemeService {
     root.style.setProperty('--color-fondo',      colores.fondo      || DEFAULTS.fondo);
     root.style.setProperty('--color-navbar',     colores.navbar     || DEFAULTS.navbar);
     root.style.setProperty('--color-menu',       (colores as any).menu || DEFAULTS.menu);
+    root.style.setProperty('--color-dias',       (colores as any).dias || DEFAULTS.dias);
   }
 
   resetear() {

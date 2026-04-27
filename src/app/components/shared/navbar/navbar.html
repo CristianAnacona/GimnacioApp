@@ -10,7 +10,9 @@
       @if (gymLogo) {
         <img [src]="gymLogo" [alt]="gymNombre" class="w-20 h-20 rounded-full logo-blend object-cover">
       } @else {
-        <img src="icons/LogoGym.jpg" alt="Logo" class="w-20 h-20 rounded-full logo-blend">
+        <div class="navbar-gym-inicial" style="background: var(--color-primario)">
+          {{ gymNombre[0] }}
+        </div>
       }
     </div>
     <div class="flex items-center gap-3">

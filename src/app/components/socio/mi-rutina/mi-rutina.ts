@@ -36,6 +36,7 @@ export class MiRutina implements OnInit, OnDestroy {
   formularioIdx: number | null = null;
   setsForm: SetForm[] = [];
   guardando = false;
+  cargando = true;
 
   scrollToActiveDay() {
     setTimeout(() => {
@@ -71,11 +72,15 @@ export class MiRutina implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.rutinas = Array.isArray(res) ? res : [res];
+          this.cargando = false;
           this.buscarRutinaDelDia(this.diaActivo);
           this.cdr.detectChanges();
           this.scrollToActiveDay();
         },
-        error: () => this.toast.error('No se pudo cargar tu rutina')
+        error: () => {
+          this.cargando = false;
+          this.cdr.detectChanges();
+        }
       });
   }
 
@@ -96,14 +101,19 @@ export class MiRutina implements OnInit, OnDestroy {
     const rutinaDelDia = this.rutinaActual;
     if (!rutinaDelDia?._id) return;
 
-    this.authService.toggleEjercicioCompletado(rutinaDelDia._id, index, !ejer.completado)
+    // Actualiza UI inmediatamente sin esperar al servidor
+    const valorAnterior = ejer.completado;
+    ejer.completado = !valorAnterior;
+    this.cdr.detectChanges();
+
+    this.authService.toggleEjercicioCompletado(rutinaDelDia._id, index, ejer.completado)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
-          ejer.completado = !ejer.completado;
+        error: () => {
+          ejer.completado = valorAnterior; // revertir si falla
           this.cdr.detectChanges();
-        },
-        error: () => this.toast.error('No se pudo guardar el progreso.')
+          this.toast.error('No se pudo guardar el progreso.');
+        }
       });
   }
 

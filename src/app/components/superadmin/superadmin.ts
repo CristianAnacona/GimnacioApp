@@ -25,7 +25,7 @@ export class SuperAdmin implements OnInit {
   nuevo = {
     nombre: '', slug: '', slogan: '',
     logo: null as string | null,
-    colores: { primario: '#f97316', secundario: '#1d4ed8', fondo: '#eef3ff', navbar: '#0f172a', menu: '#1e293b' } as Record<string, string>,
+    colores: { primario: '#f97316', secundario: '#1d4ed8', fondo: '#eef3ff', navbar: '#0f172a', menu: '#1e293b', dias: '#1d4ed8' } as Record<string, string>,
     modulos: { rutinas: true, progreso: true, medidas: true, pagos: true, noticias: true, cronometro: true } as Record<string, boolean>
   };
 
@@ -133,7 +133,7 @@ export class SuperAdmin implements OnInit {
         this.toast.success('Gimnasio creado');
         this.mostrarForm = false;
         this.nuevo = { nombre: '', slug: '', slogan: '', logo: null,
-          colores: { primario: '#f97316', secundario: '#1d4ed8', fondo: '#eef3ff', navbar: '#0f172a', menu: '#1e293b' } as Record<string, string>,
+          colores: { primario: '#f97316', secundario: '#1d4ed8', fondo: '#eef3ff', navbar: '#0f172a', menu: '#1e293b', dias: '#1d4ed8' } as Record<string, string>,
           modulos: { rutinas: true, progreso: true, medidas: true, pagos: true, noticias: true, cronometro: true } as Record<string, boolean>
         };
         this.guardando = false;

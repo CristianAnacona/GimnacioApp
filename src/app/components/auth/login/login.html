@@ -12,7 +12,7 @@
           @if (gym?.logo) {
             <img [src]="gym!.logo" [alt]="gym!.nombre" class="brand-logo">
           } @else if (gym) {
-            <div class="brand-inicial" [style.background]="gym.colores?.primario || '#f97316'">
+            <div class="brand-inicial" [style.background]="gym.colores.primario || '#f97316'">
               {{ gym.nombre[0] }}
             </div>
           } @else {

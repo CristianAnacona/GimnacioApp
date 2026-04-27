@@ -9,7 +9,7 @@ export interface Gym {
   slug: string;
   logo: string | null;
   slogan: string;
-  colores: { primario: string; secundario: string; fondo: string; navbar: string; menu: string };
+  colores: { primario: string; secundario: string; fondo: string; navbar: string; menu: string; dias: string };
   modulos: {
     rutinas: boolean; progreso: boolean; medidas: boolean;
     pagos: boolean; noticias: boolean; cronometro: boolean;
