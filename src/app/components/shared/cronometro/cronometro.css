@@ -156,7 +156,7 @@
 }
 
 .celeb-btn {
-  background: var(--color-secundario);
+  background: #f97316;
   color: #fff;
   border: none;
   padding: 0.65rem 1.75rem;
@@ -165,7 +165,7 @@
   font-weight: 800;
   cursor: pointer;
   transition: opacity 0.15s;
-  box-shadow: 0 4px 16px rgba(29,78,216,0.4);
+  box-shadow: 0 4px 16px rgba(249,115,22,0.4);
 }
 .celeb-btn:hover { opacity: 0.85; }
 
@@ -221,7 +221,7 @@
   cursor: pointer;
   transition: all 0.15s;
 }
-.preset-btn.activo { background: var(--color-secundario); border-color: var(--color-secundario); color: #fff; }
+.preset-btn.activo { background: #f97316; border-color: #f97316; color: #fff; }
 .preset-btn:hover:not(.activo) { border-color: #475569; color: #cbd5e1; }
 
 .crono-display {
@@ -245,7 +245,7 @@
 
 .progress-circle {
   fill: none;
-  stroke: var(--color-secundario);
+  stroke: #22c55e;
   stroke-width: 6;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.9s linear, stroke 0.3s;
@@ -281,12 +281,12 @@
 .btn-play {
   width: 3.5rem; height: 3.5rem;
   border-radius: 50%;
-  background: var(--color-secundario);
+  background: #f97316;
   border: none; color: #fff;
   font-size: 1.2rem; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: transform 0.15s, background 0.2s;
-  box-shadow: 0 4px 20px rgba(29,78,216,0.4);
+  box-shadow: 0 4px 20px rgba(249,115,22,0.4);
 }
 .btn-play:active { transform: scale(0.92); }
 .btn-play.pausar { background: #475569; box-shadow: none; }
