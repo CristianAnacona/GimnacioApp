@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { Notification } from './components/shared/notification/notification';
 import { Cronometro } from './components/shared/cronometro/cronometro';
+import { SpotifyPlayer } from './components/shared/spotify-player/spotify-player';
 import { UserStateService } from './services/user-state.service';
 import { UpdateService } from './services/update.service';
 import { ThemeService } from './services/theme.service';
@@ -12,7 +13,7 @@ import { GymService } from './services/gym.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Notification, Cronometro, CommonModule],
+  imports: [RouterOutlet, Notification, Cronometro, SpotifyPlayer, CommonModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

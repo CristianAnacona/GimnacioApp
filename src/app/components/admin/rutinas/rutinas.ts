@@ -59,8 +59,9 @@ export class Rutinas implements OnInit, OnDestroy {
     this.authService.getUsuarios()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res: any) => {
-          this.listaSocios = res;
+        next: (res: any[]) => {
+          // Filtrar para mostrar solo socios, excluyendo admins y superadmins
+          this.listaSocios = res.filter(u => u.role === 'socio');
           this.cdr.detectChanges();
         },
         error: () => this.toast.error('Error al cargar socios')
