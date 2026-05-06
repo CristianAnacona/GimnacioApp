@@ -63,12 +63,16 @@ export class Login implements OnInit, AfterViewInit {
   }
 
   private handleGoogleToken(accessToken: string) {
+    this.cargando = true;
     const gymId = this.gym?._id || null;
     this.authService.loginConGoogle(accessToken, gymId).subscribe({
       next: (res: any) => {
         this.guardarSesion(res);
       },
-      error: () => this.toast.error('Error al iniciar sesión con Google')
+      error: () => {
+        this.cargando = false;
+        this.toast.error('Error al iniciar sesión con Google');
+      }
     });
   }
 

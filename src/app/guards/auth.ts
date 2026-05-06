@@ -21,7 +21,9 @@ export const authGuard: CanActivateFn = (route, state) => {
     const payload = JSON.parse(atob(token.split('.')[1]));
 
     if (payload.exp * 1000 < Date.now()) {
+      const gym = localStorage.getItem('gymActual');
       localStorage.clear();
+      if (gym) localStorage.setItem('gymActual', gym);
       router.navigate(['/login']);
       return false;
     }
@@ -35,7 +37,9 @@ export const authGuard: CanActivateFn = (route, state) => {
 
     return true;
   } catch {
+    const gym = localStorage.getItem('gymActual');
     localStorage.clear();
+    if (gym) localStorage.setItem('gymActual', gym);
     router.navigate(['/login']);
     return false;
   }
