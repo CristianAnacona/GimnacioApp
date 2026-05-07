@@ -46,7 +46,8 @@ export class Rutinas implements OnInit, OnDestroy {
   rutinasExistentesDelSocio: any[] = [];
 
   ngOnInit() {
-    this.filtrarPorCategoria('Pecho');
+    const catGuardada = this.route.snapshot.queryParamMap.get('cat') || 'Pecho';
+    this.filtrarPorCategoria(catGuardada);
 
     const idSocio = this.route.snapshot.paramMap.get('id');
     const idRutina = this.route.snapshot.queryParamMap.get('rutinaId');
@@ -113,6 +114,12 @@ export class Rutinas implements OnInit, OnDestroy {
     this.limiteActual = 20;
     this.ejerciciosDeCategoria = CATALOGO_EJERCICIOS.filter(e => e.categoria === cat);
     this.actualizarVista();
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { cat },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    });
   }
 
   actualizarVista() {

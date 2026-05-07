@@ -1,11 +1,12 @@
 <div class="page">
 
+  <!-- ===== HEADER ===== -->
   <div class="page-header">
     <h2 class="page-title">📈 Mi Progreso</h2>
     <div class="header-stats">
       <div class="stat-box">
         <span class="stat-label">⚖️ Peso</span>
-        <span class="stat-val">{{ pesoActual ? pesoActual + ' kg' : '—' }}</span>
+        <span class="stat-val">{{ pesoUltimo ?? pesoActual ? (pesoUltimo ?? pesoActual) + ' kg' : '—' }}</span>
       </div>
       <div class="stat-box">
         <span class="stat-label">📏 Estatura</span>
@@ -14,153 +15,259 @@
     </div>
   </div>
 
-  <!-- Sin registros -->
-  @if (!ejercicios.length) {
-    <div class="empty-state">
-      <span class="empty-icon">🏋️</span>
-      <p class="empty-title">Aún no hay registros</p>
-      <p class="empty-sub">Completa ejercicios en tu rutina y registra el peso para ver tu progreso aquí.</p>
-    </div>
-  }
+  <!-- ===== TABS ===== -->
+  <div class="tabs">
+    <button class="tab-btn" [class.tab-activo]="tabActiva === 'peso'" (click)="tabActiva = 'peso'">
+      ⚖️ Peso corporal
+    </button>
+    <button class="tab-btn" [class.tab-activo]="tabActiva === 'ejercicios'" (click)="tabActiva = 'ejercicios'">
+      🏋️ Ejercicios
+    </button>
+  </div>
 
-  <!-- Lista de ejercicios registrados -->
-  @if (ejercicios.length) {
-    <div class="section-label">Elige un ejercicio</div>
-    <div class="ejercicios-chips">
-      @for (ej of ejercicios; track ej) {
-        <button
-          class="chip"
-          [class.chip-activo]="ejercicioSeleccionado === ej"
-          (click)="seleccionarEjercicio(ej)">
-          {{ ej }}
-        </button>
-      }
-    </div>
-  }
+  <!-- ===== TAB: PESO CORPORAL ===== -->
+  @if (tabActiva === 'peso') {
+    <div class="peso-card">
 
-  <!-- Gráfico -->
-  @if (ejercicioSeleccionado && historial.length) {
-    <div class="grafico-card">
-
-      <!-- Header del gráfico -->
-      <div class="grafico-header">
+      <div class="peso-card-header">
         <div>
-          <p class="grafico-titulo">{{ ejercicioSeleccionado }}</p>
-          <p class="grafico-sub">{{ historial.length }} registro{{ historial.length !== 1 ? 's' : '' }}</p>
+          <p class="peso-card-titulo">Historial de Peso</p>
+          @if (pesosHistorial.length) {
+            <p class="peso-card-sub">
+              {{ pesosHistorial.length }} registro{{ pesosHistorial.length !== 1 ? 's' : '' }}
+              @if (mejoraPeso) {
+                · <span [style.color]="(pesoUltimo ?? 0) <= (pesoPrimero ?? 0) ? '#15803d' : '#dc2626'">
+                    {{ mejoraPeso }}
+                  </span>
+              }
+            </p>
+          }
         </div>
-        @if (mejora) {
-          <span class="mejora-badge" [class.positiva]="mejoraPositiva" [class.negativa]="!mejoraPositiva">
-            {{ mejora }} {{ mejoraPositiva ? '↑' : '↓' }}
-          </span>
+        <button class="btn-registrar-peso" (click)="mostrarFormPeso = !mostrarFormPeso">
+          {{ mostrarFormPeso ? '✕ Cancelar' : '+ Registrar' }}
+        </button>
+      </div>
+
+      @if (mostrarFormPeso) {
+        <div class="form-peso">
+          <div class="form-peso-row">
+            <div class="form-field">
+              <label class="form-label">Peso (kg)</label>
+              <input class="form-input" type="number" [(ngModel)]="nuevoPeso"
+                     placeholder="ej: 75.5" step="0.1" min="1" max="300">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Fecha</label>
+              <input class="form-input" type="date" [(ngModel)]="nuevaFecha">
+            </div>
+          </div>
+          <button class="btn-guardar-peso" (click)="guardarPeso()"
+                  [disabled]="guardandoPeso || !nuevoPeso || !nuevaFecha">
+            @if (guardandoPeso) { Guardando... } @else { ✓ Guardar peso }
+          </button>
+        </div>
+      }
+
+      @if (pesosHistorial.length >= 2) {
+        <div class="chart-container">
+          <svg class="yaxis-svg" [attr.height]="H" [attr.width]="PAD.left">
+            @for (label of pesoYLabels(); track label.val) {
+              <line [attr.x1]="PAD.left - 4" [attr.x2]="PAD.left"
+                    [attr.y1]="label.y" [attr.y2]="label.y"
+                    stroke="#cbd5e1" stroke-width="1"/>
+              <text [attr.x]="PAD.left - 6" [attr.y]="label.y + 4"
+                    text-anchor="end" font-size="10" font-weight="600" fill="#64748b">{{ label.val }}</text>
+            }
+          </svg>
+          <div class="chart-scroll" #pesoChartScroll>
+            <svg [attr.width]="pesoDataW" [attr.height]="H">
+              @for (label of pesoYLabels(); track label.val) {
+                <line x1="0" [attr.x2]="pesoDataW"
+                      [attr.y1]="label.y" [attr.y2]="label.y"
+                      stroke="#f1f5f9" stroke-width="1"/>
+              }
+              <path [attr.d]="pesoAreaPath" fill="#2563eb" fill-opacity="0.15"/>
+              <polyline [attr.points]="pesoPolyline" fill="none"
+                        stroke="#2563eb" stroke-width="3.5"
+                        stroke-linejoin="round" stroke-linecap="round"/>
+              @for (p of pesosHistorial; track $index) {
+                @let esUltimo = $index === pesosHistorial.length - 1;
+                <circle [attr.cx]="pesoXPos($index)" [attr.cy]="pesoYPos(p.pesoKg)"
+                        [attr.r]="esUltimo ? 8 : 5.5"
+                        [attr.fill]="esUltimo ? '#2563eb' : '#64748b'"
+                        stroke="white" stroke-width="2.5"/>
+                <text [attr.x]="pesoXPos($index)" [attr.y]="pesoYPos(p.pesoKg) - 13"
+                      text-anchor="middle"
+                      [attr.font-size]="esUltimo ? 12 : 10"
+                      font-weight="bold"
+                      [attr.fill]="esUltimo ? '#1d4ed8' : '#334155'">{{ p.pesoKg }}</text>
+                <text [attr.x]="pesoXPos($index)" [attr.y]="H - PAD.bottom + 14"
+                      text-anchor="middle"
+                      [attr.font-size]="esUltimo ? 9.5 : 8.5"
+                      [attr.font-weight]="esUltimo ? 'bold' : 'normal'"
+                      [attr.fill]="esUltimo ? '#2563eb' : '#475569'">{{ p.fecha }}</text>
+              }
+            </svg>
+          </div>
+        </div>
+      }
+
+      @if (pesosHistorial.length === 1) {
+        <p class="peso-hint">Registrá al menos 2 pesos para ver la gráfica.</p>
+      }
+
+      @if (pesosHistorial.length) {
+        <div class="peso-tabla">
+          <div class="peso-tabla-header">
+            <span>Fecha</span>
+            <span>Peso</span>
+            <span>Variación</span>
+          </div>
+          <div class="historial-scroll">
+            @for (p of pesosHistorialReverso; track $index) {
+              @let idxReal = pesosHistorial.length - 1 - $index;
+              @let anterior = idxReal > 0 ? pesosHistorial[idxReal - 1].pesoKg : null;
+              @let variacion = anterior !== null ? p.pesoKg - anterior : null;
+              <div class="peso-fila" [class.fila-destacada]="$index === 0">
+                <span class="h-fecha">{{ p.fecha }}</span>
+                <span class="h-val h-peso">{{ p.pesoKg }} kg</span>
+                <span class="variacion"
+                      [class.var-baja]="variacion !== null && variacion < 0"
+                      [class.var-sube]="variacion !== null && variacion > 0">
+                  @if (variacion !== null) {
+                    {{ variacion > 0 ? '+' : '' }}{{ variacion.toFixed(1) }} kg
+                  } @else { — }
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+      } @else if (!cargandoPeso) {
+        <p class="peso-empty">Registrá tu primer peso para empezar a ver tu progreso.</p>
+      }
+
+    </div>
+  }
+
+  <!-- ===== TAB: EJERCICIOS ===== -->
+  @if (tabActiva === 'ejercicios') {
+
+    @if (!ejercicios.length) {
+      <div class="empty-state">
+        <span class="empty-icon">🏋️</span>
+        <p class="empty-title">Aún no hay registros de ejercicios</p>
+        <p class="empty-sub">Completá ejercicios en tu rutina para ver el progreso aquí.</p>
+      </div>
+    }
+
+    @if (ejercicios.length) {
+      <div class="section-label">Elige un ejercicio</div>
+      <div class="ejercicios-chips">
+        @for (ej of ejercicios; track ej) {
+          <button class="chip" [class.chip-activo]="ejercicioSeleccionado === ej"
+                  (click)="seleccionarEjercicio(ej)">
+            {{ ej }}
+          </button>
         }
       </div>
+    }
 
-      <!-- Toggle peso / reps -->
-      <div class="modo-toggle">
-        <button [class.activo]="modo === 'peso'" (click)="modo = 'peso'">Peso (kg)</button>
-        <button [class.activo]="modo === 'reps'" (click)="modo = 'reps'">Repeticiones</button>
-      </div>
+    @if (ejercicioSeleccionado && historial.length) {
+      <div class="grafico-card">
 
-      <!-- Chart: eje Y fijo + datos con scroll -->
-      <div class="chart-container">
-
-        <!-- Eje Y fijo -->
-        <svg class="yaxis-svg" [attr.height]="H" [attr.width]="PAD.left">
-          @for (label of yLabels(); track label.val) {
-            <line [attr.x1]="PAD.left - 4" [attr.x2]="PAD.left"
-                  [attr.y1]="label.y" [attr.y2]="label.y"
-                  stroke="#e2e8f0" stroke-width="1"/>
-            <text [attr.x]="PAD.left - 6" [attr.y]="label.y + 4"
-                  text-anchor="end" font-size="9" fill="#94a3b8">{{ label.val }}</text>
+        <div class="grafico-header">
+          <div>
+            <p class="grafico-titulo">{{ ejercicioSeleccionado }}</p>
+            <p class="grafico-sub">{{ historial.length }} registro{{ historial.length !== 1 ? 's' : '' }}</p>
+          </div>
+          @if (mejora) {
+            <span class="mejora-badge" [class.positiva]="mejoraPositiva" [class.negativa]="!mejoraPositiva">
+              {{ mejora }} {{ mejoraPositiva ? '↑' : '↓' }}
+            </span>
           }
-        </svg>
+        </div>
 
-        <!-- Área de datos scrollable -->
-        <div class="chart-scroll" #chartScroll>
-          <svg [attr.width]="dataW" [attr.height]="H">
+        <div class="modo-toggle">
+          <button [class.activo]="modo === 'peso'" (click)="modo = 'peso'">Peso (kg)</button>
+          <button [class.activo]="modo === 'reps'" (click)="modo = 'reps'">Repeticiones</button>
+        </div>
 
-            <!-- Grid lines horizontales -->
+        <div class="chart-container">
+          <svg class="yaxis-svg" [attr.height]="H" [attr.width]="PAD.left">
             @for (label of yLabels(); track label.val) {
-              <line x1="0" [attr.x2]="dataW"
+              <line [attr.x1]="PAD.left - 4" [attr.x2]="PAD.left"
                     [attr.y1]="label.y" [attr.y2]="label.y"
-                    stroke="#f1f5f9" stroke-width="1"/>
+                    stroke="#e2e8f0" stroke-width="1"/>
+              <text [attr.x]="PAD.left - 6" [attr.y]="label.y + 4"
+                    text-anchor="end" font-size="9" fill="#94a3b8">{{ label.val }}</text>
             }
-
-            <!-- Área bajo la línea -->
-            <path [attr.d]="areaPath" [attr.fill]="colorSecundario" fill-opacity="0.08"/>
-
-            <!-- Línea -->
-            <polyline
-              [attr.points]="polyline"
-              fill="none" [attr.stroke]="colorSecundario" stroke-width="2.5"
-              stroke-linejoin="round" stroke-linecap="round"/>
-
-            <!-- Puntos + valor + fecha -->
-            @for (p of historial; track $index) {
-              @let esUltimo = $index === historial.length - 1;
-
-              <circle
-                [attr.cx]="xPos($index)"
-                [attr.cy]="yPos(datos[$index])"
-                [attr.r]="esUltimo ? 6 : 4"
-                [attr.fill]="esUltimo ? colorPrimario : colorSecundario"
-                stroke="white" stroke-width="2"/>
-
-              @if (datos[$index] !== null) {
-                <text
-                  [attr.x]="xPos($index)"
-                  [attr.y]="yPos(datos[$index]) - 9"
-                  text-anchor="middle"
-                  [attr.font-size]="esUltimo ? 9.5 : 8"
-                  [attr.font-weight]="esUltimo ? 'bold' : 'normal'"
-                  [attr.fill]="esUltimo ? colorPrimario : colorSecundario">
-                  {{ datos[$index] }}
+          </svg>
+          <div class="chart-scroll" #chartScroll>
+            <svg [attr.width]="dataW" [attr.height]="H">
+              @for (label of yLabels(); track label.val) {
+                <line x1="0" [attr.x2]="dataW"
+                      [attr.y1]="label.y" [attr.y2]="label.y"
+                      stroke="#f1f5f9" stroke-width="1"/>
+              }
+              <path [attr.d]="areaPath" [attr.fill]="colorSecundario" fill-opacity="0.08"/>
+              <polyline [attr.points]="polyline" fill="none"
+                        [attr.stroke]="colorSecundario" stroke-width="2.5"
+                        stroke-linejoin="round" stroke-linecap="round"/>
+              @for (p of historial; track $index) {
+                @let esUltimo = $index === historial.length - 1;
+                <circle [attr.cx]="xPos($index)" [attr.cy]="yPos(datos[$index])"
+                        [attr.r]="esUltimo ? 6 : 4"
+                        [attr.fill]="esUltimo ? colorPrimario : colorSecundario"
+                        stroke="white" stroke-width="2"/>
+                @if (datos[$index] !== null) {
+                  <text [attr.x]="xPos($index)" [attr.y]="yPos(datos[$index]) - 9"
+                        text-anchor="middle"
+                        [attr.font-size]="esUltimo ? 9.5 : 8"
+                        [attr.font-weight]="esUltimo ? 'bold' : 'normal'"
+                        [attr.fill]="esUltimo ? colorPrimario : colorSecundario">
+                    {{ datos[$index] }}
+                  </text>
+                }
+                <text [attr.x]="xPos($index)" [attr.y]="H - PAD.bottom + 14"
+                      text-anchor="middle"
+                      [attr.font-size]="esUltimo ? 8.5 : 7.5"
+                      [attr.font-weight]="esUltimo ? 'bold' : 'normal'"
+                      [attr.fill]="esUltimo ? colorPrimario : '#94a3b8'">
+                  {{ p.fecha }}
                 </text>
               }
+            </svg>
+          </div>
+        </div>
 
-              <text
-                [attr.x]="xPos($index)"
-                [attr.y]="H - PAD.bottom + 14"
-                text-anchor="middle"
-                [attr.font-size]="esUltimo ? 8.5 : 7.5"
-                [attr.font-weight]="esUltimo ? 'bold' : 'normal'"
-                [attr.fill]="esUltimo ? colorPrimario : '#94a3b8'">
-                {{ p.fecha }}
-              </text>
+        <div class="historial-card">
+          <p class="historial-titulo">Historial</p>
+          <div class="historial-header">
+            <span>Fecha</span>
+            <span>Peso</span>
+            <span>Reps</span>
+          </div>
+          <div class="historial-scroll">
+            @for (p of historialReverso; track $index) {
+              <div class="historial-fila" [class.fila-destacada]="$index === 0">
+                <span class="h-fecha">{{ p.fecha }}</span>
+                <span class="h-val h-peso">{{ p.peso !== null ? p.peso + ' kg' : '—' }}</span>
+                <span class="h-val h-reps">{{ p.reps !== null ? p.reps + ' reps' : '—' }}</span>
+              </div>
             }
-
-          </svg>
+          </div>
         </div>
+
       </div>
+    }
 
-      <!-- Historial de registros -->
-      <div class="historial-card">
-        <p class="historial-titulo">Historial</p>
-        <div class="historial-header">
-          <span>Fecha</span>
-          <span>Peso</span>
-          <span>Reps</span>
-        </div>
-        <div class="historial-scroll">
-          @for (p of historialReverso; track $index) {
-            @let esPrimero = $index === 0;
-            <div class="historial-fila" [class.fila-destacada]="esPrimero">
-              <span class="h-fecha">{{ p.fecha }}</span>
-              <span class="h-val h-peso">{{ p.peso !== null ? p.peso + ' kg' : '—' }}</span>
-              <span class="h-val h-reps">{{ p.reps !== null ? p.reps + ' reps' : '—' }}</span>
-            </div>
-          }
-        </div>
+    @if (ejercicioSeleccionado && !historial.length && !cargando) {
+      <div class="empty-state" style="margin-top: 1rem;">
+        <span class="empty-icon">📊</span>
+        <p class="empty-title">Sin registros para este ejercicio</p>
       </div>
+    }
 
-    </div>
-  }
-
-  @if (ejercicioSeleccionado && !historial.length && !cargando) {
-    <div class="empty-state" style="margin-top: 1rem;">
-      <span class="empty-icon">📊</span>
-      <p class="empty-title">Sin registros para este ejercicio</p>
-    </div>
   }
 
 </div>

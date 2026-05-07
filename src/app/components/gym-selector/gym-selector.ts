@@ -31,6 +31,17 @@ export class GymSelector implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    // Si ya tiene gym y sesión, mandarlo directo al dashboard
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role')?.toLowerCase().trim();
+    const gym = this.gymService.getGym();
+
+    if (token && gym && (role === 'admin' || role === 'socio')) {
+      if (role === 'admin') this.router.navigate(['/admin']);
+      else this.router.navigate(['/socio']);
+      return;
+    }
+
     // Carga inicial — muestra todos los gyms disponibles
     this.buscarGyms('');
 

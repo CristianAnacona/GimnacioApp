@@ -20,6 +20,7 @@ export class Login implements OnInit, AfterViewInit {
   usuario = { email: '', password: '' };
   cargando = false;
   verPass = false;
+  procesandoGoogle = false;
   gym: Gym | null = null;
 
   constructor(
@@ -56,21 +57,26 @@ export class Login implements OnInit, AfterViewInit {
       callback: (tokenResponse: any) => {
         if (tokenResponse.access_token) {
           this.ngZone.run(() => this.handleGoogleToken(tokenResponse.access_token));
+        } else {
+          this.ngZone.run(() => { this.procesandoGoogle = false; });
         }
+      },
+      error_callback: () => {
+        this.ngZone.run(() => { this.procesandoGoogle = false; });
       }
     });
+    this.procesandoGoogle = true;
     client.requestAccessToken();
   }
 
   private handleGoogleToken(accessToken: string) {
-    this.cargando = true;
     const gymId = this.gym?._id || null;
     this.authService.loginConGoogle(accessToken, gymId).subscribe({
       next: (res: any) => {
         this.guardarSesion(res);
       },
       error: () => {
-        this.cargando = false;
+        this.procesandoGoogle = false;
         this.toast.error('Error al iniciar sesión con Google');
       }
     });

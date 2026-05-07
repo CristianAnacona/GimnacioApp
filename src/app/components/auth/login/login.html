@@ -1,4 +1,13 @@
-<div class="login-bg">
+@if (procesandoGoogle) {
+  <div class="google-loading-overlay">
+    <svg class="spin-google" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="white" stroke-width="3" stroke-dasharray="40" stroke-dashoffset="10"/>
+    </svg>
+    <p>Iniciando sesión con Google...</p>
+  </div>
+}
+
+<div class="login-bg" [style.display]="procesandoGoogle ? 'none' : ''">
   <div class="deco deco-1"></div>
   <div class="deco deco-2"></div>
   <div class="deco deco-3"></div>

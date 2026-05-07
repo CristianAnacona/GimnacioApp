@@ -1,3 +1,5 @@
+@if (enRutaSocio) {
+
 <!-- ===== CONFETI (se muestra encima de todo al terminar) ===== -->
 @if (terminado) {
   <div class="confetti-container" (click)="onClickInterno($event)">
@@ -95,3 +97,5 @@
     </div>
   </div>
 }
+
+} <!-- fin @if enRutaSocio -->

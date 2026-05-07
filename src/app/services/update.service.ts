@@ -18,6 +18,7 @@ export class UpdateService {
   }
 
   private mostrarBannerActualizacion() {
+    document.getElementById('update-banner')?.remove();
     const banner = document.createElement('div');
     banner.id = 'update-banner';
     banner.innerHTML = `

@@ -37,6 +37,9 @@
         <div class="estado-msg">
           <span class="estado-icon">😕</span>
           <p>No encontramos ningún gimnasio con ese nombre.</p>
+          @if (!query) {
+            <button class="btn-retry" (click)="buscarGyms('')">↺ Reintentar</button>
+          }
         </div>
       }
 

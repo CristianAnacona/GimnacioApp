@@ -146,3 +146,17 @@
   text-decoration: none;
 }
 .register-link a:hover { text-decoration: underline; }
+
+.btn-retry {
+  margin-top: .75rem;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  padding: .45rem 1.25rem;
+  border-radius: 999px;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-retry:hover { background: rgba(255,255,255,.18); }

@@ -373,6 +373,14 @@ export const CATALOGO_EJERCICIOS: EjercicioBase[] = [
     descripcion: 'Siéntate en la máquina con los muslos sujetos por las almohadillas. Sujeta los agarres con las palmas hacia adelante. Tira de las palancas hacia abajo hasta que los codos lleguen a los costados, apretando las escápulas. Regresa lentamente a la posición inicial permitiendo que los brazos se extiendan por completo.',
     tip: 'Esta máquina permite trabajar de forma bilateral (ambos brazos a la vez) o unilateral (un brazo a la vez) para un mayor enfoque. Mantén el pecho arriba durante todo el movimiento.'
   },
+  {
+    nombre: 'Banco de Extensiones Lumbares',
+    categoria: 'Espalda',
+    imagenUrl: 'ejercicios/espaldaImagenes/extensiones-lumbares.jpeg',
+    gifUrl: 'ejercicios/espaldaGif/extensiones-lumbares.gif',
+    descripcion: 'En el banco de extensiones, baja el torso de forma controlada y elévalo hasta alinear la espalda con las piernas, fortaleciendo la zona lumbar.',
+    tip: 'No hiperextiendas demasiado la espalda hacia atrás al subir; mantén el movimiento controlado.'
+  },
   // FIN ESPALDA
 
   // --- BICEPS ---
@@ -571,10 +579,115 @@ export const CATALOGO_EJERCICIOS: EjercicioBase[] = [
   gifUrl: 'ejercicios/piernaGif/elevacion-talones-pie.gif',
   descripcion: 'Colócate de pie con los pies separados a la anchura de los hombros. Eleva los talones apoyándote sobre la punta de los pies hasta quedar de puntillas. Desciende lentamente hasta apoyar completamente los pies en el suelo.',
   tip: 'Mantén el abdomen firme y realiza el movimiento de forma controlada, subiendo y bajando lentamente para trabajar mejor los gemelos.'
-}
+},
 // FIN PIERNA
 
-
+  // --- ABDOMINALES ---
+  {
+    nombre: 'Plancha Tradicional',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/plancha-tradicional.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/plancha-tradicional.gif',
+    descripcion: 'Mantén el cuerpo en línea recta apoyado sobre los antebrazos y las puntas de los pies, activando el core.',
+    tip: 'No dejes que la cadera caiga ni se eleve demasiado.'
+  },
+  {
+    nombre: 'Plancha Lateral',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/plancha-lateral.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/plancha-lateral.gif',
+    descripcion: 'Apóyate sobre un antebrazo de lado, manteniendo el cuerpo recto y la cadera elevada.',
+    tip: 'Mantén el cuello alineado con la columna.'
+  },
+  {
+    nombre: 'Rueda Abdominal',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/rueda-abdominal.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/rueda-abdominal.gif',
+    descripcion: 'Arrodillado, desliza la rueda hacia adelante extendiendo el cuerpo y regresa usando los abdominales.',
+    tip: 'No arquees la espalda baja al extenderte.'
+  },
+  {
+    nombre: 'Crunches',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/crunches.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/crunches.gif',
+    descripcion: 'Acostado, eleva ligeramente los hombros del suelo contrayendo el abdomen superior.',
+    tip: 'No tires del cuello con las manos.'
+  },
+  {
+    nombre: 'Crunch en Polea Alta',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/crunches-polea-alta.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/crunches-polea-alta.gif',
+    descripcion: 'Arrodillado frente a la polea, sujeta la cuerda y flexiona el torso hacia abajo contrayendo el abdomen.',
+    tip: 'Mueve el torso, no los brazos.'
+  },
+  {
+    nombre: 'Sit-ups',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/SIT-UPS.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/SIT-UPS.gif',
+    descripcion: 'Acostado con rodillas flexionadas, eleva el torso completo hasta quedar sentado.',
+    tip: 'Controla la bajada para mayor efectividad.'
+  },
+  {
+    nombre: 'Ab Coaster',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/Ab-Coaster-Machine Chico.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/ab-coaster.gif',
+    descripcion: 'En la máquina Ab Coaster, eleva las rodillas hacia el pecho deslizando el soporte curvo.',
+    tip: 'Evita usar el impulso de las piernas.'
+  },
+  {
+    nombre: 'Elevación de Piernas Colgado',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/ELEVACIONES-PIERNA-COLGADO.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/ELEVACIONES-PIERNA-COLGADO.gif',
+    descripcion: 'Colgado de una barra, eleva las piernas (rectas o flexionadas) hasta la altura de la cadera.',
+    tip: 'Evita balancear el cuerpo.'
+  },
+  {
+    nombre: 'Elevación de Piernas Acostado',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/elevaciones-piernas-acostado.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/elevaciones-piernas-acostado.gif',
+    descripcion: 'Acostado boca arriba, eleva las piernas juntas hasta 90 grados y baja sin tocar el suelo.',
+    tip: 'Mantén la espalda baja pegada al suelo.'
+  },
+  {
+    nombre: 'Tijeras',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/tijeras.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/tijeras.gif',
+    descripcion: 'Acostado, alterna el cruce de piernas arriba y abajo a pocos centímetros del suelo.',
+    tip: 'Mantén las piernas bien extendidas.'
+  },
+  {
+    nombre: 'Twist Ruso',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/twist-ruso.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/twist-ruso.gif',
+    descripcion: 'Sentado con pies elevados, rota el torso de lado a lado (puedes usar peso).',
+    tip: 'Sigue el movimiento con la mirada.'
+  },
+  {
+    nombre: 'Toques de Talón',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/toques-talon.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/toques-talon.gif',
+    descripcion: 'Acostado con rodillas flexionadas, toca alternamente tus talones con las manos.',
+    tip: 'Mantén los hombros ligeramente elevados del suelo.'
+  },
+  {
+    nombre: 'Crunch Lateral',
+    categoria: 'Abdominales',
+    imagenUrl: 'ejercicios/abdominalesImagenes/crunch-lateral.jpeg',
+    gifUrl: 'ejercicios/abdominalesGif/crunch-lateral.gif',
+    descripcion: 'Acostado de lado, eleva el torso lateralmente para trabajar los oblicuos.',
+    tip: 'Concéntrate en la contracción lateral.'
+  }
+  // FIN ABDOMINALES
 ];
 
 // Extraemos la lista de categorías únicas para las pestañas (Tabs)
