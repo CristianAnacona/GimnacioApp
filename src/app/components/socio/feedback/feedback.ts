@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -23,7 +23,8 @@ export class FeedbackComponent {
     private feedbackService: FeedbackService,
     private gymService: GymService,
     private toast: ToastService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   get restantes(): number { return this.MAX - this.mensaje.length; }
@@ -36,10 +37,12 @@ export class FeedbackComponent {
       next: () => {
         this.enviando = false;
         this.enviado  = true;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.enviando = false;
         this.toast.error('Error al enviar. Intentá de nuevo.');
+        this.cdr.detectChanges();
       }
     });
   }
