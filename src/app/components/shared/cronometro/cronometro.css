@@ -1,3 +1,21 @@
+/* ===== AVISO PERMISOS ===== */
+.notif-banner-denied {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 1rem;
+  background: #1e293b;
+  color: #fbbf24;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.75rem;
+  max-width: 260px;
+  z-index: 999;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  line-height: 1.4;
+  cursor: default;
+}
+
 /* ===== CONFETI ===== */
 .confetti-container {
   position: fixed;

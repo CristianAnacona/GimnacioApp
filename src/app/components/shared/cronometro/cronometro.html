@@ -1,5 +1,11 @@
 @if (enRutaSocio) {
 
+@if (permisoNotif === 'denied') {
+  <div class="notif-banner-denied" (click)="onClickInterno($event)">
+    🔕 Notificaciones bloqueadas — activálas en la configuración del browser para recibir alertas del cronómetro
+  </div>
+}
+
 <!-- ===== CONFETI (se muestra encima de todo al terminar) ===== -->
 @if (terminado) {
   <div class="confetti-container" (click)="onClickInterno($event)">

@@ -39,6 +39,7 @@ export class Cronometro implements OnInit, OnDestroy {
   minimizado = true;
   confettiPiezas: ConfettiPieza[] = [];
   enRutaSocio = false;
+  permisoNotif: NotificationPermission = 'default';
 
   private intervalo: any = null;
   private routeSub: any = null;
@@ -150,13 +151,14 @@ export class Cronometro implements OnInit, OnDestroy {
 
   private sincronizarDesdeStorage() {
     const endTime = Number(localStorage.getItem(KEY_END));
-    if (!endTime || !this.activo) return;
+    if (!endTime) return;
 
     const restante = Math.ceil((endTime - Date.now()) / 1000);
     if (restante <= 0) {
       this.tiempoRestante = 0;
+      // Timer terminó mientras estaba en segundo plano → avisar al volver
       this.alTerminar();
-    } else {
+    } else if (this.activo) {
       this.tiempoRestante = restante;
     }
     this.cdr.detectChanges();
@@ -194,27 +196,44 @@ export class Cronometro implements OnInit, OnDestroy {
     localStorage.removeItem(KEY_PAUSE);
   }
 
-  private pedirPermisosNotificacion() {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+  async pedirPermisosNotificacion() {
+    if (!('Notification' in window)) return;
+    this.permisoNotif = Notification.permission;
+    if (Notification.permission === 'default') {
+      this.permisoNotif = await Notification.requestPermission();
     }
   }
 
   private programarNotificacion(segundos: number) {
     clearTimeout(this.notifTimeout);
+    // setTimeout funciona mientras la pestaña está activa.
+    // Si el browser pausa JS en segundo plano, la notificación se
+    // dispara igual cuando el usuario vuelve (via visibilitychange).
     this.notifTimeout = setTimeout(() => {
-      if (this.activo) this.mostrarNotificacion();
+      this.mostrarNotificacion();
     }, segundos * 1000);
   }
 
-  private mostrarNotificacion() {
+  private async mostrarNotificacion() {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
-    new Notification('¡Tiempo de descanso terminado! 💪', {
+
+    const titulo = '¡Tiempo de descanso terminado! 💪';
+    const opciones: NotificationOptions = {
       body: '¡A darle con todo, guerrero!',
       icon: '/icons/LogoGym.jpg',
       tag: 'cronometro-fin',
       requireInteraction: true
-    } as NotificationOptions);
+    };
+
+    // ServiceWorker showNotification es más confiable en mobile
+    if ('serviceWorker' in navigator) {
+      try {
+        const reg = await navigator.serviceWorker.ready;
+        await reg.showNotification(titulo, opciones);
+        return;
+      } catch {}
+    }
+    new Notification(titulo, opciones);
   }
 
   private generarConfetti() {
