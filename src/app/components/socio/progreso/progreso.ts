@@ -61,14 +61,14 @@ export class Progreso implements OnInit {
 
   ngOnInit() {
     const user = this.userState.getCurrentUser();
+    const datos = user?.datosPersonales;
+    this.pesoActual = datos?.pesoActual || user?.pesoActual || null;
+    this.altura     = datos?.altura     || user?.altura     || null;
     if (user?._id) {
       this.usuarioId = user._id;
       this.cargarEjercicios();
       this.cargarHistorialPeso();
     }
-    const datos = user?.datosPersonales;
-    this.pesoActual = datos?.pesoActual || user?.pesoActual || null;
-    this.altura     = datos?.altura     || user?.altura     || null;
     this.nuevaFecha = new Date().toISOString().split('T')[0];
   }
 
@@ -117,6 +117,17 @@ export class Progreso implements OnInit {
             _id: m._id
           }))
           .sort((a, b) => a.fechaISO.localeCompare(b.fechaISO));
+
+        // Si no hay registros pero el perfil tiene peso, mostrarlo como punto inicial
+        if (this.pesosHistorial.length === 0 && this.pesoActual) {
+          const hoy = new Date().toISOString().split('T')[0];
+          this.pesosHistorial = [{
+            fechaISO: hoy,
+            fecha: this.formatFecha(hoy),
+            pesoKg: this.pesoActual
+          }];
+        }
+
         this.cargandoPeso = false;
         this.cdr.detectChanges();
         setTimeout(() => {
