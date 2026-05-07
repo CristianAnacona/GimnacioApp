@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth';
 import { ToastService } from '../../services/toast.service';
 import { ConfirmService } from '../../services/confirm.service';
+import { FeedbackService, Feedback } from '../../services/feedback.service';
 
 @Component({
   selector: 'app-superadmin',
@@ -18,6 +19,8 @@ import { ConfirmService } from '../../services/confirm.service';
 export class SuperAdmin implements OnInit {
   gyms: any[] = [];
   cargando = false;
+  feedbacks: Feedback[] = [];
+  tabActiva: 'gyms' | 'feedback' = 'gyms';
   mostrarForm = false;
   guardando = false;
   editando: any = null; // gym que se está editando
@@ -39,10 +42,36 @@ export class SuperAdmin implements OnInit {
     private toast: ToastService,
     private confirm: ConfirmService,
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private feedbackService: FeedbackService
   ) {}
 
-  ngOnInit() { this.cargar(); }
+  ngOnInit() {
+    this.cargar();
+    this.cargarFeedbacks();
+  }
+
+  cargarFeedbacks() {
+    this.feedbackService.getAll().subscribe({
+      next: (data) => { this.feedbacks = data; this.cdr.detectChanges(); },
+      error: () => {}
+    });
+  }
+
+  marcarLeido(fb: Feedback) {
+    if (!fb._id || fb.leido) return;
+    this.feedbackService.marcarLeido(fb._id).subscribe({
+      next: () => { fb.leido = true; this.cdr.detectChanges(); }
+    });
+  }
+
+  get feedbacksNoLeidos(): number {
+    return this.feedbacks.filter(f => !f.leido).length;
+  }
+
+  formatFecha(iso: string): string {
+    return new Date(iso).toLocaleDateString('es', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
 
   cargar() {
     this.cargando = true;

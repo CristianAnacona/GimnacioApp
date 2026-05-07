@@ -6,12 +6,54 @@
       <p class="sa-sub">Super Administrador</p>
     </div>
     <div class="sa-header-actions">
-      <button class="btn-nuevo" (click)="mostrarForm = !mostrarForm; editando = null">
-        {{ mostrarForm ? '✕ Cancelar' : '+ Nuevo Gym' }}
-      </button>
+      @if (tabActiva === 'gyms') {
+        <button class="btn-nuevo" (click)="mostrarForm = !mostrarForm; editando = null">
+          {{ mostrarForm ? '✕ Cancelar' : '+ Nuevo Gym' }}
+        </button>
+      }
       <button class="btn-salir" (click)="cerrarSesion()">Salir</button>
     </div>
   </header>
+
+  <!-- Tabs -->
+  <div class="sa-tabs">
+    <button class="sa-tab" [class.sa-tab-activo]="tabActiva === 'gyms'" (click)="tabActiva = 'gyms'">
+      🏋️ Gimnasios
+    </button>
+    <button class="sa-tab" [class.sa-tab-activo]="tabActiva === 'feedback'" (click)="tabActiva = 'feedback'">
+      💬 Sugerencias
+      @if (feedbacksNoLeidos > 0) {
+        <span class="sa-badge">{{ feedbacksNoLeidos }}</span>
+      }
+    </button>
+  </div>
+
+  <!-- Tab Sugerencias -->
+  @if (tabActiva === 'feedback') {
+    <div class="fb-list">
+      @if (!feedbacks.length) {
+        <p class="fb-empty">Aún no hay sugerencias recibidas.</p>
+      }
+      @for (fb of feedbacks; track fb._id) {
+        <div class="fb-item" [class.fb-no-leido]="!fb.leido" (click)="marcarLeido(fb)">
+          <div class="fb-item-header">
+            <div class="fb-item-meta">
+              <span class="fb-usuario">{{ fb.nombreUsuario }}</span>
+              @if (fb.gymNombre) { <span class="fb-gym">· {{ fb.gymNombre }}</span> }
+            </div>
+            <div class="fb-item-right">
+              @if (!fb.leido) { <span class="fb-nuevo-dot"></span> }
+              <span class="fb-fecha">{{ formatFecha(fb.createdAt!) }}</span>
+            </div>
+          </div>
+          <p class="fb-mensaje">{{ fb.mensaje }}</p>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Tab Gimnasios -->
+  @if (tabActiva === 'gyms') {
 
   <!-- Formulario nuevo gym -->
   @if (mostrarForm) {
@@ -198,5 +240,7 @@
       </div>
     }
   </div>
+
+  } <!-- fin @if tabActiva gyms -->
 
 </div>

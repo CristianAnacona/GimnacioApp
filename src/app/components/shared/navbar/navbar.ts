@@ -68,8 +68,9 @@ export class Navbar implements OnInit, OnDestroy {
         { icon: '📈',    name: 'mi progreso', route: '/socio/progreso',   show: m('progreso') },
         { icon: '👤',    name: 'perfil',      route: '/socio/perfil',     show: true },
         { icon: '💎',    name: 'planes',      route: '/socio/planes',     show: m('pagos') },
-        { icon: '💰',    name: 'pagos',       route: '/socio/pagos',      show: m('pagos') },
-        { icon: '🏃‍♂️', name: 'Cerrar Sesión', route: 'logout', isAction: true, show: true }
+        { icon: '💰',    name: 'pagos',              route: '/socio/pagos',      show: m('pagos') },
+        { icon: '💬',    name: 'Ayúdanos a mejorar', route: '/socio/feedback',   show: true },
+        { icon: '🏃‍♂️', name: 'Cerrar Sesión',       route: 'logout', isAction: true, show: true }
       ].filter(l => l.show);
     }
     return [];

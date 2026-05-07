@@ -1,0 +1,42 @@
+<div class="fb-page">
+
+  @if (!enviado) {
+
+    <div class="fb-header">
+      <button class="fb-back" (click)="volver()">← Volver</button>
+    </div>
+
+    <div class="fb-card">
+      <div class="fb-icon">💬</div>
+      <h1 class="fb-titulo">¿Qué podemos mejorar?</h1>
+      <p class="fb-sub">Tu opinión nos ayuda a hacer una mejor app para todos. Escribí libremente, lo leemos con atención.</p>
+
+      <textarea
+        class="fb-textarea"
+        [(ngModel)]="mensaje"
+        [maxlength]="MAX"
+        placeholder="Contanos qué mejorarías, qué te gusta o qué te falta..."
+        rows="7">
+      </textarea>
+
+      <div class="fb-footer-row">
+        <span class="fb-contador" [class.rojo]="restantes < 50">{{ restantes }} caracteres restantes</span>
+        <button class="fb-btn" (click)="enviar()"
+                [disabled]="!mensaje.trim() || enviando">
+          @if (enviando) { Enviando... } @else { Enviar sugerencia }
+        </button>
+      </div>
+    </div>
+
+  } @else {
+
+    <div class="fb-gracias">
+      <div class="fb-gracias-icon">🙏</div>
+      <h2 class="fb-gracias-titulo">¡Gracias por tu feedback!</h2>
+      <p class="fb-gracias-sub">Tu mensaje llegó y lo vamos a revisar. Juntos hacemos la app mejor.</p>
+      <button class="fb-btn" (click)="volver()">Volver al inicio</button>
+    </div>
+
+  }
+
+</div>

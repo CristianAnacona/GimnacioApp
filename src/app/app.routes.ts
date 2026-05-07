@@ -117,6 +117,10 @@ export const routes: Routes = [
         path: 'medidas',
         loadComponent: () => import('./components/socio/medidas/medidas').then(m => m.Medidas)
       },
+      {
+        path: 'feedback',
+        loadComponent: () => import('./components/socio/feedback/feedback').then(m => m.FeedbackComponent)
+      },
       { path: '', redirectTo: 'noticias', pathMatch: 'full' }
     ]
   },
