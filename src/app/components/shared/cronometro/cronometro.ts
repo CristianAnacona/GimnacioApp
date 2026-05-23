@@ -309,13 +309,13 @@ export class Cronometro implements OnInit, OnDestroy {
   }
 
   private generarConfetti() {
-    this.confettiPiezas = Array.from({ length: 28 }, (_, i) => ({
+    this.confettiPiezas = Array.from({ length: 50 }, (_, i) => ({
       id: i,
       left: 5 + Math.random() * 90,
       delay: Math.random() * 0.8,
       color: this.COLORES[Math.floor(Math.random() * this.COLORES.length)],
-      size: 7 + Math.random() * 8,
-      duration: 2.2 + Math.random() * 1.5,
+      size: 6 + Math.random() * 10,
+      duration: 2.0 + Math.random() * 1.8,
       isCircle: Math.random() > 0.5
     }));
   }
