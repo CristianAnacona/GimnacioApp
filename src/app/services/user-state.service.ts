@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { StorageService } from './storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserStateService {
   private userSubject = new BehaviorSubject<any>(this.getUserFromStorage());
   user$ = this.userSubject.asObservable();
+
+  constructor(private storageService: StorageService) {}
 
   private getUserFromStorage() {
     const user = localStorage.getItem('usuario');
@@ -67,10 +70,8 @@ export class UserStateService {
   }
 
   clearSession() {
-    // Preservar el gym seleccionado para no tener que buscarlo de nuevo
-    const gymActual = localStorage.getItem('gymActual');
-    localStorage.clear();
-    if (gymActual) localStorage.setItem('gymActual', gymActual);
+    // Usar el servicio de storage que preserva cronómetro y preferencias
+    this.storageService.clearSessionPreservingData();
     this.userSubject.next(null);
   }
 }

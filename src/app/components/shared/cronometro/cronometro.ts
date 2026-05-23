@@ -1,7 +1,8 @@
-import { Component, OnDestroy, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, HostListener, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { IndexedDBService } from '../../../services/indexed-db.service';
 
 interface ConfettiPieza {
   id: number;
@@ -50,9 +51,11 @@ export class Cronometro implements OnInit, OnDestroy {
     if (document.visibilityState === 'visible') this.sincronizarDesdeStorage();
   };
 
+  private indexedDB = inject(IndexedDBService);
+
   constructor(private cdr: ChangeDetectorRef, private router: Router) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.enRutaSocio = this.router.url.startsWith('/socio');
     this.routeSub = this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
@@ -62,7 +65,13 @@ export class Cronometro implements OnInit, OnDestroy {
       });
 
     this.pedirPermisosNotificacion();
+
+    // Primero intentar restaurar desde IndexedDB (más confiable)
+    await this.restaurarDesdeIndexedDB();
+
+    // Luego restaurar desde localStorage (por si IndexedDB falla)
     this.restaurarDeStorage();
+
     document.addEventListener('visibilitychange', this.onVisibilityChange);
   }
 
@@ -108,6 +117,12 @@ export class Cronometro implements OnInit, OnDestroy {
     localStorage.setItem(KEY_TOTAL, String(this.tiempoTotal));
     localStorage.removeItem(KEY_PAUSE);
 
+    // Guardar también en IndexedDB para mayor seguridad
+    this.indexedDB.saveTimerState({
+      endTime,
+      total: this.tiempoTotal
+    }).catch(err => console.warn('No se pudo guardar en IndexedDB:', err));
+
     this.programarNotificacion(this.tiempoRestante);
     this.lanzarIntervalo();
   }
@@ -133,6 +148,12 @@ export class Cronometro implements OnInit, OnDestroy {
     clearTimeout(this.notifTimeout);
     localStorage.removeItem(KEY_END);
     localStorage.setItem(KEY_PAUSE, String(this.tiempoRestante));
+
+    // Guardar estado pausado en IndexedDB
+    this.indexedDB.saveTimerState({
+      paused: this.tiempoRestante,
+      total: this.tiempoTotal
+    }).catch(err => console.warn('No se pudo guardar en IndexedDB:', err));
   }
 
   private detener() {
@@ -194,6 +215,55 @@ export class Cronometro implements OnInit, OnDestroy {
     localStorage.removeItem(KEY_END);
     localStorage.removeItem(KEY_TOTAL);
     localStorage.removeItem(KEY_PAUSE);
+
+    // Limpiar también de IndexedDB
+    this.indexedDB.clearTimerState().catch(err => console.warn('No se pudo limpiar IndexedDB:', err));
+  }
+
+  /**
+   * Restaura el estado del cronómetro desde IndexedDB
+   */
+  private async restaurarDesdeIndexedDB(): Promise<void> {
+    try {
+      const state = await this.indexedDB.getTimerState();
+      if (!state) return;
+
+      const { endTime, total, paused } = state;
+
+      // Si hay un timer activo
+      if (endTime && total) {
+        const restante = Math.ceil((endTime - Date.now()) / 1000);
+        this.tiempoTotal = total;
+
+        if (restante <= 0) {
+          this.tiempoRestante = 0;
+          this.limpiarStorage();
+          this.alTerminar();
+        } else {
+          this.tiempoRestante = restante;
+          this.activo = true;
+          this.terminado = false;
+
+          // Sincronizar con localStorage
+          localStorage.setItem(KEY_END, String(endTime));
+          localStorage.setItem(KEY_TOTAL, String(total));
+
+          this.programarNotificacion(restante);
+          this.lanzarIntervalo();
+        }
+      }
+      // Si hay un timer pausado
+      else if (paused && total) {
+        this.tiempoTotal = total;
+        this.tiempoRestante = paused;
+
+        // Sincronizar con localStorage
+        localStorage.setItem(KEY_TOTAL, String(total));
+        localStorage.setItem(KEY_PAUSE, String(paused));
+      }
+    } catch (error) {
+      console.warn('Error al restaurar desde IndexedDB:', error);
+    }
   }
 
   async pedirPermisosNotificacion() {

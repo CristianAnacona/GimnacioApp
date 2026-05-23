@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { GymService, Gym } from '../../services/gym.service';
 import { ThemeService } from '../../services/theme.service';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-gym-selector',
@@ -27,7 +28,8 @@ export class GymSelector implements OnInit, OnDestroy {
     private gymService: GymService,
     private themeService: ThemeService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private storageService: StorageService
   ) {}
 
   ngOnInit() {
@@ -76,9 +78,8 @@ export class GymSelector implements OnInit, OnDestroy {
     this.gymService.guardarGym(gym);
     this.themeService.aplicar(gym);
     // Limpia sesión anterior para forzar nuevo login en el gym seleccionado
-    const gymActual = localStorage.getItem('gymActual');
-    localStorage.clear();
-    if (gymActual) localStorage.setItem('gymActual', gymActual);
+    // Preserva cronómetro y preferencias
+    this.storageService.clearSessionPreservingData();
     this.router.navigate(['/login']);
   }
 

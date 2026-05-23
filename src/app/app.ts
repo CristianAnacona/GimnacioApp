@@ -10,6 +10,7 @@ import { UserStateService } from './services/user-state.service';
 import { UpdateService } from './services/update.service';
 import { ThemeService } from './services/theme.service';
 import { GymService } from './services/gym.service';
+import { TokenMonitorService } from './services/token-monitor.service';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,7 @@ export class App implements OnInit {
   private _update = inject(UpdateService);
   private theme = inject(ThemeService);
   private router = inject(Router);
+  private tokenMonitor = inject(TokenMonitorService);
 
   isAdmin = toSignal(
     this.userState.user$.pipe(map(user => user?.role?.toLowerCase().trim() === 'admin')),
@@ -35,6 +37,10 @@ export class App implements OnInit {
 
   ngOnInit() {
     this.theme.aplicar();
+
+    // Iniciar monitoreo de expiración de token
+    this.tokenMonitor.startMonitoring();
+
     // Refresca gym desde el server para que módulos y colores estén siempre actualizados
     const gym = this.gymService.getGym();
     if (gym?.slug) {

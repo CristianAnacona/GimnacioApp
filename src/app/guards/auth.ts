@@ -1,9 +1,11 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
+import { StorageService } from '../services/storage.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
-  const token = localStorage.getItem('token');
+  const storageService = inject(StorageService);
+  const token = storageService.getToken();
   const gym   = localStorage.getItem('gymActual');
 
   // Sin gym seleccionado → selector
@@ -21,9 +23,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     const payload = JSON.parse(atob(token.split('.')[1]));
 
     if (payload.exp * 1000 < Date.now()) {
-      const gym = localStorage.getItem('gymActual');
-      localStorage.clear();
-      if (gym) localStorage.setItem('gymActual', gym);
+      storageService.clearSessionPreservingData();
       router.navigate(['/login']);
       return false;
     }
@@ -37,9 +37,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
     return true;
   } catch {
-    const gym = localStorage.getItem('gymActual');
-    localStorage.clear();
-    if (gym) localStorage.setItem('gymActual', gym);
+    storageService.clearSessionPreservingData();
     router.navigate(['/login']);
     return false;
   }

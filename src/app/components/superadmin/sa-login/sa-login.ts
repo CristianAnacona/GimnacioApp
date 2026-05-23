@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth';
 import { ToastService } from '../../../services/toast.service';
+import { StorageService } from '../../../services/storage.service';
 
 @Component({
   selector: 'app-sa-login',
@@ -21,7 +22,8 @@ export class SaLogin {
   constructor(
     private auth: AuthService,
     private toast: ToastService,
-    private router: Router
+    private router: Router,
+    private storageService: StorageService
   ) {}
 
   entrar() {
@@ -36,7 +38,7 @@ export class SaLogin {
           this.cargando = false;
           return;
         }
-        localStorage.clear();
+        this.storageService.clearSessionPreservingData();
         localStorage.setItem('token', res.token);
         localStorage.setItem('role', role);
         localStorage.setItem('userId', res.usuario._id);

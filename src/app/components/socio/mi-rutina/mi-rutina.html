@@ -104,6 +104,7 @@
                   <input
                     type="number"
                     [(ngModel)]="set.peso"
+                    (ngModelChange)="actualizarFormularioStorage()"
                     placeholder="—"
                     min="0"
                     inputmode="decimal"
@@ -111,6 +112,7 @@
                   <input
                     type="number"
                     [(ngModel)]="set.reps"
+                    (ngModelChange)="actualizarFormularioStorage()"
                     placeholder="—"
                     min="0"
                     inputmode="numeric"

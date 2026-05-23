@@ -43,6 +43,23 @@ export class AuthService {
     this.userStateService.clearSession();
   }
 
+  /**
+   * Renueva el token JWT actual
+   * Requiere que el usuario tenga un token válido (no expirado)
+   */
+  refreshToken(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/refresh-token`, {}).pipe(
+      tap((response: any) => {
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
+        if (response.usuario) {
+          this.userStateService.updateUser(response.usuario);
+        }
+      })
+    );
+  }
+
   // --- USUARIOS (Admin) ---
 
   getUsuarios(): Observable<any> {

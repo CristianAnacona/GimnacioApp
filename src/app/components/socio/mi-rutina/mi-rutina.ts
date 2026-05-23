@@ -10,7 +10,13 @@ import { ToastService } from '../../../services/toast.service';
 import { ProgresoService } from '../../../services/progreso.service';
 import { UserStateService } from '../../../services/user-state.service';
 import { DIAS_RUTINA } from '../../../../data/ejercicios-catalogo';
+
 interface SetForm { peso: number | null; reps: number | null; }
+
+// Claves para persistir el formulario de progreso
+const KEY_FORM_IDX = 'progreso_formIdx';
+const KEY_FORM_DATA = 'progreso_formData';
+const KEY_FORM_EJERCICIO = 'progreso_ejercicio';
 
 @Component({
   selector: 'app-mi-rutina',
@@ -74,6 +80,10 @@ export class MiRutina implements OnInit, OnDestroy {
           this.rutinas = Array.isArray(res) ? res : [res];
           this.cargando = false;
           this.buscarRutinaDelDia(this.diaActivo);
+
+          // Restaurar formulario de progreso si existe
+          this.restaurarFormularioProgreso();
+
           this.cdr.detectChanges();
           this.scrollToActiveDay();
         },
@@ -121,11 +131,23 @@ export class MiRutina implements OnInit, OnDestroy {
     event.stopPropagation();
     if (this.formularioIdx === index) {
       this.formularioIdx = null;
+      this.limpiarFormularioStorage();
       return;
     }
     this.formularioIdx = index;
     const numSeries = Number(ejer.series) || 4;
-    this.setsForm = Array.from({ length: numSeries }, () => ({ peso: null, reps: null }));
+
+    // Intentar restaurar datos previos para este ejercicio
+    const datosGuardados = this.obtenerDatosGuardados(ejer.nombre, index);
+    if (datosGuardados) {
+      this.setsForm = datosGuardados;
+    } else {
+      this.setsForm = Array.from({ length: numSeries }, () => ({ peso: null, reps: null }));
+    }
+
+    // Guardar estado inicial
+    this.guardarFormularioEnStorage(ejer.nombre, index);
+
     this.cdr.detectChanges();
 
     setTimeout(() => {
@@ -136,6 +158,7 @@ export class MiRutina implements OnInit, OnDestroy {
   cerrarFormulario(event: MouseEvent) {
     event.stopPropagation();
     this.formularioIdx = null;
+    this.limpiarFormularioStorage();
   }
 
   async guardarProgreso(ejer: any, event: MouseEvent) {
@@ -165,11 +188,102 @@ export class MiRutina implements OnInit, OnDestroy {
 
     this.guardando = false;
     this.formularioIdx = null;
+    this.limpiarFormularioStorage(); // Limpiar después de guardar exitosamente
     this.toast.success(`✓ ${guardados} serie${guardados !== 1 ? 's' : ''} guardada${guardados !== 1 ? 's' : ''}`);
     this.cdr.detectChanges();
   }
 
+  /**
+   * Guarda el formulario de progreso en localStorage para que no se pierda
+   */
+  private guardarFormularioEnStorage(ejercicioNombre: string, index: number): void {
+    try {
+      localStorage.setItem(KEY_FORM_IDX, String(index));
+      localStorage.setItem(KEY_FORM_EJERCICIO, ejercicioNombre);
+      localStorage.setItem(KEY_FORM_DATA, JSON.stringify(this.setsForm));
+    } catch (error) {
+      console.warn('No se pudo guardar formulario en localStorage:', error);
+    }
+  }
+
+  /**
+   * Actualiza el formulario en localStorage cuando el usuario cambia valores
+   */
+  actualizarFormularioStorage(): void {
+    if (this.formularioIdx !== null) {
+      try {
+        localStorage.setItem(KEY_FORM_DATA, JSON.stringify(this.setsForm));
+      } catch (error) {
+        console.warn('No se pudo actualizar formulario:', error);
+      }
+    }
+  }
+
+  /**
+   * Obtiene datos guardados para un ejercicio específico
+   */
+  private obtenerDatosGuardados(ejercicioNombre: string, index: number): SetForm[] | null {
+    try {
+      const idxGuardado = localStorage.getItem(KEY_FORM_IDX);
+      const ejercicioGuardado = localStorage.getItem(KEY_FORM_EJERCICIO);
+      const datosGuardados = localStorage.getItem(KEY_FORM_DATA);
+
+      if (idxGuardado === String(index) &&
+          ejercicioGuardado === ejercicioNombre &&
+          datosGuardados) {
+        return JSON.parse(datosGuardados);
+      }
+    } catch (error) {
+      console.warn('Error al restaurar datos:', error);
+    }
+    return null;
+  }
+
+  /**
+   * Restaura el formulario si se recargó la página mientras estaba abierto
+   */
+  private restaurarFormularioProgreso(): void {
+    try {
+      const idxGuardado = localStorage.getItem(KEY_FORM_IDX);
+      const ejercicioGuardado = localStorage.getItem(KEY_FORM_EJERCICIO);
+      const datosGuardados = localStorage.getItem(KEY_FORM_DATA);
+
+      if (idxGuardado && ejercicioGuardado && datosGuardados && this.rutinaActual?.ejercicios) {
+        const index = Number(idxGuardado);
+        const ejercicio = this.rutinaActual.ejercicios[index];
+
+        // Verificar que sea el mismo ejercicio
+        if (ejercicio?.nombre === ejercicioGuardado) {
+          this.formularioIdx = index;
+          this.setsForm = JSON.parse(datosGuardados);
+          this.cdr.detectChanges();
+
+          // Scroll al formulario después de un momento
+          setTimeout(() => {
+            document.getElementById('progreso-panel')?.scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest'
+            });
+          }, 300);
+        }
+      }
+    } catch (error) {
+      console.warn('Error al restaurar formulario:', error);
+      this.limpiarFormularioStorage();
+    }
+  }
+
+  /**
+   * Limpia los datos del formulario de localStorage
+   */
+  private limpiarFormularioStorage(): void {
+    localStorage.removeItem(KEY_FORM_IDX);
+    localStorage.removeItem(KEY_FORM_EJERCICIO);
+    localStorage.removeItem(KEY_FORM_DATA);
+  }
+
   ngOnDestroy() {
+    // NO limpiar el formulario al destruir, para que se preserve entre navegaciones
     this.destroy$.next();
     this.destroy$.complete();
   }

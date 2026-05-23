@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth';
 import { ToastService } from '../../../services/toast.service';
 import { GymService, Gym } from '../../../services/gym.service';
+import { StorageService } from '../../../services/storage.service';
 
 const GOOGLE_CLIENT_ID = '976541861094-pcm89afbvhdi6fttf7si2cc7gbtuf2pn.apps.googleusercontent.com';
 
@@ -28,7 +29,8 @@ export class Login implements OnInit, AfterViewInit {
     private authService: AuthService,
     private toast: ToastService,
     private gymService: GymService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private storageService: StorageService
   ) {}
 
   ngOnInit() {
@@ -108,10 +110,8 @@ export class Login implements OnInit, AfterViewInit {
   }
 
   private guardarSesion(res: any) {
-    // Preservar el gym antes de limpiar
-    const gymActual = localStorage.getItem('gymActual');
-    localStorage.clear();
-    if (gymActual) localStorage.setItem('gymActual', gymActual);
+    // Limpiar sesión anterior preservando cronómetro y preferencias
+    this.storageService.clearSessionPreservingData();
 
     const role = res.usuario.role.toLowerCase().trim();
     localStorage.setItem('userId', res.usuario._id);
