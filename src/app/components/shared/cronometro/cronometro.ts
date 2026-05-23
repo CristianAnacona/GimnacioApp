@@ -324,18 +324,18 @@ export class Cronometro implements OnInit, OnDestroy {
     this.detener();
     this.terminado = true;
 
-    // Confetti breve solo si está visible
-    if (!this.minimizado) {
-      this.generarConfetti();
-    }
+    // Confetti siempre (animación breve en el fondo)
+    this.generarConfetti();
 
-    // Vibración y notificación
-    if ('vibrate' in navigator) navigator.vibrate([400, 150, 400, 150, 400]);
+    // Vibración fuerte y notificación
+    if ('vibrate' in navigator) {
+      navigator.vibrate([200, 100, 200, 100, 400]);
+    }
     this.mostrarNotificacion();
 
     // Comportamiento diferente según si está en ruta de socio
     if (this.enRutaSocio) {
-      // En rutina: reinicio rápido y automático al mismo preset
+      // En rutina: reinicio automático al mismo preset
       setTimeout(() => {
         if (this.terminado) {
           this.tiempoTotal = this.ultimoPresetUsado;
@@ -345,7 +345,7 @@ export class Cronometro implements OnInit, OnDestroy {
           this.minimizado = true; // Mantener minimizado
           this.cdr.detectChanges();
         }
-      }, 1500); // 1.5 segundos (antes 5 segundos)
+      }, 3000); // 3 segundos para leer "¡Listo! Toca para repetir"
     } else {
       // Fuera de rutina: comportamiento normal
       setTimeout(() => {
@@ -353,7 +353,7 @@ export class Cronometro implements OnInit, OnDestroy {
           this.reiniciar();
           this.cdr.detectChanges();
         }
-      }, 1500);
+      }, 3000);
     }
   }
 
