@@ -41,6 +41,7 @@ export class Cronometro implements OnInit, OnDestroy {
   confettiPiezas: ConfettiPieza[] = [];
   enRutaSocio = false;
   permisoNotif: NotificationPermission = 'default';
+  ultimoPresetUsado = 60; // Guardar último preset para reinicio rápido
 
   private intervalo: any = null;
   private routeSub: any = null;
@@ -100,6 +101,7 @@ export class Cronometro implements OnInit, OnDestroy {
     this.tiempoRestante = segundos;
     this.terminado = false;
     this.confettiPiezas = [];
+    this.ultimoPresetUsado = segundos; // Guardar para reinicio rápido
     this.limpiarStorage();
   }
 
@@ -321,12 +323,38 @@ export class Cronometro implements OnInit, OnDestroy {
   private alTerminar() {
     this.detener();
     this.terminado = true;
-    this.generarConfetti();
+
+    // Confetti breve solo si está visible
+    if (!this.minimizado) {
+      this.generarConfetti();
+    }
+
+    // Vibración y notificación
     if ('vibrate' in navigator) navigator.vibrate([400, 150, 400, 150, 400]);
     this.mostrarNotificacion();
-    setTimeout(() => {
-      if (this.terminado) { this.reiniciar(); this.cdr.detectChanges(); }
-    }, 5000);
+
+    // Comportamiento diferente según si está en ruta de socio
+    if (this.enRutaSocio) {
+      // En rutina: reinicio rápido y automático al mismo preset
+      setTimeout(() => {
+        if (this.terminado) {
+          this.tiempoTotal = this.ultimoPresetUsado;
+          this.tiempoRestante = this.ultimoPresetUsado;
+          this.terminado = false;
+          this.confettiPiezas = [];
+          this.minimizado = true; // Mantener minimizado
+          this.cdr.detectChanges();
+        }
+      }, 1500); // 1.5 segundos (antes 5 segundos)
+    } else {
+      // Fuera de rutina: comportamiento normal
+      setTimeout(() => {
+        if (this.terminado) {
+          this.reiniciar();
+          this.cdr.detectChanges();
+        }
+      }, 1500);
+    }
   }
 
   ngOnDestroy() {

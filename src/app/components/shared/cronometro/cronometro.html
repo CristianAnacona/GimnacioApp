@@ -36,7 +36,9 @@
     </div>
 
     @if (terminado) {
-      <span class="mini-fin-texto">¡A darle! 💪</span>
+      <span class="mini-fin-texto">✅ ¡Listo! Toca para repetir</span>
+    } @else if (activo) {
+      <span class="mini-estado">Descansando...</span>
     }
   </div>
 }
