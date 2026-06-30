@@ -46,6 +46,7 @@ export class Cronometro implements OnInit, OnDestroy {
   private intervalo: any = null;
   private routeSub: any = null;
   private notifTimeout: any = null;
+  private audioCtx: AudioContext | null = null;
   private readonly COLORES = ['#cc0000','#22c55e','#3b82f6','#f97316','#a855f7','#eab308','#ec4899'];
 
   private onVisibilityChange = () => {
@@ -113,6 +114,10 @@ export class Cronometro implements OnInit, OnDestroy {
   private iniciar() {
     this.activo = true;
     this.terminado = false;
+
+    // Desbloquear el audio aquí (es un gesto del usuario): así el sonido
+    // podrá reproducirse cuando el cronómetro termine, también en móvil.
+    this.prepararAudio();
 
     const endTime = Date.now() + this.tiempoRestante * 1000;
     localStorage.setItem(KEY_END, String(endTime));
@@ -286,6 +291,47 @@ export class Cronometro implements OnInit, OnDestroy {
     }, segundos * 1000);
   }
 
+  /**
+   * Crea/reanuda el AudioContext. Debe llamarse desde un gesto del usuario
+   * (los navegadores móviles bloquean el audio iniciado por temporizadores).
+   */
+  private prepararAudio() {
+    try {
+      if (!this.audioCtx) {
+        const AC = (window as any).AudioContext || (window as any).webkitAudioContext;
+        if (AC) this.audioCtx = new AC();
+      }
+      if (this.audioCtx?.state === 'suspended') this.audioCtx.resume();
+    } catch {}
+  }
+
+  /**
+   * Reproduce un timbre de 3 notas ascendentes al terminar el cronómetro.
+   * Usa Web Audio API (sin archivos de audio).
+   */
+  private reproducirSonido() {
+    const ctx = this.audioCtx;
+    if (!ctx) return;
+    try {
+      if (ctx.state === 'suspended') ctx.resume();
+      const ahora = ctx.currentTime;
+      const notas = [880, 1108.73, 1318.51]; // La5 - Do#6 - Mi6 (acorde alegre)
+      notas.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const t = ahora + i * 0.18;
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(0.35, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.17);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.18);
+      });
+    } catch {}
+  }
+
   private async mostrarNotificacion() {
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
@@ -327,7 +373,8 @@ export class Cronometro implements OnInit, OnDestroy {
     // Confetti siempre (animación breve en el fondo)
     this.generarConfetti();
 
-    // Vibración fuerte y notificación
+    // Sonido + vibración fuerte + notificación
+    this.reproducirSonido();
     if ('vibrate' in navigator) {
       navigator.vibrate([200, 100, 200, 100, 400]);
     }
@@ -362,5 +409,6 @@ export class Cronometro implements OnInit, OnDestroy {
     clearTimeout(this.notifTimeout);
     this.routeSub?.unsubscribe();
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
+    this.audioCtx?.close().catch(() => {});
   }
 }
