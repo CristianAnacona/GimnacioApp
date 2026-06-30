@@ -25,6 +25,12 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/google`, { access_token: accessToken, gymId });
   }
 
+  // Login de Google nativo (APK): se envía el idToken como `credential`,
+  // que el backend verifica con la audiencia del client ID.
+  loginGoogleNativo(idToken: string, gymId?: string | null): Observable<any> {
+    return this.http.post(`${this.apiUrl}/google`, { credential: idToken, gymId });
+  }
+
   login(credenciales: any) {
     return this.http.post(`${this.apiUrl}/login`, credenciales);
   }

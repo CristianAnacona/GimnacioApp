@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { IndexedDBService } from '../../../services/indexed-db.service';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 interface ConfettiPieza {
   id: number;
@@ -17,6 +19,7 @@ interface ConfettiPieza {
 const KEY_END  = 'crono_endTime';
 const KEY_TOTAL = 'crono_total';
 const KEY_PAUSE = 'crono_paused';
+const NOTIF_ID = 9001; // id fijo de la notificación nativa del cronómetro
 
 @Component({
   selector: 'app-cronometro',
@@ -47,6 +50,7 @@ export class Cronometro implements OnInit, OnDestroy {
   private routeSub: any = null;
   private notifTimeout: any = null;
   private audioCtx: AudioContext | null = null;
+  private readonly esNativo = Capacitor.isNativePlatform();
   private readonly COLORES = ['#cc0000','#22c55e','#3b82f6','#f97316','#a855f7','#eab308','#ec4899'];
 
   private onVisibilityChange = () => {
@@ -130,7 +134,7 @@ export class Cronometro implements OnInit, OnDestroy {
       total: this.tiempoTotal
     }).catch(err => console.warn('No se pudo guardar en IndexedDB:', err));
 
-    this.programarNotificacion(this.tiempoRestante);
+    this.programarAviso(endTime);
     this.lanzarIntervalo();
   }
 
@@ -152,7 +156,7 @@ export class Cronometro implements OnInit, OnDestroy {
   private pausar() {
     this.activo = false;
     clearInterval(this.intervalo);
-    clearTimeout(this.notifTimeout);
+    this.cancelarAviso();
     localStorage.removeItem(KEY_END);
     localStorage.setItem(KEY_PAUSE, String(this.tiempoRestante));
 
@@ -163,10 +167,16 @@ export class Cronometro implements OnInit, OnDestroy {
     }).catch(err => console.warn('No se pudo guardar en IndexedDB:', err));
   }
 
-  private detener() {
+  private detener(cancelarNotif = true) {
     this.activo = false;
     clearInterval(this.intervalo);
-    clearTimeout(this.notifTimeout);
+    if (cancelarNotif) {
+      this.cancelarAviso();
+    } else {
+      // Fin natural del cronómetro: NO cancelar la notificación nativa,
+      // justo es la que debe dispararse en este instante.
+      clearTimeout(this.notifTimeout);
+    }
     this.limpiarStorage();
   }
 
@@ -255,7 +265,7 @@ export class Cronometro implements OnInit, OnDestroy {
           localStorage.setItem(KEY_END, String(endTime));
           localStorage.setItem(KEY_TOTAL, String(total));
 
-          this.programarNotificacion(restante);
+          this.programarAviso(endTime);
           this.lanzarIntervalo();
         }
       }
@@ -274,10 +284,62 @@ export class Cronometro implements OnInit, OnDestroy {
   }
 
   async pedirPermisosNotificacion() {
+    // En el APK (Capacitor) se piden los permisos nativos de notificación.
+    if (this.esNativo) {
+      try {
+        const estado = await LocalNotifications.checkPermissions();
+        if (estado.display !== 'granted') {
+          await LocalNotifications.requestPermissions();
+        }
+      } catch {}
+      return;
+    }
+    // En navegador, permiso de notificaciones web.
     if (!('Notification' in window)) return;
     this.permisoNotif = Notification.permission;
     if (Notification.permission === 'default') {
       this.permisoNotif = await Notification.requestPermission();
+    }
+  }
+
+  /**
+   * Programa el aviso de fin: notificación nativa en el APK (salta a la hora
+   * exacta aunque la app esté cerrada) o setTimeout web en el navegador.
+   */
+  private programarAviso(endTime: number) {
+    if (this.esNativo) {
+      this.programarNotificacionNativa(endTime);
+    } else {
+      const restante = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+      this.programarNotificacion(restante);
+    }
+  }
+
+  /** Cancela el aviso pendiente (web y nativo). */
+  private cancelarAviso() {
+    clearTimeout(this.notifTimeout);
+    if (this.esNativo) {
+      LocalNotifications.cancel({ notifications: [{ id: NOTIF_ID }] }).catch(() => {});
+    }
+  }
+
+  /**
+   * Agenda una notificación local nativa para la hora exacta de fin.
+   * El sistema operativo la dispara aunque la app esté cerrada.
+   */
+  private async programarNotificacionNativa(endTime: number) {
+    try {
+      await LocalNotifications.cancel({ notifications: [{ id: NOTIF_ID }] }).catch(() => {});
+      await LocalNotifications.schedule({
+        notifications: [{
+          id: NOTIF_ID,
+          title: '¡Tiempo de descanso terminado! 💪',
+          body: '¡A darle con todo, guerrero!',
+          schedule: { at: new Date(endTime), allowWhileIdle: true }
+        }]
+      });
+    } catch (e) {
+      console.warn('No se pudo programar la notificación nativa:', e);
     }
   }
 
@@ -367,7 +429,7 @@ export class Cronometro implements OnInit, OnDestroy {
   }
 
   private alTerminar() {
-    this.detener();
+    this.detener(false); // no cancelar la notificación nativa que debe sonar ahora
     this.terminado = true;
 
     // Confetti siempre (animación breve en el fondo)
@@ -378,7 +440,9 @@ export class Cronometro implements OnInit, OnDestroy {
     if ('vibrate' in navigator) {
       navigator.vibrate([200, 100, 200, 100, 400]);
     }
-    this.mostrarNotificacion();
+    // En el APK la notificación nativa ya está programada y salta sola
+    // (también con la app cerrada); en web la mostramos aquí.
+    if (!this.esNativo) this.mostrarNotificacion();
 
     // Comportamiento diferente según si está en ruta de socio
     if (this.enRutaSocio) {
