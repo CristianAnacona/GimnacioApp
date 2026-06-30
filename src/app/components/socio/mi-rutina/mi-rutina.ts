@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angula
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { takeUntil, map, catchError } from 'rxjs/operators';
 
 import { AuthService } from '../../../services/auth';
 import { ToastService } from '../../../services/toast.service';
@@ -161,7 +161,7 @@ export class MiRutina implements OnInit, OnDestroy {
     this.limpiarFormularioStorage();
   }
 
-  async guardarProgreso(ejer: any, event: MouseEvent) {
+  guardarProgreso(ejer: any, event: MouseEvent) {
     event.stopPropagation();
     const usuario = this.userState.getCurrentUser();
     if (!usuario?._id) return;
@@ -173,24 +173,38 @@ export class MiRutina implements OnInit, OnDestroy {
     }
 
     this.guardando = true;
-    let guardados = 0;
 
-    for (const set of setsConDatos) {
-      await new Promise<void>((resolve) => {
-        this.progresoService.guardarRegistro({
-          usuarioId: usuario._id,
-          ejercicioNombre: ejer.nombre,
-          pesoKg: set.peso ?? undefined,
-          repeticiones: set.reps ?? undefined
-        }).subscribe({ next: () => { guardados++; resolve(); }, error: () => resolve() });
-      });
-    }
+    // Enviar todas las series en paralelo; cada una reporta éxito/fallo sin
+    // abortar a las demás (no se trata un fallo parcial como éxito total).
+    const peticiones = setsConDatos.map(set =>
+      this.progresoService.guardarRegistro({
+        usuarioId: usuario._id,
+        ejercicioNombre: ejer.nombre,
+        pesoKg: set.peso ?? undefined,
+        repeticiones: set.reps ?? undefined
+      }).pipe(
+        map(() => true),
+        catchError(() => of(false))
+      )
+    );
 
-    this.guardando = false;
-    this.formularioIdx = null;
-    this.limpiarFormularioStorage(); // Limpiar después de guardar exitosamente
-    this.toast.success(`✓ ${guardados} serie${guardados !== 1 ? 's' : ''} guardada${guardados !== 1 ? 's' : ''}`);
-    this.cdr.detectChanges();
+    forkJoin(peticiones).pipe(takeUntil(this.destroy$)).subscribe(resultados => {
+      const guardados = resultados.filter(Boolean).length;
+      const fallidos = resultados.length - guardados;
+
+      this.guardando = false;
+      this.formularioIdx = null;
+
+      if (fallidos === 0) {
+        this.limpiarFormularioStorage(); // Limpiar solo si todo se guardó bien
+        this.toast.success(`✓ ${guardados} serie${guardados !== 1 ? 's' : ''} guardada${guardados !== 1 ? 's' : ''}`);
+      } else if (guardados === 0) {
+        this.toast.error('No se pudo guardar el progreso. Revisa tu conexión.');
+      } else {
+        this.toast.error(`Se guardaron ${guardados} de ${resultados.length} series. Reintenta las demás.`);
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   /**

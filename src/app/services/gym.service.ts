@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { StorageService } from './storage.service';
 
 export interface Gym {
   _id: string;
@@ -43,8 +44,7 @@ export class GymService {
   }
 
   getGym(): Gym | null {
-    const raw = localStorage.getItem(GYM_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return StorageService.safeParse<Gym | null>(localStorage.getItem(GYM_KEY), null);
   }
 
   getGymId(): string | null {

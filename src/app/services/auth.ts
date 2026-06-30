@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserStateService } from './user-state.service';
+import { StorageService } from './storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -12,27 +13,20 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private userStateService: UserStateService
+    private userStateService: UserStateService,
+    private storageService: StorageService
   ) {}
 
   // --- AUTENTICACIÓN ---
 
+  // La persistencia de sesión (limpiar + escribir + sincronizar estado) la hace
+  // el componente Login vía guardarSesion(), para evitar escribir antes de limpiar.
   loginConGoogle(accessToken: string, gymId?: string | null): Observable<any> {
-    return this.http.post(`${this.apiUrl}/google`, { access_token: accessToken, gymId }).pipe(
-      tap((response: any) => {
-        if (response.usuario) this.userStateService.updateUser(response.usuario);
-      })
-    );
+    return this.http.post(`${this.apiUrl}/google`, { access_token: accessToken, gymId });
   }
 
   login(credenciales: any) {
-    return this.http.post(`${this.apiUrl}/login`, credenciales).pipe(
-      tap((response: any) => {
-        if (response.usuario) {
-          this.userStateService.updateUser(response.usuario);
-        }
-      })
-    );
+    return this.http.post(`${this.apiUrl}/login`, credenciales);
   }
 
   registrar(usuario: any) {
@@ -51,7 +45,7 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/refresh-token`, {}).pipe(
       tap((response: any) => {
         if (response.token) {
-          localStorage.setItem('token', response.token);
+          this.storageService.setToken(response.token);
         }
         if (response.usuario) {
           this.userStateService.updateUser(response.usuario);

@@ -14,8 +14,8 @@ export class TokenMonitorService implements OnDestroy {
   private warningShown = false;
   private tokenRenewed = false;
   private readonly CHECK_INTERVAL_MS = 60000; // Revisar cada minuto
-  private readonly WARNING_THRESHOLD_MS = 24 * 60 * 60 * 1000; // Advertir con 24 horas
-  private readonly RENEWAL_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000; // Renovar con 7 días
+  // El token vive 8h: renovar cuando quedan <2h y avisar cuando quedan <30min.
+  private readonly RENEWAL_THRESHOLD_MS = 2 * 60 * 60 * 1000; // Renovar con 2 horas
 
   private authService = inject(AuthService);
 
@@ -70,12 +70,12 @@ export class TokenMonitorService implements OnDestroy {
 
     const remaining = this.storageService.getTokenTimeRemaining();
 
-    // Si quedan menos de 7 días, intentar renovar automáticamente (solo una vez)
+    // Si quedan menos de 2h, intentar renovar automáticamente (solo una vez)
     if (remaining < this.RENEWAL_THRESHOLD_MS && remaining > 0 && !this.tokenRenewed) {
       this.renewTokenAutomatically();
     }
 
-    // Si el token expira pronto (< 24h), mostrar advertencia (solo una vez)
+    // Si el token expira pronto (< 30min), mostrar advertencia (solo una vez)
     if (this.storageService.isTokenExpiringSoon() && !this.warningShown) {
       this.showExpirationWarning();
     }
@@ -88,14 +88,12 @@ export class TokenMonitorService implements OnDestroy {
     this.tokenRenewed = true;
 
     this.authService.refreshToken().subscribe({
-      next: (response) => {
-        console.log('✅ Token renovado automáticamente');
+      next: () => {
         this.toastService.success('Tu sesión ha sido renovada automáticamente', 3000);
-        // Resetear flags para permitir futuras renovaciones
+        // Resetear flag para permitir futuras advertencias
         this.warningShown = false;
       },
-      error: (err) => {
-        console.error('❌ Error al renovar token:', err);
+      error: () => {
         // Si falla la renovación, mostrar advertencia manual
         this.tokenRenewed = false;
         this.showExpirationWarning();

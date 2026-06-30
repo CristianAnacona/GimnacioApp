@@ -26,10 +26,14 @@ export class Navbar implements OnInit, OnDestroy {
   private readonly CACHE_DURATION = 5 * 60 * 1000;
   private destroy$ = new Subject<void>();
 
-  get gymNombre(): string { return this.gymService.getGym()?.nombre || 'GymApp'; }
-  get gymLogo(): string | null { return this.gymService.getGym()?.logo || null; }
-  get navbarBg(): string { return this.gymService.getGym()?.colores?.navbar || '#0f172a'; }
-  get menuBg(): string { return (this.gymService.getGym()?.colores as any)?.menu || '#1e293b'; }
+  // Cache local del gym: se inicializa y actualiza vía gymCambio$ (BehaviorSubject)
+  // para no parsear localStorage en cada ciclo de detección de cambios.
+  private gym: any = null;
+
+  get gymNombre(): string { return this.gym?.nombre || 'GymApp'; }
+  get gymLogo(): string | null { return this.gym?.logo || null; }
+  get navbarBg(): string { return this.gym?.colores?.navbar || '#0f172a'; }
+  get menuBg(): string { return (this.gym?.colores as any)?.menu || '#1e293b'; }
 
   constructor(
     private router: Router,
@@ -83,7 +87,7 @@ export class Navbar implements OnInit, OnDestroy {
     // Re-renderiza cuando cambian los datos del gym (módulos, colores, logo)
     this.gymService.gymCambio$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.cdr.detectChanges());
+      .subscribe(gym => { this.gym = gym; this.cdr.detectChanges(); });
 
     this.userStateService.user$
       .pipe(takeUntil(this.destroy$))

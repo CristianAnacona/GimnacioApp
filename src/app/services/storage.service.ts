@@ -36,31 +36,40 @@ export class StorageService {
   }
 
   /**
-   * Limpia TODO el localStorage (usar solo en casos extremos)
+   * Parseo seguro de un valor JSON de localStorage (nunca lanza).
    */
-  clearAll(): void {
-    localStorage.clear();
+  static safeParse<T = any>(raw: string | null, fallback: T): T {
+    if (!raw) return fallback;
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      return fallback;
+    }
   }
 
   /**
-   * Limpia la sesión completa pero preserva claves específicas
+   * Decodifica el payload de un JWT (base64url) sin lanzar.
+   */
+  private decodeTokenPayload(token: string | null): any | null {
+    if (!token) return null;
+    try {
+      const part = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(part));
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Limpia la sesión completa pero preserva claves específicas.
+   * No usa localStorage.clear() (regla del proyecto): elimina toda clave
+   * que no esté en la lista de preservadas, de forma robusta ante nuevas claves.
    */
   clearSessionPreservingData(): void {
-    // Guardar datos a preservar
-    const preserved: Record<string, string | null> = {};
-    this.PRESERVED_KEYS.forEach(key => {
-      preserved[key] = localStorage.getItem(key);
-    });
-
-    // Limpiar todo
-    localStorage.clear();
-
-    // Restaurar datos preservados
-    Object.entries(preserved).forEach(([key, value]) => {
-      if (value !== null) {
-        localStorage.setItem(key, value);
-      }
-    });
+    const preserved = new Set(this.PRESERVED_KEYS);
+    Object.keys(localStorage)
+      .filter(key => !preserved.has(key))
+      .forEach(key => localStorage.removeItem(key));
   }
 
   /**
@@ -81,38 +90,27 @@ export class StorageService {
    * Verifica si el token está expirado
    */
   isTokenExpired(): boolean {
-    const token = this.getToken();
-    if (!token) return true;
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.exp * 1000 < Date.now();
-    } catch {
-      return true;
-    }
+    const payload = this.decodeTokenPayload(this.getToken());
+    if (!payload?.exp) return true;
+    return payload.exp * 1000 < Date.now();
   }
 
   /**
    * Obtiene el tiempo restante del token en milisegundos
    */
   getTokenTimeRemaining(): number {
-    const token = this.getToken();
-    if (!token) return 0;
-
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return Math.max(0, payload.exp * 1000 - Date.now());
-    } catch {
-      return 0;
-    }
+    const payload = this.decodeTokenPayload(this.getToken());
+    if (!payload?.exp) return 0;
+    return Math.max(0, payload.exp * 1000 - Date.now());
   }
 
   /**
-   * Verifica si el token expira pronto (menos de 24 horas)
+   * Verifica si el token expira pronto (menos de 30 minutos).
+   * El token vive 8h, por lo que el umbral debe ser corto.
    */
   isTokenExpiringSoon(): boolean {
     const remaining = this.getTokenTimeRemaining();
-    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
-    return remaining > 0 && remaining < ONE_DAY_MS;
+    const THIRTY_MIN_MS = 30 * 60 * 1000;
+    return remaining > 0 && remaining < THIRTY_MIN_MS;
   }
 }

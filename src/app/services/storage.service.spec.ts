@@ -112,8 +112,8 @@ describe('StorageService', () => {
     });
 
     it('debe detectar si el token expira pronto', () => {
-      // Arrange - Token que expira en 12 horas (< 24 horas)
-      const soonExp = Math.floor(Date.now() / 1000) + (12 * 60 * 60);
+      // Arrange - Token que expira en 20 minutos (< 30 minutos)
+      const soonExp = Math.floor(Date.now() / 1000) + (20 * 60);
       const token = createToken({ exp: soonExp });
       service.setToken(token);
 
