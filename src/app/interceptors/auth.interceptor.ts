@@ -5,27 +5,26 @@ import { throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { StorageService } from '../services/storage.service';
 
+// Endpoints públicos de auth: un 401 aquí significa "credenciales inválidas",
+// no "sesión expirada", así que no se debe cerrar sesión ni redirigir.
+const AUTH_ENDPOINTS = ['/api/auth/login', '/api/auth/register', '/api/auth/google', '/api/auth/forgot-password', '/api/auth/reset-password'];
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const storageService = inject(StorageService);
-  const token = storageService.getToken();
-  const usuarioRaw = localStorage.getItem('usuario');
-  const usuario = usuarioRaw ? JSON.parse(usuarioRaw) : {};
-
-  const authReq = token
-    ? req.clone({
-        setHeaders: {
-          'Authorization': `Bearer ${token}`,
-          'user-id': usuario._id || 'publico'
-        }
-      })
-    : req;
-
   const router = inject(Router);
+  const token = storageService.getToken();
+
+  // El backend identifica al usuario por el JWT verificado; no se envía 'user-id'
+  // controlable por el cliente (vector de suplantación/IDOR).
+  const authReq = token
+    ? req.clone({ setHeaders: { 'Authorization': `Bearer ${token}` } })
+    : req;
 
   return next(authReq).pipe(
     catchError(err => {
-      if (err.status === 401) {
-        // Preservar cronómetro y preferencias al cerrar sesión por token inválido
+      const esEndpointAuth = AUTH_ENDPOINTS.some(ep => req.url.includes(ep));
+      // Solo cerrar sesión si había un token (sesión real) y no es un login fallido.
+      if (err.status === 401 && token && !esEndpointAuth) {
         storageService.clearSessionPreservingData();
         router.navigate(['/login']);
       }

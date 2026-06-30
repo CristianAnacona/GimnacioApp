@@ -9,14 +9,12 @@ export class UserStateService {
 
   constructor(private storageService: StorageService) {}
 
-  private getUserFromStorage() {
-    const user = localStorage.getItem('usuario');
-    return user ? JSON.parse(user) : null;
+  private getUserFromStorage(): any {
+    return StorageService.safeParse<any>(localStorage.getItem('usuario'), null);
   }
 
-  private getGymFromStorage() {
-    const gym = localStorage.getItem('gymActual');
-    return gym ? JSON.parse(gym) : null;
+  private getGymFromStorage(): any {
+    return StorageService.safeParse<any>(localStorage.getItem('gymActual'), null);
   }
 
   getCurrentUser() {

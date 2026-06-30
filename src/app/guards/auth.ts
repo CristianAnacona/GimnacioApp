@@ -19,19 +19,25 @@ export const authGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+  if (storageService.isTokenExpired()) {
+    storageService.clearSessionPreservingData();
+    router.navigate(['/login']);
+    return false;
+  }
 
-    if (payload.exp * 1000 < Date.now()) {
-      storageService.clearSessionPreservingData();
-      router.navigate(['/login']);
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    const role = payload.role?.toLowerCase().trim();
+
+    // Zona admin: solo admin o superadmin.
+    if (state.url.startsWith('/admin') && role !== 'admin' && role !== 'superadmin') {
+      router.navigate(['/socio']);
       return false;
     }
 
-    const role = payload.role?.toLowerCase().trim();
-
-    if (state.url.includes('/admin') && role !== 'admin') {
-      router.navigate(['/socio']);
+    // Zona socio: solo socio (admin/superadmin tienen su propio panel).
+    if (state.url.startsWith('/socio') && role !== 'socio') {
+      router.navigate(['/admin']);
       return false;
     }
 

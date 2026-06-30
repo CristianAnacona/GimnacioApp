@@ -7,6 +7,7 @@ import { AuthService } from '../../../services/auth';
 import { ToastService } from '../../../services/toast.service';
 import { GymService, Gym } from '../../../services/gym.service';
 import { StorageService } from '../../../services/storage.service';
+import { UserStateService } from '../../../services/user-state.service';
 
 const GOOGLE_CLIENT_ID = '976541861094-pcm89afbvhdi6fttf7si2cc7gbtuf2pn.apps.googleusercontent.com';
 
@@ -30,7 +31,8 @@ export class Login implements OnInit, AfterViewInit {
     private toast: ToastService,
     private gymService: GymService,
     private ngZone: NgZone,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private userStateService: UserStateService
   ) {}
 
   ngOnInit() {
@@ -110,15 +112,18 @@ export class Login implements OnInit, AfterViewInit {
   }
 
   private guardarSesion(res: any) {
-    // Limpiar sesión anterior preservando cronómetro y preferencias
+    // 1) Limpiar sesión anterior preservando cronómetro y preferencias
     this.storageService.clearSessionPreservingData();
 
+    // 2) Escribir la nueva sesión
     const role = res.usuario.role.toLowerCase().trim();
     localStorage.setItem('userId', res.usuario._id);
-    localStorage.setItem('usuario', JSON.stringify(res.usuario));
-    localStorage.setItem('token', res.token);
+    this.storageService.setToken(res.token);
     localStorage.setItem('role', role);
     localStorage.setItem('nombre', res.usuario.nombre);
+
+    // 3) Sincronizar estado reactivo (escribe 'usuario' y notifica al navbar)
+    this.userStateService.updateUser(res.usuario);
 
     if (role === 'superadmin') this.router.navigate(['/plataforma']);
     else if (role === 'admin') this.router.navigate(['admin/noticias']);

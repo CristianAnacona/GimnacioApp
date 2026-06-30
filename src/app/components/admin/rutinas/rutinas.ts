@@ -132,7 +132,16 @@ export class Rutinas implements OnInit, OnDestroy {
   }
 
   agregarA_Rutina(ej: any) {
-    this.rutinaParaSocio.push({ ...ej, series: 4, repeticiones: '10', completado: false });
+    // Copiar solo los campos que persiste el modelo Rutina (no todo el catálogo:
+    // gif, categoría, descripción, tips inflan innecesariamente el documento).
+    this.rutinaParaSocio.push({
+      nombre: ej.nombre,
+      imagenUrl: ej.imagenUrl || ej.gifUrl || '',
+      instrucciones: ej.instrucciones ?? ej.tip ?? ej.descripcion ?? '',
+      series: 4,
+      repeticiones: '10',
+      completado: false
+    });
   }
 
   quitarDeRutina(index: number) {
