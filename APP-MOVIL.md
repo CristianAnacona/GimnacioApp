@@ -93,6 +93,11 @@ proyecto en Android Studio para Build → Build APK).
 - En el navegador (PWA) se usa el método web (solo con la app abierta).
 - Permisos en el manifest: `POST_NOTIFICATIONS`, `SCHEDULE_EXACT_ALARM`, `USE_EXACT_ALARM`,
   `RECEIVE_BOOT_COMPLETED`, `WAKE_LOCK`.
+- **Icono de la notificación** (barra de estado): silueta blanca del oso `ic_stat_kodiak`
+  (en `res/drawable-*dpi/`) con tinte dorado (`iconColor: '#D4AF37'`). Android exige que el
+  icono pequeño sea una silueta monocroma; se generó desde el logo con `sharp`
+  (recorte de la cabeza del oso + umbral). Para regenerarlo, ver el script en el commit
+  o repetir el proceso de recorte/umbral sobre `public/icons/LogoGym.jpg`.
 
 **En el teléfono**, para que llegue con la app cerrada:
 - Activar Notificaciones y "Alarmas y recordatorios" de la app.

@@ -335,7 +335,9 @@ export class Cronometro implements OnInit, OnDestroy {
           id: NOTIF_ID,
           title: '¡Tiempo de descanso terminado! 💪',
           body: '¡A darle con todo, guerrero!',
-          schedule: { at: new Date(endTime), allowWhileIdle: true }
+          schedule: { at: new Date(endTime), allowWhileIdle: true },
+          smallIcon: 'ic_stat_kodiak',   // silueta del oso en la barra de estado
+          iconColor: '#D4AF37'           // tinte dorado
         }]
       });
     } catch (e) {
