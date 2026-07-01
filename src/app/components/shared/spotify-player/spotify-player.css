@@ -1,41 +1,91 @@
 .spotify-container {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    z-index: 1000;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
-.spotify-link {
-    background-color: #121212;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    text-decoration: none;
-    border: 1px solid rgba(255,255,255,0.1);
+/* Botón flotante (FAB) */
+.spotify-fab {
+  background-color: #1DB954;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s;
 }
 
-.spotify-link:hover {
-    background-color: #000;
-    transform: scale(1.1);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+.spotify-fab:hover { background-color: #1ed760; transform: scale(1.08); }
+.spotify-fab:active { transform: scale(0.95); }
+.spotify-fab.activo { background-color: #169c46; }
+
+/* Tarjeta con el reproductor embebido */
+.spotify-card {
+  width: 320px;
+  max-width: calc(100vw - 40px);
+  background: #121212;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  animation: spotify-in 0.18s ease-out;
 }
 
-.spotify-link:active {
-    transform: scale(0.95);
+@keyframes spotify-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+.spotify-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  color: #fff;
+}
+
+.spotify-title {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spotify-open {
+  background: #1DB954;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.spotify-open:hover { background: #1ed760; }
+
+.spotify-close {
+  background: transparent;
+  color: #b3b3b3;
+  border: none;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+}
+.spotify-close:hover { color: #fff; }
 
 @media (max-width: 480px) {
-    .spotify-container {
-        bottom: 15px;
-        left: 15px;
-    }
-    .spotify-link {
-        width: 48px;
-        height: 48px;
-    }
+  .spotify-container { bottom: 15px; left: 15px; }
 }

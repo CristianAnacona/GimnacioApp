@@ -153,6 +153,19 @@ alarma/reloj/calendario. Si algún día se publica en Play Store, habría que **
 `USE_EXACT_ALARM`** y, o bien pedir el permiso `SCHEDULE_EXACT_ALARM` al usuario en runtime,
 o cambiar a una notificación no-exacta. Para el APK actual no hay problema.
 
+## 9c. Reproductor de Spotify
+
+Componente [spotify-player](src/app/components/shared/spotify-player/spotify-player.ts)
+(visible en rutas de socio):
+
+- **Mini-player embebido** (iframe oficial de Spotify) con una playlist de entrenamiento.
+  No requiere login; reproduce previews (o completo si el usuario tiene sesión de Spotify).
+- Botón **"Abrir app"** que abre la app nativa de Spotify vía deep link
+  (`spotify:playlist:ID`, plugin `@capacitor/app-launcher`) y cae al enlace web si no está
+  instalada. En navegador abre la pestaña web.
+- Playlist por defecto en `DEFAULT_PLAYLIST`; se puede sobreescribir por gym si se añade
+  el campo `spotifyPlaylist` a la config del gimnasio (futuro).
+
 ## 10. Pendiente / futuro
 
 - **APK release firmado** + Google Play (para actualizaciones automáticas; $25 único).
