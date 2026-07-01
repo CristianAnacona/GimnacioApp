@@ -90,8 +90,11 @@ export class TokenMonitorService implements OnDestroy {
     this.authService.refreshToken().subscribe({
       next: () => {
         this.toastService.success('Tu sesión ha sido renovada automáticamente', 3000);
-        // Resetear flag para permitir futuras advertencias
+        // Resetear flags: el token nuevo tiene ~8h, asi que la condicion de
+        // renovacion (<2h) no se re-disparara de inmediato. Permite futuras
+        // renovaciones y advertencias en sesiones largas.
         this.warningShown = false;
+        this.tokenRenewed = false;
       },
       error: () => {
         // Si falla la renovación, mostrar advertencia manual
@@ -120,10 +123,10 @@ export class TokenMonitorService implements OnDestroy {
    */
   private showExpirationWarning(): void {
     const remaining = this.storageService.getTokenTimeRemaining();
-    const hoursRemaining = Math.floor(remaining / (1000 * 60 * 60));
+    const minutos = Math.max(1, Math.round(remaining / (1000 * 60)));
 
     this.toastService.info(
-      `Tu sesión expirará en ${hoursRemaining} hora(s). Guarda tu progreso.`,
+      `Tu sesión expirará en ~${minutos} minuto(s). Guarda tu progreso.`,
       5000
     );
 

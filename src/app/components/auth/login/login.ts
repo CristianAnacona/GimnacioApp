@@ -98,8 +98,13 @@ export class Login implements OnInit, AfterViewInit {
         }
       });
     } catch (e: any) {
-      // El nativo falla en teléfonos sin servicios de Google (Huawei).
-      // Caemos al login de Google por navegador.
+      const msg = (e?.message || e?.code || '').toString().toLowerCase();
+      // Si el usuario canceló el selector, no hacer nada (ni error ni fallback).
+      if (msg.includes('cancel')) {
+        this.procesandoGoogle = false;
+        return;
+      }
+      // Sin servicios de Google (Huawei) u otro fallo → login por navegador.
       console.warn('Google nativo no disponible, usando navegador:', e);
       this.loginGoogleNavegador();
     }
@@ -215,6 +220,14 @@ export class Login implements OnInit, AfterViewInit {
   }
 
   private guardarSesion(res: any) {
+    // 0) Validar la respuesta del servidor antes de tocar la sesión
+    if (!res?.usuario?.role || !res?.usuario?._id || !res?.token) {
+      this.cargando = false;
+      this.procesandoGoogle = false;
+      this.toast.error('Respuesta inválida del servidor');
+      return;
+    }
+
     // 1) Limpiar sesión anterior preservando cronómetro y preferencias
     this.storageService.clearSessionPreservingData();
 

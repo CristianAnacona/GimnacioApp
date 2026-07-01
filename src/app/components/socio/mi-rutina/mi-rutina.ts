@@ -53,12 +53,15 @@ export class MiRutina implements OnInit, OnDestroy {
 
   private resetarSiEsDiaDistinto(usuarioId: string) {
     const hoy = new Date().toISOString().split('T')[0];
-    const ultima = localStorage.getItem('ultimoResetRutina');
-    if (ultima === hoy) return;
+    // Marca por-usuario (no global): en un dispositivo compartido, el reset de
+    // un socio no debe bloquear el de otro. Se guarda {usuarioId, fecha}.
+    let prev: any = null;
+    try { prev = JSON.parse(localStorage.getItem('ultimoResetRutina') || 'null'); } catch { prev = null; }
+    if (prev && prev.usuarioId === usuarioId && prev.fecha === hoy) return;
     this.authService.resetDiario(usuarioId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => localStorage.setItem('ultimoResetRutina', hoy),
+        next: () => localStorage.setItem('ultimoResetRutina', JSON.stringify({ usuarioId, fecha: hoy })),
         error: () => this.toast.error('Error al resetear la rutina diaria')
       });
   }

@@ -33,15 +33,18 @@ export class GymSelector implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Si ya tiene gym y sesión, mandarlo directo al dashboard
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role')?.toLowerCase().trim();
+    // Si ya tiene gym y una sesión válida (token no expirado), ir al dashboard.
+    const token = this.storageService.getToken();
     const gym = this.gymService.getGym();
 
-    if (token && gym && (role === 'admin' || role === 'socio')) {
-      if (role === 'admin') this.router.navigate(['/admin']);
-      else this.router.navigate(['/socio']);
-      return;
+    if (token && gym && !this.storageService.isTokenExpired()) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        const role = payload.role?.toLowerCase().trim();
+        if (role === 'superadmin') { this.router.navigate(['/plataforma']); return; }
+        if (role === 'admin') { this.router.navigate(['/admin']); return; }
+        if (role === 'socio') { this.router.navigate(['/socio']); return; }
+      } catch { /* token ilegible → mostrar selector */ }
     }
 
     // Carga inicial — muestra todos los gyms disponibles

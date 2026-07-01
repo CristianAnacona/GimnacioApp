@@ -219,7 +219,7 @@ export class Cronometro implements OnInit, OnDestroy {
         this.tiempoRestante = restante;
         this.activo = true;
         this.terminado = false;
-        this.programarNotificacion(restante);
+        this.programarAviso(endTime); // web o nativo segun plataforma
         this.lanzarIntervalo();
       }
     } else if (paused && total) {

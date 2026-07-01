@@ -1,7 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../../../services/auth';
 import { UserStateService } from '../../../services/user-state.service';
@@ -13,9 +15,10 @@ import { ToastService } from '../../../services/toast.service';
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './datos-personales.html'
 })
-export class DatosPersonales implements OnInit {
+export class DatosPersonales implements OnInit, OnDestroy {
   perfil: any = null;
   cargando = false;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
@@ -24,6 +27,11 @@ export class DatosPersonales implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router
   ) {}
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit() {
     const user = this.userStateService.getCurrentUser();
@@ -35,7 +43,7 @@ export class DatosPersonales implements OnInit {
   }
 
   cargarDatos(id: string) {
-    this.authService.getPerfilSocio(id).subscribe({
+    this.authService.getPerfilSocio(id).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.perfil = res.datosCompletos || res;
 
@@ -64,7 +72,8 @@ export class DatosPersonales implements OnInit {
       this.perfil.fotoUrl = fotoComprimida;
       this.cdr.detectChanges();
 
-      this.authService.actualizarPerfil(this.perfil._id, { fotoUrl: fotoComprimida }).subscribe({
+      this.authService.actualizarPerfil(this.perfil._id, { fotoUrl: fotoComprimida })
+        .pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           this.userStateService.updateUser(res.usuario || res);
         },
@@ -81,7 +90,6 @@ export class DatosPersonales implements OnInit {
       reader.readAsDataURL(file);
       reader.onload = (event: any) => {
         const img = new Image();
-        img.src = event.target.result;
         img.onload = () => {
           const canvas = document.createElement('canvas');
           const MAX_WIDTH = 400;
@@ -91,6 +99,9 @@ export class DatosPersonales implements OnInit {
           canvas.getContext('2d')?.drawImage(img, 0, 0, canvas.width, canvas.height);
           resolve(canvas.toDataURL('image/jpeg', 0.7));
         };
+        // Si el archivo no es una imagen válida/decodificable, no dejar la promesa colgada
+        img.onerror = () => reject(new Error('Imagen inválida'));
+        img.src = event.target.result;
       };
       reader.onerror = error => reject(error);
     });
@@ -107,7 +118,8 @@ export class DatosPersonales implements OnInit {
       mensajeMotivador: this.perfil.mensajeMotivador
     };
 
-    this.authService.actualizarPerfil(this.perfil._id, datosAEditar).subscribe({
+    this.authService.actualizarPerfil(this.perfil._id, datosAEditar)
+      .pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.cargando = false;
         this.userStateService.updateUser(res.usuario || res);

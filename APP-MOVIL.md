@@ -143,6 +143,16 @@ Código en [src/app/components/auth/login/login.ts](src/app/components/auth/logi
 
 ---
 
+## 9b. Nota sobre alarmas exactas y Google Play
+
+El cronómetro usa **alarmas exactas** (`SCHEDULE_EXACT_ALARM` + `USE_EXACT_ALARM`) para
+saltar en el segundo justo. Esto funciona perfecto para **distribución por APK** (sideload).
+
+⚠️ **Google Play**: `USE_EXACT_ALARM` está restringido a apps cuya función central es
+alarma/reloj/calendario. Si algún día se publica en Play Store, habría que **quitar
+`USE_EXACT_ALARM`** y, o bien pedir el permiso `SCHEDULE_EXACT_ALARM` al usuario en runtime,
+o cambiar a una notificación no-exacta. Para el APK actual no hay problema.
+
 ## 10. Pendiente / futuro
 
 - **APK release firmado** + Google Play (para actualizaciones automáticas; $25 único).
